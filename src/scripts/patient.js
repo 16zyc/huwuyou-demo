@@ -234,6 +234,87 @@ const P_ICON = {
     .svd-bottom-bar { position:sticky; bottom:0; display:flex; gap:10px; padding:12px 0 4px; background:linear-gradient(180deg, transparent, var(--bg) 20%); }
     .svd-bottom-bar .btn { flex:1; }
 
+    /* 陪诊师详情页 */
+    .ed-profile { display:flex; gap:14px; padding:16px; background:var(--bg-card); border-radius:var(--radius-lg); margin-bottom:16px; }
+    .ed-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-deep)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; flex-shrink:0; }
+    .ed-info { flex:1; }
+    .ed-name { font-size:18px; font-weight:700; display:flex; align-items:center; gap:6px; }
+    .ed-star { color:#eab308; font-size:13px; font-weight:500; }
+    .ed-meta { font-size:12px; color:var(--text-muted); margin-top:4px; }
+    .ed-stats { display:flex; gap:12px; margin-top:10px; }
+    .ed-stat { flex:1; text-align:center; background:var(--bg-tertiary); padding:8px 4px; border-radius:8px; }
+    .ed-stat strong { display:block; font-size:15px; color:var(--accent); }
+    .ed-stat span { font-size:10px; color:var(--text-muted); }
+    .ed-tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .ed-tag { font-size:12px; padding:5px 12px; background:var(--accent-bg); color:var(--accent); border-radius:12px; }
+    .ed-info-list { background:var(--bg-card); border-radius:var(--radius); overflow:hidden; }
+    .ed-info-row { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--border-color); font-size:13px; }
+    .ed-info-row:last-child { border-bottom:none; }
+    .ed-info-label { color:var(--text-muted); }
+    .ed-info-value { font-weight:500; }
+    .ed-info-value.busy { color:var(--status-partial); }
+    .ed-info-value.free { color:var(--status-covered); }
+    .ed-form { background:var(--bg-card); border-radius:var(--radius); padding:14px; display:flex; flex-direction:column; gap:14px; }
+    .ed-form-item { display:flex; flex-direction:column; gap:6px; }
+    .ed-form-item label { font-size:13px; font-weight:500; color:var(--text-primary); }
+    .ed-form-item select, .ed-form-item input, .ed-form-item textarea { width:100%; padding:10px 12px; background:var(--bg-tertiary); border:1px solid var(--border-color); border-radius:var(--radius); font-size:14px; outline:none; color:var(--text-primary); }
+    .ed-form-item select:focus, .ed-form-item input:focus, .ed-form-item textarea:focus { border-color:var(--accent); }
+    .ed-form-item textarea { resize:vertical; }
+    .ed-date-picker { display:flex; gap:8px; flex-wrap:wrap; }
+    .ed-date-opt { flex:1; min-width:80px; position:relative; }
+    .ed-date-opt input { position:absolute; opacity:0; }
+    .ed-date-opt span { display:block; text-align:center; padding:8px; background:var(--bg-tertiary); border:1px solid var(--border-color); border-radius:var(--radius); font-size:13px; font-weight:500; }
+    .ed-date-opt em { display:block; text-align:center; font-size:10px; color:var(--text-muted); font-style:normal; margin-top:2px; }
+    .ed-date-opt input:checked + span { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .ed-price-box { background:var(--bg-card); border-radius:var(--radius); padding:14px; }
+    .ed-price-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; font-size:13px; color:var(--text-secondary); }
+    .ed-price-row strong { color:var(--text-primary); font-weight:600; }
+    .ed-price-total { display:flex; justify-content:space-between; align-items:center; padding-top:10px; margin-top:6px; border-top:1px dashed var(--border-color); }
+    .ed-price-total strong { font-size:18px; color:var(--accent); font-weight:700; }
+
+    /* 陪诊师聊天界面 */
+    .chat-page { display:flex; flex-direction:column; height:calc(100vh - 180px); }
+    .chat-header { display:flex; align-items:center; padding:10px 0; margin-bottom:0; }
+    .chat-header .svd-back { width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:var(--bg-card); cursor:pointer; }
+    .chat-header .svd-back svg { width:18px; height:18px; }
+    .chat-header h2 { flex:1; text-align:center; font-size:16px; font-weight:700; margin-right:32px; }
+    .chat-body { flex:1; overflow-y:auto; padding:12px 4px; display:flex; flex-direction:column; gap:12px; }
+    .chat-msg { display:flex; gap:8px; max-width:85%; }
+    .chat-msg.sent { align-self:flex-end; flex-direction:row-reverse; }
+    .chat-msg-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; flex-shrink:0; }
+    .chat-msg.sent .chat-msg-avatar { background:var(--accent); color:#fff; }
+    .chat-msg.received .chat-msg-avatar { background:var(--bg-tertiary); color:var(--accent); }
+    .chat-msg-content { display:flex; flex-direction:column; gap:4px; }
+    .chat-msg.sent .chat-msg-content { align-items:flex-end; }
+    .chat-msg-bubble { padding:10px 14px; border-radius:12px; font-size:14px; line-height:1.5; word-break:break-word; }
+    .chat-msg.sent .chat-msg-bubble { background:var(--accent); color:#fff; border-bottom-right-radius:4px; }
+    .chat-msg.received .chat-msg-bubble { background:var(--bg-card); color:var(--text-primary); border-bottom-left-radius:4px; border:1px solid var(--border-color); }
+    .chat-msg-time { font-size:10px; color:var(--text-muted); padding:0 4px; }
+    .chat-input-bar { display:flex; gap:8px; padding:10px 0; border-top:1px solid var(--border-color); }
+    .chat-input-bar input { flex:1; padding:10px 14px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:20px; font-size:14px; outline:none; }
+    .chat-input-bar button { padding:10px 18px; background:var(--accent); color:#fff; border:none; border-radius:20px; font-size:14px; font-weight:500; cursor:pointer; }
+
+    /* 就诊人管理 */
+    .p-list { display:flex; flex-direction:column; gap:12px; }
+    .p-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); padding:14px; }
+    .p-card-head { display:flex; gap:12px; align-items:center; }
+    .p-avatar { width:48px; height:48px; border-radius:50%; background:var(--accent-bg); color:var(--accent); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:600; flex-shrink:0; }
+    .p-info { flex:1; }
+    .p-name { font-size:15px; font-weight:600; }
+    .p-meta { font-size:12px; color:var(--text-muted); margin-top:4px; }
+    .p-actions { display:flex; gap:6px; margin-top:10px; }
+    .p-actions button { flex:1; padding:8px 10px; font-size:12px; }
+    .p-record-list { margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+    .p-record-item { display:flex; align-items:center; gap:8px; padding:6px 10px; background:var(--bg-tertiary); border-radius:6px; font-size:12px; }
+    .p-record-item svg { width:14px; height:14px; stroke:var(--accent); }
+    .p-image-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+    .p-image-thumb { aspect-ratio:1; background:var(--bg-tertiary); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--text-muted); overflow:hidden; position:relative; }
+    .p-image-thumb img { width:100%; height:100%; object-fit:cover; }
+    .p-image-del { position:absolute; top:2px; right:2px; width:18px; height:18px; background:rgba(0,0,0,0.6); border-radius:50%; color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; cursor:pointer; }
+    .p-image-add { aspect-ratio:1; background:var(--bg-tertiary); border:1px dashed var(--border-color); border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-muted); font-size:11px; cursor:pointer; }
+    .p-image-add svg { width:24px; height:24px; margin-bottom:2px; }
+    .p-empty { text-align:center; padding:40px 20px; color:var(--text-muted); font-size:14px; }
+
     /* 响应式 */
     @media (max-width:374px) {
       .ph-svc-sub-list { grid-template-columns:1fr; }
@@ -283,7 +364,7 @@ const Patient = {
       <div class="ph-svc-list">
         ${this._renderServiceBigCard('consult', '诊前咨询', '没头绪？不知道看什么科？专业陪诊师为您解答', 'c1', P_ICON.service_consult, ['专业解答', '流程指导', '科室推荐'])}
         ${this._renderServiceBigCard('agent', '代办服务', '代取药、代挂号、代办跑腿，足不出户搞定', 'c2', P_ICON.service_agent_cat, ['代办跑腿', '代办问诊', '辅助就医'])}
-        ${this._renderServiceBigCard('special', '特需服务', '孕妇、儿童、老人、护士等专业陪诊', 'c3', P_ICON.service_special, ['孕妇陪诊', '儿童陪诊', '专病陪诊'])}
+        ${this._renderServiceBigCard('special', '特需服务', '孕妇/儿童/老人/轮椅等特殊人群陪诊', 'c3', P_ICON.service_special, ['孕妇陪诊', '儿童陪诊', '专病陪诊'])}
         ${this._renderServiceBigCard('featured', '特色介绍', '国风助行、专家会诊等特色服务', 'c4', P_ICON.service_featured, ['国风助行', '专家会诊', '康复陪诊'])}
       </div>
 
@@ -518,6 +599,14 @@ const Patient = {
   },
 
   _renderSpecialPage() {
+    const specials = [
+      { title: '孕妇陪诊', icon: '🤰', price: 268, origPrice: 298, tags: ['问诊陪伴', '检查陪同', '心理疏导'], desc: '全程陪伴孕妇就诊，提供专业建议' },
+      { title: '儿童陪诊', icon: '🧒', price: 268, origPrice: 298, tags: ['问诊陪伴', '心理建设', '安抚情绪'], desc: '专业陪诊师陪同儿童就诊，安抚紧张情绪' },
+      { title: '专病陪诊', icon: '🏥', price: 578, origPrice: 598, tags: ['专病专治', '专家陪同', '方案定制'], desc: '针对疑难病症，专家级陪诊师陪同就诊' },
+      { title: '老人陪诊', icon: '👴', price: 228, origPrice: 258, tags: ['全程陪同', '沟通翻译', '贴心照顾'], desc: '为老年人提供全程贴心陪诊服务' },
+      { title: '轮椅陪诊', icon: '♿', price: 198, origPrice: 228, tags: ['轮椅服务', '移动协助', '贴心陪诊'], desc: '提供轮椅及移动协助服务' },
+      { title: '护士陪诊', icon: '👩‍⚕️', price: 368, origPrice: 398, tags: ['专业护理', '健康指导', '用药监督'], desc: '专业护士提供陪诊及健康指导服务' },
+    ];
     return `
       <div class="svc-detail">
         <div class="svd-header">
@@ -525,48 +614,51 @@ const Patient = {
           <h2>特需服务</h2>
         </div>
         <div class="svd-hero">
-          <div class="svd-hero-banner" style="background:linear-gradient(135deg,#ea580c,#c24a0a);">国风助行</div>
+          <div class="svd-hero-banner" style="background:linear-gradient(135deg,#ea580c,#c24a0a);">特需陪诊</div>
           <div class="svd-hero-info">
-            <div class="svd-hero-title">国风助行陪诊</div>
-            <div class="svd-hero-desc">让每一次陪诊都充满温度</div>
+            <div class="svd-hero-title">特殊人群 · 专业陪诊</div>
+            <div class="svd-hero-desc">为孕妇、儿童、老人、轮椅等特殊人群提供专属陪诊服务</div>
           </div>
         </div>
         <div class="svd-section">
-          <div class="svd-section-title">服务流程</div>
-          <div class="svd-process-list">
-            <div class="svd-process-item">
-              <div class="svd-process-num">1</div>
-              <div class="svd-process-content">
-                <div class="svd-process-title">接单预约</div>
-                <div class="svd-process-text">7x12小时响应，专业陪诊人员24小时在岗</div>
+          <div class="svd-section-title">特需服务项目</div>
+          <div class="svd-sub-list">
+            ${specials.map((s, i) => `
+              <div class="svd-sub-card" onclick="Patient._bookService('special_${i}')">
+                <div class="svd-sub-img" style="background:linear-gradient(135deg,#ffedd5,#fed7aa);color:#c24a0a;font-size:28px;">${s.icon}</div>
+                <div class="svd-sub-info">
+                  <div class="svd-sub-title">${s.title}</div>
+                  <div class="svd-sub-price">¥${s.price} <small>¥${s.origPrice}</small></div>
+                  <div class="svd-sub-tags">
+                    ${s.tags.slice(0,2).map(t => `<span class="svd-sub-tag">${t}</span>`).join('')}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="svd-section">
+          <div class="svd-section-title">服务承诺</div>
+          <div class="svd-reason-list">
+            <div class="svd-reason-item">
+              <div class="svd-reason-icon" style="background:rgba(234,88,12,0.1);color:#ea580c;">${P_ICON.shield}</div>
+              <div class="svd-reason-content">
+                <div class="svd-reason-title">服务保障</div>
+                <div class="svd-reason-text">专业资质认证，服务不满意全额退款</div>
               </div>
             </div>
-            <div class="svd-process-item">
-              <div class="svd-process-num">2</div>
-              <div class="svd-process-content">
-                <div class="svd-process-title">智能陪诊</div>
-                <div class="svd-process-text">智能规划就诊路线，精准陪同每一步</div>
+            <div class="svd-reason-item">
+              <div class="svd-reason-icon" style="background:rgba(59,108,181,0.1);color:var(--accent);">${P_ICON.clock}</div>
+              <div class="svd-reason-content">
+                <div class="svd-reason-title">准时到达</div>
+                <div class="svd-reason-text">约定时间准时到达，迟到赔付</div>
               </div>
             </div>
-            <div class="svd-process-item">
-              <div class="svd-process-num">3</div>
-              <div class="svd-process-content">
-                <div class="svd-process-title">温馨到达</div>
-                <div class="svd-process-text">精准准时到达指定位置，提供安全陪同服务</div>
-              </div>
-            </div>
-            <div class="svd-process-item">
-              <div class="svd-process-num">4</div>
-              <div class="svd-process-content">
-                <div class="svd-process-title">贴心陪诊</div>
-                <div class="svd-process-text">耐心解答医生问题，贴心照顾陪同老人</div>
-              </div>
-            </div>
-            <div class="svd-process-item">
-              <div class="svd-process-num">5</div>
-              <div class="svd-process-content">
-                <div class="svd-process-title">安全送达</div>
-                <div class="svd-process-text">完成所有陪诊任务，安全送到指定地点</div>
+            <div class="svd-reason-item">
+              <div class="svd-reason-icon" style="background:rgba(22,163,74,0.1);color:var(--status-covered);">${P_ICON.phone}</div>
+              <div class="svd-reason-content">
+                <div class="svd-reason-title">24小时客服</div>
+                <div class="svd-reason-text">全程电话畅通，随时联系陪诊师</div>
               </div>
             </div>
           </div>
@@ -667,9 +759,35 @@ const Patient = {
       consult: '诊前咨询', agent: '代办服务', special: '特需服务', featured: '特色陪诊',
       agent_run: '代办跑腿', agent_consult: '代办问诊', agent_report: '代约检查', agent_assist: '辅助就医',
       pregnant: '孕妇陪诊', children: '儿童陪诊', whitecollar: '白领陪诊', nurse: '护士陪诊', specialty: '专病陪诊',
+      special_0: '孕妇陪诊', special_1: '儿童陪诊', special_2: '专病陪诊', special_3: '老人陪诊', special_4: '轮椅陪诊', special_5: '护士陪诊',
     };
-    App.toast('已选择' + (names[type] || '服务') + '，正在跳转预约…');
-    setTimeout(() => App.switchTab(1), 500);
+    const prices = {
+      special_0: 268, special_1: 268, special_2: 578, special_3: 228, special_4: 198, special_5: 368,
+    };
+
+    // 如果是子服务类型（代办/特需/特色子项），直接创建订单
+    const isSubType = /^(agent_|special_|pregnant|children|whitecollar|nurse|specialty)/.test(type);
+    if (isSubType) {
+      const u = MockData.patient.user;
+      const price = prices[type] || 298;
+      const typeName = names[type] || '服务';
+      const req = NeedPool.add({
+        patientName: u.name, gender: u.gender, age: u.age, phone: u.phone,
+        emergencyName: u.emergencyName, emergencyPhone: u.emergencyPhone,
+        history: u.medical?.history || '', allergy: u.medical?.allergy || '',
+        medicine: '', mobility: '', insurance: '',
+        hospital: '待确认', dept: '待确认', date: '待确认',
+        serviceType: typeName, amount: price,
+        note: '通过' + typeName + '详情页下单',
+        status: '待处理',
+        idCardFront: null, idCardBack: null, reportFiles: [],
+      });
+      App.toast('下单成功！订单号：' + req.id);
+      setTimeout(() => App.switchTab(2), 800);
+    } else {
+      App.toast('已选择' + (names[type] || '服务') + '，正在跳转预约…');
+      setTimeout(() => App.switchTab(1), 500);
+    }
   },
 
   // ===== 医院列表页 =====
@@ -822,7 +940,7 @@ const Patient = {
         <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">专业陪诊师随时为您服务</div>
       </div>
       ${escorts.map(e => `
-        <div class="esc-card" onclick="Patient._contactEscort('${e.id}')">
+        <div class="esc-card" onclick="Patient.goEscortDetail('${e.id}')">
           <div class="esc-avatar">${e.avatar}</div>
           <div class="esc-info">
             <div class="esc-name">${e.name} <span class="esc-star">★ ${e.star}</span></div>
@@ -837,10 +955,264 @@ const Patient = {
     `;
   },
 
-  _contactEscort(id) {
+  // ===== 陪诊师聊天界面 =====
+  openChatWithEscort(escortId) {
     if (!App.requireLogin('联系陪诊师')) return;
+    const e = (MockData.escorts || []).find(x => x.id === escortId);
+    if (!e) return;
+    this._currentEscort = e;
+    this._chatMessages = [
+      { from: 'escort', text: `您好，我是陪诊师${e.name}，很高兴为您服务！请问您有什么需要帮助的吗？`, time: this._chatTime() },
+      { from: 'me', text: '您好，我想咨询一下陪诊的具体流程', time: this._chatTime() },
+      { from: 'escort', text: '好的，我们的流程是：1.您填写就诊信息 2.我确认信息 3.约定时间地点 4.提供陪诊服务。请问您要就诊的医院和科室是？', time: this._chatTime() },
+    ];
+    this._renderChatPage();
+  },
+
+  _renderChatPage() {
+    const e = this._currentEscort;
+    if (!e) return;
+    const screen = document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+
+    screen.innerHTML = `
+      <div class="chat-page">
+        <div class="chat-header">
+          <div class="svd-back" onclick="App.switchTab(1)">${P_ICON.chevronLeft}</div>
+          <h2>${e.name}</h2>
+        </div>
+        <div class="chat-body" id="chatBody">
+          ${this._chatMessages.map(m => this._renderChatMsg(m)).join('')}
+        </div>
+        <div class="chat-input-bar">
+          <input type="text" id="chatInput" placeholder="输入消息..." />
+          <button onclick="Patient._sendChatMsg()">发送</button>
+        </div>
+      </div>
+    `;
+
+    const input = document.getElementById('chatInput');
+    if (input) input.addEventListener('keypress', ev => { if (ev.key === 'Enter') this._sendChatMsg(); });
+    this._scrollChat();
+  },
+
+  _renderChatMsg(m) {
+    const avatar = m.from === 'me' ? '我' : (this._currentEscort?.name?.[0] || '陪');
+    return `
+      <div class="chat-msg ${m.from}">
+        <div class="chat-msg-avatar">${avatar}</div>
+        <div class="chat-msg-content">
+          <div class="chat-msg-bubble">${m.text}</div>
+          <div class="chat-msg-time">${m.time}</div>
+        </div>
+      </div>
+    `;
+  },
+
+  _sendChatMsg() {
+    const input = document.getElementById('chatInput');
+    if (!input || !input.value.trim()) return;
+    const text = input.value.trim();
+    input.value = '';
+    this._chatMessages.push({ from: 'me', text, time: this._chatTime() });
+    this._renderChatPage();
+    this._scrollChat();
+
+    // 模拟陪诊师回复
+    setTimeout(() => {
+      const replies = [
+        '好的，我了解了。请问您的就诊时间是？',
+        '可以的，我会提前30分钟到达。',
+        '请问您需要轮椅服务吗？',
+        '您可以把就诊医院和科室告诉我吗？',
+        '我这边已经记录好了，随时可以为您服务。',
+      ];
+      this._chatMessages.push({ from: 'escort', text: replies[Math.floor(Math.random() * replies.length)], time: this._chatTime() });
+      this._renderChatPage();
+      this._scrollChat();
+    }, 800 + Math.random() * 600);
+  },
+
+  _scrollChat() {
+    const body = document.getElementById('chatBody');
+    if (body) body.scrollTop = body.scrollHeight;
+  },
+
+  _chatTime() {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  },
+
+  // ===== 陪诊师详情页 =====
+  goEscortDetail(id) {
     const e = (MockData.escorts || []).find(x => x.id === id);
-    if (e) App.toast('正在为您对接陪诊师 ' + e.name);
+    if (!e) return;
+    this._currentEscort = e;
+    this._renderEscortDetailPage();
+  },
+
+  _renderEscortDetailPage() {
+    const e = this._currentEscort;
+    if (!e) return;
+    const screen = document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+
+    const hospitals = (MockData.hospitals || []).filter(h => h.hot);
+    const today = new Date();
+    const tomorrow = new Date(today.getTime() + 86400000);
+    const dayAfter = new Date(today.getTime() + 2*86400000);
+    const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const dateOptions = [
+      { label: '今天', value: fmt(today) },
+      { label: '明天', value: fmt(tomorrow) },
+      { label: '后天', value: fmt(dayAfter) },
+    ];
+    const serviceTypes = ['半程陪诊', '全程陪诊', '代办跑腿', '代办问诊', '特需陪诊'];
+
+    screen.innerHTML = `
+      <div class="svc-detail">
+        <div class="svd-header">
+          <div class="svd-back" onclick="App.switchTab(1)">${P_ICON.chevronLeft}</div>
+          <h2>陪诊师详情</h2>
+        </div>
+
+        <!-- 陪诊师信息 -->
+        <div class="ed-profile">
+          <div class="ed-avatar">${e.avatar}</div>
+          <div class="ed-info">
+            <div class="ed-name">${e.name} <span class="ed-star">★ ${e.star}</span></div>
+            <div class="ed-meta">${e.gender} · ${e.age}岁 · ${e.region}</div>
+            <div class="ed-stats">
+              <div class="ed-stat"><strong>${e.orders}</strong><span>服务单数</span></div>
+              <div class="ed-stat"><strong>${e.completionRate}%</strong><span>完成率</span></div>
+              <div class="ed-stat"><strong>${e.score}</strong><span>综合评分</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 擅长领域 -->
+        <div class="svd-section">
+          <div class="svd-section-title">擅长领域</div>
+          <div class="ed-tags">
+            ${e.tags.map(t => `<span class="ed-tag">${t}</span>`).join('')}
+          </div>
+        </div>
+
+        <!-- 服务信息 -->
+        <div class="svd-section">
+          <div class="svd-section-title">服务信息</div>
+          <div class="ed-info-list">
+            <div class="ed-info-row">
+              <span class="ed-info-label">状态</span>
+              <span class="ed-info-value ${e.status === '服务中' ? 'busy' : 'free'}">${e.status}</span>
+            </div>
+            <div class="ed-info-row">
+              <span class="ed-info-label">入职时间</span>
+              <span class="ed-info-value">${e.joinDate}</span>
+            </div>
+            <div class="ed-info-row">
+              <span class="ed-info-label">联系电话</span>
+              <span class="ed-info-value">${e.phone}</span>
+            </div>
+            <div class="ed-info-row">
+              <span class="ed-info-label">累计收入</span>
+              <span class="ed-info-value">¥${e.income.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 订单确认 -->
+        <div class="svd-section">
+          <div class="svd-section-title">确认订单信息</div>
+          <div class="ed-form">
+            <div class="ed-form-item">
+              <label>就诊医院</label>
+              <select id="edHospital">
+                ${hospitals.map(h => `<option value="${h.name}">${h.name}</option>`).join('')}
+              </select>
+            </div>
+            <div class="ed-form-item">
+              <label>就诊日期</label>
+              <div class="ed-date-picker">
+                ${dateOptions.map((d, i) => `<label class="ed-date-opt"><input type="radio" name="edDate" value="${d.value}" ${i===0?'checked':''}><span>${d.label}</span><em>${d.value}</em></label>`).join('')}
+              </div>
+            </div>
+            <div class="ed-form-item">
+              <label>服务类型</label>
+              <select id="edServiceType">
+                ${serviceTypes.map(s => `<option value="${s}">${s}</option>`).join('')}
+              </select>
+            </div>
+            <div class="ed-form-item">
+              <label>就诊科室</label>
+              <input type="text" id="edDept" placeholder="如：心内科" />
+            </div>
+            <div class="ed-form-item">
+              <label>备注说明</label>
+              <textarea id="edNote" placeholder="如有特殊需求请填写，如：需要轮椅、听不懂普通话等" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 费用说明 -->
+        <div class="svd-section">
+          <div class="svd-section-title">费用说明</div>
+          <div class="ed-price-box">
+            <div class="ed-price-row"><span>陪诊服务费</span><strong id="edPrice">¥298</strong></div>
+            <div class="ed-price-row"><span>押金</span><strong>¥0</strong></div>
+            <div class="ed-price-total"><span>合计</span><strong id="edTotal">¥298</strong></div>
+          </div>
+        </div>
+
+        <!-- 下单按钮 -->
+        <div class="svd-bottom-bar">
+          <button class="btn btn-outline" onclick="Patient.openChatWithEscort('${e.id}')">联系陪诊师</button>
+          <button class="btn" onclick="Patient._submitEscortOrder()">确认下单</button>
+        </div>
+      </div>
+    `;
+
+    // 绑定服务类型变化更新价格
+    const st = document.getElementById('edServiceType');
+    if (st) st.addEventListener('change', () => {
+      const prices = { '半程陪诊': 298, '全程陪诊': 498, '代办跑腿': 188, '代办问诊': 258, '特需陪诊': 688 };
+      const p = prices[st.value] || 298;
+      document.getElementById('edPrice').textContent = '¥' + p;
+      document.getElementById('edTotal').textContent = '¥' + p;
+    });
+  },
+
+  _submitEscortOrder() {
+    if (!App.requireLogin('下单')) return;
+    const e = this._currentEscort;
+    if (!e) return;
+    const hospital = document.getElementById('edHospital')?.value || '未选择';
+    const dateEl = document.querySelector('input[name="edDate"]:checked');
+    const date = dateEl ? dateEl.value : '';
+    const serviceType = document.getElementById('edServiceType')?.value || '半程陪诊';
+    const dept = document.getElementById('edDept')?.value || '';
+    const note = document.getElementById('edNote')?.value || '';
+    const prices = { '半程陪诊': 298, '全程陪诊': 498, '代办跑腿': 188, '代办问诊': 258, '特需陪诊': 688 };
+    const amount = prices[serviceType] || 298;
+
+    if (!date) { App.toast('请选择就诊日期'); return; }
+    if (!dept) { App.toast('请填写就诊科室'); return; }
+
+    const u = MockData.patient.user;
+    const req = NeedPool.add({
+      patientName: u.name, gender: u.gender, age: u.age, phone: u.phone,
+      emergencyName: u.emergencyName, emergencyPhone: u.emergencyPhone,
+      history: u.medical?.history || '', allergy: u.medical?.allergy || '',
+      medicine: '', mobility: '', insurance: '',
+      hospital, dept, date, serviceType, amount,
+      note: note || '通过陪诊师详情页下单',
+      status: '已对接',
+      escortId: e.id, escortName: e.name,
+      idCardFront: null, idCardBack: null, reportFiles: [],
+    });
+
+    App.toast('下单成功！订单号：' + req.id);
+    setTimeout(() => App.switchTab(2), 800);
   },
 
   // ===== 订单页 =====
@@ -880,18 +1252,23 @@ const Patient = {
 
   _renderOrderCard(n) {
     const statusClass = n.status === '待处理' ? 'pending' : n.status === '已分配' || n.status === '已对接' ? 'accepted' : n.status === '服务中' ? 'serving' : 'done';
+    const statusLabel = n.status === '待处理' ? '待接单' : n.status === '已分配' ? '待服务' : n.status === '已对接' ? '进行中' : n.status;
     return `
       <div class="order-card" onclick="Patient._openOrderDetail('${n.id}')">
         <div class="order-head">
-          <span class="order-status ${statusClass}">${n.status}</span>
+          <span class="order-status ${statusClass}">${statusLabel}</span>
           <span style="font-size:11px; color:var(--text-muted);">${n.id}</span>
         </div>
         <div class="order-title">${n.hospital} · ${n.dept}</div>
         <div class="order-sub">${n.date} · ${n.serviceType} · ¥${n.amount}</div>
         ${n.escortName ? `
-          <div style="margin-top:8px; padding:8px 10px; background:var(--accent-bg); border-radius:6px; font-size:12px;">
-            陪诊师：<strong style="color:var(--accent);">${n.escortName}</strong>
+          <div style="margin-top:8px; padding:8px 10px; background:var(--accent-bg); border-radius:6px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
+            <span>陪诊师：<strong style="color:var(--accent);">${n.escortName}</strong></span>
+            <span style="color:var(--text-muted); font-size:11px;">已对接</span>
           </div>
+        ` : ''}
+        ${n.note ? `
+          <div style="margin-top:6px; font-size:11px; color:var(--text-muted); line-height:1.4; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">备注：${n.note}</div>
         ` : ''}
       </div>
     `;
@@ -901,10 +1278,124 @@ const Patient = {
     const n = NeedPool.getById(id);
     if (!n) return;
     if (!App.requireLogin('查看订单详情')) return;
-    if (typeof Patient.openNeedDetail === 'function') {
-      Patient.openNeedDetail(id);
+    this._renderOrderDetailPage(id);
+  },
+
+  _renderOrderDetailPage(id) {
+    const n = NeedPool.getById(id);
+    if (!n) return;
+    const screen = document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+
+    const statusClass = n.status === '待处理' ? 'pending' : n.status === '已分配' || n.status === '已对接' ? 'accepted' : n.status === '服务中' ? 'serving' : 'done';
+    const timelineItems = [
+      { label: '订单创建', time: n.createTime, done: true },
+      { label: '陪诊师对接', time: n.escortName ? n.updatedAt : null, done: !!n.escortName },
+      { label: '服务开始', time: n.status === '服务中' || n.status === '已完成' ? n.date : null, done: n.status === '服务中' || n.status === '已完成' },
+      { label: '服务完成', time: n.status === '已完成' ? n.updatedAt : null, done: n.status === '已完成' },
+    ];
+
+    screen.innerHTML = `
+      <div class="svc-detail">
+        <div class="svd-header">
+          <div class="svd-back" onclick="App.switchTab(2)">${P_ICON.chevronLeft}</div>
+          <h2>订单详情</h2>
+        </div>
+
+        <!-- 订单状态 -->
+        <div class="ed-profile" style="flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div class="ed-name">${n.serviceType}</div>
+              <div class="ed-meta">订单号：${n.id}</div>
+            </div>
+            <span class="order-status ${statusClass}">${n.status}</span>
+          </div>
+          <div class="ed-price-total" style="border:none; padding:0; margin:0;">
+            <span>订单金额</span>
+            <strong>¥${n.amount}</strong>
+          </div>
+        </div>
+
+        <!-- 就医信息 -->
+        <div class="svd-section">
+          <div class="svd-section-title">就医信息</div>
+          <div class="ed-info-list">
+            <div class="ed-info-row"><span class="ed-info-label">就诊医院</span><span class="ed-info-value">${n.hospital}</span></div>
+            <div class="ed-info-row"><span class="ed-info-label">就诊科室</span><span class="ed-info-value">${n.dept}</span></div>
+            <div class="ed-info-row"><span class="ed-info-label">就诊日期</span><span class="ed-info-value">${n.date}</span></div>
+            <div class="ed-info-row"><span class="ed-info-label">服务类型</span><span class="ed-info-value">${n.serviceType}</span></div>
+            ${n.note ? `<div class="ed-info-row"><span class="ed-info-label">备注</span><span class="ed-info-value" style="max-width:60%; text-align:right;">${n.note}</span></div>` : ''}
+          </div>
+        </div>
+
+        <!-- 患者信息 -->
+        <div class="svd-section">
+          <div class="svd-section-title">患者信息</div>
+          <div class="ed-info-list">
+            <div class="ed-info-row"><span class="ed-info-label">姓名</span><span class="ed-info-value">${n.patientName}</span></div>
+            <div class="ed-info-row"><span class="ed-info-label">性别/年龄</span><span class="ed-info-value">${n.gender} · ${n.age}岁</span></div>
+            <div class="ed-info-row"><span class="ed-info-label">联系电话</span><span class="ed-info-value">${n.phone}</span></div>
+            <div class="ed-info-row"><span class="ed-info-label">紧急联系人</span><span class="ed-info-value">${n.emergencyName || '未填写'} ${n.emergencyPhone ? '· ' + n.emergencyPhone : ''}</span></div>
+          </div>
+        </div>
+
+        ${n.escortName ? `
+        <!-- 陪诊师信息 -->
+        <div class="svd-section">
+          <div class="svd-section-title">陪诊师信息</div>
+          <div class="ed-info-list">
+            <div class="ed-info-row"><span class="ed-info-label">陪诊师</span><span class="ed-info-value" style="color:var(--accent);">${n.escortName}</span></div>
+            ${n.escortPhone ? `<div class="ed-info-row"><span class="ed-info-label">联系电话</span><span class="ed-info-value">${n.escortPhone}</span></div>` : ''}
+          </div>
+        </div>
+        ` : ''}
+
+        <!-- 订单进度 -->
+        <div class="svd-section">
+          <div class="svd-section-title">订单进度</div>
+          <div class="svd-process-list">
+            ${timelineItems.map((item, i) => `
+              <div class="svd-process-item ${item.done ? '' : 'inactive'}">
+                <div class="svd-process-num" style="${item.done ? '' : 'background:var(--bg-tertiary); color:var(--text-muted);'}">${i+1}</div>
+                <div class="svd-process-content">
+                  <div class="svd-process-title">${item.label}</div>
+                  <div class="svd-process-text">${item.time || '待处理'}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="svd-bottom-bar">
+          ${n.status === '待处理' ? `<button class="btn btn-outline" onclick="Patient._cancelOrder('${n.id}')">取消订单</button>` : ''}
+          ${n.status === '已完成' ? `<button class="btn" onclick="Patient._reviewOrder('${n.id}')">评价订单</button>` : ''}
+          ${n.status !== '已完成' && n.status !== '待处理' ? `<button class="btn" onclick="Patient._contactEscortFromOrder('${n.id}')">联系陪诊师</button>` : ''}
+        </div>
+      </div>
+    `;
+  },
+
+  _cancelOrder(id) {
+    if (!confirm('确定要取消这个订单吗？')) return;
+    NeedPool.update(id, { status: '已取消', updatedAt: new Date().toLocaleString('zh-CN') });
+    App.toast('订单已取消');
+    setTimeout(() => App.switchTab(2), 500);
+  },
+
+  _reviewOrder(id) {
+    App.toast('评价功能开发中');
+  },
+
+  _contactEscortFromOrder(id) {
+    const n = NeedPool.getById(id);
+    if (n && n.escortId) {
+      this.openChatWithEscort(n.escortId);
+    } else if (n && n.escortName) {
+      App.toast('正在为您对接' + n.escortName);
     } else {
-      App.toast('订单详情功能正在开发中');
+      App.toast('暂无陪诊师信息');
     }
   },
 
@@ -989,7 +1480,270 @@ const Patient = {
   _svcAction(type) {
     const nameMap = { orders: '就诊人管理', escort: '陪诊师入驻', address: '地址管理', review: '我的评价', service: '客服中心', settings: '设置中心' };
     if (!App.requireLogin(nameMap[type] || '使用此功能')) return;
-    App.toast('功能演示中');
+    if (type === 'orders') {
+      this.openPatientManager();
+    } else if (type === 'address') {
+      this._openAddressManager();
+    } else {
+      App.toast('功能演示中');
+    }
+  },
+
+  // ===== 就诊人管理 =====
+  openPatientManager() {
+    const screen = document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+    const patients = this._getPatients();
+    screen.innerHTML = `
+      <div class="svc-detail">
+        <div class="svd-header">
+          <div class="svd-back" onclick="App.switchTab(3)">${P_ICON.chevronLeft}</div>
+          <h2>就诊人管理</h2>
+          <div style="width:32px; text-align:right; cursor:pointer;" onclick="Patient._addPatient()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        ${patients.length === 0 ? `
+          <div class="p-empty">
+            <div style="font-size:36px; margin-bottom:10px;">👤</div>
+            <div>暂无就诊人信息</div>
+            <div style="margin-top:6px;">点击右上角 + 添加就诊人</div>
+          </div>
+        ` : `
+          <div class="p-list">
+            ${patients.map((p, i) => `
+              <div class="p-card">
+                <div class="p-card-head">
+                  <div class="p-avatar">${(p.name || '?')[0]}</div>
+                  <div class="p-info">
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-meta">${p.gender} · ${p.age}岁${p.relation ? ' · ' + p.relation : ''}</div>
+                  </div>
+                </div>
+                ${p.medicalHistory ? `
+                  <div class="p-record-list">
+                    ${p.medicalHistory.split('、').filter(Boolean).map(h => `
+                      <div class="p-record-item">${P_ICON.clipboard} ${h}</div>
+                    `).join('')}
+                  </div>
+                ` : ''}
+                ${p.images && p.images.length > 0 ? `
+                  <div class="p-image-grid">
+                    ${p.images.map((img, j) => `
+                      <div class="p-image-thumb">
+                        ${img.startsWith('data:') ? `<img src="${img}" alt="检查报告"/>` : `<span>📋</span>`}
+                        <div class="p-image-del" onclick="Patient._removeImage(${i}, ${j})">×</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : ''}
+                <div class="p-actions">
+                  <button class="btn btn-outline" onclick="Patient._editPatient(${i})">编辑</button>
+                  <button class="btn btn-outline" onclick="Patient._addImage(${i})">添加图片</button>
+                  <button class="btn btn-outline" style="color:var(--status-notfound);" onclick="Patient._deletePatient(${i})">删除</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+        ${patients.length > 0 ? `
+          <div style="margin-top:16px; text-align:center;">
+            <button class="btn btn-outline" style="padding:10px 30px;" onclick="Patient._addPatient()">+ 添加就诊人</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  },
+
+  _getPatients() {
+    if (!this._patients) {
+      try {
+        this._patients = JSON.parse(localStorage.getItem('huwuyou_patients') || 'null') || [];
+      } catch (e) { this._patients = []; }
+    }
+    return this._patients;
+  },
+
+  _savePatients() {
+    localStorage.setItem('huwuyou_patients', JSON.stringify(this._patients));
+  },
+
+  _addPatient() {
+    this._showPatientForm(null, -1);
+  },
+
+  _editPatient(idx) {
+    this._showPatientForm(this._patients[idx], idx);
+  },
+
+  _deletePatient(idx) {
+    if (!confirm('确定要删除这个就诊人吗？')) return;
+    this._patients.splice(idx, 1);
+    this._savePatients();
+    this.openPatientManager();
+  },
+
+  _addImage(idx) {
+    const p = this._patients[idx];
+    if (!p.images) p.images = [];
+    // 模拟添加图片
+    const fakeImages = [
+      '🩺 CT影像报告',
+      '💊 处方单',
+      '📋 化验单',
+      '🏥 病历本',
+      '🩻 X光片',
+    ];
+    p.images.push(fakeImages[Math.floor(Math.random() * fakeImages.length)]);
+    this._savePatients();
+    this.openPatientManager();
+  },
+
+  _removeImage(pIdx, imgIdx) {
+    this._patients[pIdx].images.splice(imgIdx, 1);
+    this._savePatients();
+    this.openPatientManager();
+  },
+
+  _showPatientForm(patient, idx) {
+    const isEdit = patient !== null;
+    const p = patient || { name: '', gender: '男', age: '', relation: '', phone: '', medicalHistory: '', images: [] };
+    const screen = document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+
+    screen.innerHTML = `
+      <div class="svc-detail">
+        <div class="svd-header">
+          <div class="svd-back" onclick="Patient.openPatientManager()">${P_ICON.chevronLeft}</div>
+          <h2>${isEdit ? '编辑就诊人' : '添加就诊人'}</h2>
+        </div>
+        <div class="ed-form">
+          <div class="ed-form-item">
+            <label>姓名 <span style="color:var(--status-notfound);">*</span></label>
+            <input type="text" id="pf_name" value="${p.name}" placeholder="请输入姓名" />
+          </div>
+          <div class="ed-form-item">
+            <label>性别 <span style="color:var(--status-notfound);">*</span></label>
+            <div style="display:flex; gap:10px;">
+              <label style="flex:1;"><input type="radio" name="pf_gender" value="男" ${p.gender==='男'?'checked':''}/> 男</label>
+              <label style="flex:1;"><input type="radio" name="pf_gender" value="女" ${p.gender==='女'?'checked':''}/> 女</label>
+            </div>
+          </div>
+          <div class="ed-form-item">
+            <label>年龄 <span style="color:var(--status-notfound);">*</span></label>
+            <input type="number" id="pf_age" value="${p.age}" placeholder="请输入年龄" min="0" max="150" />
+          </div>
+          <div class="ed-form-item">
+            <label>关系</label>
+            <select id="pf_relation">
+              <option value="">请选择</option>
+              <option value="本人" ${p.relation==='本人'?'selected':''}>本人</option>
+              <option value="父亲" ${p.relation==='父亲'?'selected':''}>父亲</option>
+              <option value="母亲" ${p.relation==='母亲'?'selected':''}>母亲</option>
+              <option value="配偶" ${p.relation==='配偶'?'selected':''}>配偶</option>
+              <option value="子女" ${p.relation==='子女'?'selected':''}>子女</option>
+              <option value="其他亲属" ${p.relation==='其他亲属'?'selected':''}>其他亲属</option>
+            </select>
+          </div>
+          <div class="ed-form-item">
+            <label>联系电话</label>
+            <input type="tel" id="pf_phone" value="${p.phone || ''}" placeholder="请输入联系电话" />
+          </div>
+          <div class="ed-form-item">
+            <label>病史信息</label>
+            <textarea id="pf_history" placeholder="如：高血压、糖尿病等，多个用、分隔" rows="3">${p.medicalHistory || ''}</textarea>
+          </div>
+          <div class="ed-form-item">
+            <label>上传检查报告/影像</label>
+            <div class="p-image-grid">
+              ${(p.images || []).map((img, j) => `
+                <div class="p-image-thumb">
+                  ${img.startsWith('data:') ? `<img src="${img}"/>` : `<span>${img}</span>`}
+                  <div class="p-image-del" onclick="Patient._removeImageInForm(${j})">×</div>
+                </div>
+              `).join('')}
+              <div class="p-image-add" onclick="Patient._pickFile()">
+                ${P_ICON.image}
+                <span>添加图片</span>
+              </div>
+            </div>
+            <input type="file" id="pf_file" accept="image/*" multiple style="display:none;" onchange="Patient._handleFileUpload(this)" />
+          </div>
+        </div>
+        <div class="svd-bottom-bar">
+          <button class="btn" onclick="Patient._savePatient(${idx})">${isEdit ? '保存修改' : '添加就诊人'}</button>
+        </div>
+      </div>
+    `;
+    this._tempImages = p.images ? [...p.images] : [];
+  },
+
+  _pickFile() {
+    const el = document.getElementById('pf_file');
+    if (el) el.click();
+  },
+
+  _handleFileUpload(input) {
+    const files = input.files;
+    if (!files || files.length === 0) return;
+    const handleOne = (file) => new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    });
+    Promise.all(Array.from(files).map(handleOne)).then(results => {
+      results.forEach(r => this._tempImages.push(r));
+      // 重新渲染表单
+      const idx = parseInt(input.dataset.idx || '-1');
+      const name = document.getElementById('pf_name')?.value || '';
+      const gender = document.querySelector('input[name="pf_gender"]:checked')?.value || '男';
+      const age = document.getElementById('pf_age')?.value || '';
+      const relation = document.getElementById('pf_relation')?.value || '';
+      const phone = document.getElementById('pf_phone')?.value || '';
+      const history = document.getElementById('pf_history')?.value || '';
+      this._showPatientForm(
+        { name, gender, age, relation, phone, medicalHistory: history, images: this._tempImages },
+        idx
+      );
+    });
+  },
+
+  _removeImageInForm(j) {
+    this._tempImages.splice(j, 1);
+    const name = document.getElementById('pf_name')?.value || '';
+    const gender = document.querySelector('input[name="pf_gender"]:checked')?.value || '男';
+    const age = document.getElementById('pf_age')?.value || '';
+    const relation = document.getElementById('pf_relation')?.value || '';
+    const phone = document.getElementById('pf_phone')?.value || '';
+    const history = document.getElementById('pf_history')?.value || '';
+    const idx = parseInt(document.getElementById('pf_file')?.dataset.idx || '-1');
+    this._showPatientForm(
+      { name, gender, age, relation, phone, medicalHistory: history, images: this._tempImages },
+      idx
+    );
+  },
+
+  _savePatient(idx) {
+    const name = document.getElementById('pf_name')?.value?.trim();
+    const gender = document.querySelector('input[name="pf_gender"]:checked')?.value || '男';
+    const age = document.getElementById('pf_age')?.value;
+    const relation = document.getElementById('pf_relation')?.value || '';
+    const phone = document.getElementById('pf_phone')?.value || '';
+    const history = document.getElementById('pf_history')?.value || '';
+
+    if (!name) { App.toast('请填写姓名'); return; }
+    if (!age || age < 0) { App.toast('请填写有效年龄'); return; }
+
+    const data = { name, gender, age: parseInt(age), relation, phone, medicalHistory: history, images: this._tempImages || [] };
+
+    if (idx >= 0) {
+      this._patients[idx] = data;
+    } else {
+      this._patients.push(data);
+    }
+    this._savePatients();
+    App.toast('保存成功');
+    this.openPatientManager();
   },
 
   // ===== 通用方法 =====
