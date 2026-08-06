@@ -1,0 +1,580 @@
+{"kind":"deck","id":"pr/ws0ylh","name":"Deck"}
+{"kind":"layout","layoutId":"5d3c3dfc-182e-494a-929c-4668ec24814e","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"e13e458a-9343-4336-81c2-cbd9910bd94f","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/27qw39","slide":1,"title":"护无忧","textShapes":8}
+{"kind":"shape","id":"sh/re5kf2po","slide":1,"name":"accent-bar","bbox":[0,0,24,720]}
+{"kind":"textbox","id":"sh/cfelonqt","slide":1,"name":"text","text":"护无忧","textPreview":"护无忧","textChars":3,"textLines":1,"bbox":[72,72,280,48]}
+{"kind":"textbox","id":"sh/dgn2hs7e","slide":1,"name":"text","text":"智陪诊全链路平台","textPreview":"智陪诊全链路平台","textChars":8,"textLines":1,"bbox":[72,178,950,82]}
+{"kind":"textbox","id":"sh/2pcjid8r","slide":1,"name":"text","text":"技术交接汇报","textPreview":"技术交接汇报","textChars":6,"textLines":1,"bbox":[72,278,520,70]}
+{"kind":"textbox","id":"sh/3qlkbipc","slide":1,"name":"text","text":"系统使用 · 功能边界 · 技术架构 · 接手清单","textPreview":"系统使用 · 功能边界 · 技术架构 · 接手清单","textChars":25,"textLines":1,"bbox":[76,372,900,42]}
+{"kind":"shape","id":"sh/4ru1knqx","slide":1,"name":"line","bbox":[76,444,1070,1]}
+{"kind":"shape","id":"sh/psn2ds7i","slide":1,"name":"pill","bbox":[76,482,280,34]}
+{"kind":"textbox","id":"sh/mlg3uh8b","slide":1,"name":"text","text":"当前形态：单浏览器演示原型","textPreview":"当前形态：单浏览器演示原型","textChars":13,"textLines":1,"bbox":[84,482,264,34]}
+{"kind":"shape","id":"sh/nmpknmpg","slide":1,"name":"pill","bbox":[370,482,230,34]}
+{"kind":"textbox","id":"sh/7y98zmhk","slide":1,"name":"text","text":"版本：v2.0 · 2026-07","textPreview":"版本：v2.0 · 2026-07","textChars":17,"textLines":1,"bbox":[378,482,214,34]}
+{"kind":"shape","id":"sh/mx0rqhgz","slide":1,"name":"pill","bbox":[614,482,250,34]}
+{"kind":"textbox","id":"sh/90rq1wfq","slide":1,"name":"text","text":"对象：接手研发与运维人员","textPreview":"对象：接手研发与运维人员","textChars":12,"textLines":1,"bbox":[622,482,234,34]}
+{"kind":"textbox","id":"sh/8zi9sry5","slide":1,"name":"text","text":"交付目标：听完即可启动、演示、定位代码并规划生产化改造","textPreview":"交付目标：听完即可启动、演示、定位代码并规划生产化改造","textChars":27,"textLines":1,"bbox":[76,588,1020,44]}
+{"kind":"notes","id":"nt/27qw39","slide":1,"text":"各位好，这次交接不只介绍页面功能，而是要让接手同事在一次汇报后完成四件事：能把系统跑起来、能按患者与管理员两条路径演示、能定位关键代码、能判断当前原型距离生产系统还有哪些差距。"}
+{"kind":"slide","id":"sl/fdf4u6","slide":2,"title":"02","textShapes":27}
+{"kind":"textbox","id":"sh/3upcba9k","slide":2,"name":"page-no","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/4vyd4fq5","slide":2,"name":"slide-title","text":"这是一套跑通业务闭环的前端演示原型","textPreview":"这是一套跑通业务闭环的前端演示原型","textChars":17,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/5w7udkra","slide":2,"name":"slide-subtitle","text":"先明确系统边界，再讨论功能与技术","textPreview":"先明确系统边界，再讨论功能与技术","textChars":16,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/u5wby58n","slide":2,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"textbox","id":"sh/v65c7q98","slide":2,"name":"text","text":"核心结论","textPreview":"核心结论","textChars":4,"textLines":1,"bbox":[64,148,180,34]}
+{"kind":"textbox","id":"sh/g7ed0vqt","slide":2,"name":"text","text":"患者提交需求，管理员处理，双方通过同一浏览器数据状态完成闭环。","textPreview":"患者提交需求，管理员处理，双方通过同一浏览器数据状态完成闭环。","textChars":31,"textLines":1,"bbox":[64,190,760,94]}
+{"kind":"shape","id":"sh/hsnu90re","slide":2,"name":"node","bbox":[76,346,220,104]}
+{"kind":"textbox","id":"sh/61cbul8r","slide":2,"name":"text","text":"患者端","textPreview":"患者端","textChars":3,"textLines":1,"bbox":[86,354,200,70]}
+{"kind":"textbox","id":"sh/725c3q9c","slide":2,"name":"text","text":"提交 / 查询 / 报告","textPreview":"提交 / 查询 / 报告","textChars":12,"textLines":1,"bbox":[86,423,200,20]}
+{"kind":"shape","id":"sh/zqlgf6d8","slide":2,"name":"arrow","bbox":[318,387,58,24]}
+{"kind":"shape","id":"sh/e5cfm1cn","slide":2,"name":"node","bbox":[396,346,250,104]}
+{"kind":"textbox","id":"sh/1s3yhgve","slide":2,"name":"text","text":"共享业务状态","textPreview":"共享业务状态","textChars":6,"textLines":1,"bbox":[406,354,230,70]}
+{"kind":"textbox","id":"sh/0ruxobut","slide":2,"name":"text","text":"CareStore + localStorage","textPreview":"CareStore + localStorage","textChars":24,"textLines":1,"bbox":[406,423,230,20]}
+{"kind":"shape","id":"sh/nu5gjqd4","slide":2,"name":"arrow","bbox":[668,387,58,24]}
+{"kind":"shape","id":"sh/mtcfqlcj","slide":2,"name":"node","bbox":[746,346,220,104]}
+{"kind":"textbox","id":"sh/9wnylgba","slide":2,"name":"text","text":"管理后台","textPreview":"管理后台","textChars":4,"textLines":1,"bbox":[756,354,200,70]}
+{"kind":"textbox","id":"sh/ovexsbup","slide":2,"name":"text","text":"审批 / 派单 / 发布","textPreview":"审批 / 派单 / 发布","textChars":12,"textLines":1,"bbox":[756,423,200,20]}
+{"kind":"shape","id":"sh/3y1w7md0","slide":2,"name":"boundary","bbox":[1000,164,206,330]}
+{"kind":"textbox","id":"sh/2xsfehcf","slide":2,"name":"text","text":"当前不包含","textPreview":"当前不包含","textChars":5,"textLines":1,"bbox":[1022,184,160,34]}
+{"kind":"textbox","id":"sh/6tgjmpw3","slide":2,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[1022,232,20,30]}
+{"kind":"textbox","id":"sh/7u90fudo","slide":2,"name":"text","text":"后端服务","textPreview":"后端服务","textChars":4,"textLines":1,"bbox":[1050,232,132,34]}
+{"kind":"textbox","id":"sh/8vi1oze9","slide":2,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[1022,270,20,30]}
+{"kind":"textbox","id":"sh/tgrih4vu","slide":2,"name":"text","text":"数据库","textPreview":"数据库","textChars":3,"textLines":1,"bbox":[1050,270,132,34]}
+{"kind":"textbox","id":"sh/ypgzipwr","slide":2,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[1022,308,20,30]}
+{"kind":"textbox","id":"sh/jqp0baxc","slide":2,"name":"text","text":"真实鉴权","textPreview":"真实鉴权","textChars":4,"textLines":1,"bbox":[1050,308,132,34]}
+{"kind":"textbox","id":"sh/kry1kfex","slide":2,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[1022,346,20,30]}
+{"kind":"textbox","id":"sh/ls7idkfi","slide":2,"name":"text","text":"真实短信","textPreview":"真实短信","textChars":4,"textLines":1,"bbox":[1050,346,132,34]}
+{"kind":"textbox","id":"sh/alwze5wv","slide":2,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[1022,384,20,30]}
+{"kind":"textbox","id":"sh/bmp07axg","slide":2,"name":"text","text":"生产 OCR / LLM","textPreview":"生产 OCR / LLM","textChars":12,"textLines":1,"bbox":[1050,384,132,34]}
+{"kind":"textbox","id":"sh/dsfu9cja","slide":2,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[1022,422,20,30]}
+{"kind":"textbox","id":"sh/cr6d072p","slide":2,"name":"text","text":"自动化测试","textPreview":"自动化测试","textChars":5,"textLines":1,"bbox":[1050,422,132,34]}
+{"kind":"textbox","id":"sh/bqxc72l4","slide":2,"name":"text","text":"因此：可演示、可验证业务规则；不可直接承载真实患者数据。","textPreview":"因此：可演示、可验证业务规则；不可直接承载真实患者数据。","textChars":28,"textLines":1,"bbox":[76,558,1100,52]}
+{"kind":"textbox","id":"sh/qp4byxkj","slide":2,"name":"source","text":"代码依据：index.html · js/store.js · js/workflow.js","textPreview":"代码依据：index.html · js/store.js · js/workflow.js","textChars":46,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/povu5s3y","slide":2,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/fdf4u6","slide":2,"text":"先给出最重要的判断：它是一个完整业务闭环的前端原型，不是已生产化的平台。患者端和后台共用 CareStore，并把状态保存到 localStorage，所以同一浏览器中可以切换角色演示数据联动。没有后端、数据库和真实鉴权，因此禁止录入真实患者信息。"}
+{"kind":"slide","id":"sl/c2hco7","slide":3,"title":"03","textShapes":39}
+{"kind":"textbox","id":"sh/4zmhknad","slide":3,"name":"page-no","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/3ydgbi9s","slide":3,"name":"slide-title","text":"功能围绕患者与运营两条主线展开","textPreview":"功能围绕患者与运营两条主线展开","textChars":15,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/ix4fids7","slide":3,"name":"slide-subtitle","text":"陪诊师目前是后台管理对象，不是独立登录端","textPreview":"陪诊师目前是后台管理对象，不是独立登录端","textChars":20,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/d4fyhsru","slide":3,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"textbox","id":"sh/s36hona9","slide":3,"name":"text","text":"患者端","textPreview":"患者端","textChars":3,"textLines":1,"bbox":[64,154,300,38]}
+{"kind":"shape","id":"sh/r2xgf29o","slide":3,"name":"line","bbox":[64,204,320,3]}
+{"kind":"textbox","id":"sh/q1ozmxs3","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[64,234,20,30]}
+{"kind":"textbox","id":"sh/t8by58rq","slide":3,"name":"text","text":"AI / 人工双路径提交需求","textPreview":"AI / 人工双路径提交需求","textChars":14,"textLines":1,"bbox":[92,234,292,34]}
+{"kind":"textbox","id":"sh/872xc3a5","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[64,292,20,30]}
+{"kind":"textbox","id":"sh/yt0z21cf","slide":3,"name":"text","text":"身份证与检查资料演示上传","textPreview":"身份证与检查资料演示上传","textChars":12,"textLines":1,"bbox":[92,292,292,34]}
+{"kind":"textbox","id":"sh/zu9gbmd0","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[64,350,20,30]}
+{"kind":"textbox","id":"sh/kvih4ru5","slide":3,"name":"text","text":"需求、状态和通知查询","textPreview":"需求、状态和通知查询","textChars":10,"textLines":1,"bbox":[92,350,292,34]}
+{"kind":"textbox","id":"sh/lwrydwvq","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[64,408,20,30]}
+{"kind":"textbox","id":"sh/mx0z61cb","slide":3,"name":"text","text":"医院介绍与公开收费","textPreview":"医院介绍与公开收费","textChars":9,"textLines":1,"bbox":[92,408,292,34]}
+{"kind":"textbox","id":"sh/7ytgf6dw","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[64,466,20,30]}
+{"kind":"textbox","id":"sh/8z2h8buh","slide":3,"name":"text","text":"陪诊报告与通俗说明","textPreview":"陪诊报告与通俗说明","textChars":9,"textLines":1,"bbox":[92,466,292,34]}
+{"kind":"textbox","id":"sh/9kbyhgv2","slide":3,"name":"text","text":"管理后台","textPreview":"管理后台","textChars":4,"textLines":1,"bbox":[442,154,300,38]}
+{"kind":"shape","id":"sh/ulkzalcn","slide":3,"name":"line","bbox":[442,204,320,3]}
+{"kind":"textbox","id":"sh/vmtgj6d8","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[442,234,20,30]}
+{"kind":"textbox","id":"sh/rqdg7q90","slide":3,"name":"text","text":"工作台与风险提示","textPreview":"工作台与风险提示","textChars":8,"textLines":1,"bbox":[470,234,292,34]}
+{"kind":"textbox","id":"sh/6p4fylsf","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[442,292,20,30]}
+{"kind":"textbox","id":"sh/tsvy9gr6","slide":3,"name":"text","text":"需求分配与状态推进","textPreview":"需求分配与状态推进","textChars":9,"textLines":1,"bbox":[470,292,292,34]}
+{"kind":"textbox","id":"sh/srmx0bal","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[442,350,20,30]}
+{"kind":"textbox","id":"sh/jmtg3694","slide":3,"name":"text","text":"陪诊师档案管理","textPreview":"陪诊师档案管理","textChars":7,"textLines":1,"bbox":[470,350,292,34]}
+{"kind":"textbox","id":"sh/i1kfu1sj","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[442,408,20,30]}
+{"kind":"textbox","id":"sh/5oby5gra","slide":3,"name":"text","text":"医院申请审批与资料维护","textPreview":"医院申请审批与资料维护","textChars":11,"textLines":1,"bbox":[470,408,292,34]}
+{"kind":"textbox","id":"sh/4n2xwbap","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[442,466,20,30]}
+{"kind":"textbox","id":"sh/vytwz69s","slide":3,"name":"text","text":"收费标准、报告和评价管理","textPreview":"收费标准、报告和评价管理","textChars":12,"textLines":1,"bbox":[470,466,292,34]}
+{"kind":"textbox","id":"sh/ux0fq1sn","slide":3,"name":"text","text":"跨端闭环","textPreview":"跨端闭环","textChars":4,"textLines":1,"bbox":[820,154,300,38]}
+{"kind":"shape","id":"sh/k3yd07q5","slide":3,"name":"line","bbox":[820,204,320,3]}
+{"kind":"textbox","id":"sh/l47uts7q","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[820,234,20,30]}
+{"kind":"textbox","id":"sh/y1gvyx8f","slide":3,"name":"text","text":"统一需求状态机","textPreview":"统一需求状态机","textChars":7,"textLines":1,"bbox":[848,234,292,34]}
+{"kind":"textbox","id":"sh/z2pcr2pk","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[820,292,20,30]}
+{"kind":"textbox","id":"sh/87id47qh","slide":3,"name":"text","text":"医院申请回填草稿","textPreview":"医院申请回填草稿","textChars":8,"textLines":1,"bbox":[848,292,292,34]}
+{"kind":"textbox","id":"sh/9sruxc72","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[820,350,20,30]}
+{"kind":"textbox","id":"sh/m5gv2x8b","slide":3,"name":"text","text":"角色隔离通知与去重","textPreview":"角色隔离通知与去重","textChars":9,"textLines":1,"bbox":[848,350,292,34]}
+{"kind":"textbox","id":"sh/769cv2pw","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[820,408,20,30]}
+{"kind":"textbox","id":"sh/obetsnqx","slide":3,"name":"text","text":"价格修改患者端立即可见","textPreview":"价格修改患者端立即可见","textChars":11,"textLines":1,"bbox":[848,408,292,34]}
+{"kind":"textbox","id":"sh/pwnul87i","slide":3,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[820,466,20,30]}
+{"kind":"textbox","id":"sh/h4jehcby","slide":3,"name":"text","text":"已完成需求发布报告","textPreview":"已完成需求发布报告","textChars":9,"textLines":1,"bbox":[848,466,292,34]}
+{"kind":"textbox","id":"sh/g3ado7ut","slide":3,"name":"text","text":"接手时优先维护“需求状态 + Store + workflow 覆盖层”，而不是从页面样式开始。","textPreview":"接手时优先维护“需求状态 + Store + workflow 覆盖层”，而不是从页面样式开始。","textChars":48,"textLines":1,"bbox":[64,612,1120,38]}
+{"kind":"textbox","id":"sh/f21cf2t8","slide":3,"name":"source","text":"代码依据：js/patient.js · js/admin.js · js/store.js · js/workflow.js","textPreview":"代码依据：js/patient.js · js/admin.js · js/store.js · js/workflow.js","textChars":63,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/u1svmxcn","slide":3,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/c2hco7","slide":3,"text":"功能可以分为患者端、管理后台和跨端闭环三组。患者端负责提交、查询和查看结果；后台负责审批、派单、价格与报告；真正决定系统是否可靠的是跨端状态规则。当前没有独立陪诊师端，陪诊师只是后台可分配的资源对象。"}
+{"kind":"slide","id":"sl/2ofq0i","slide":4,"title":"04","textShapes":16}
+{"kind":"textbox","id":"sh/9sjmxwfa","slide":4,"name":"page-no","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/mpsn2hgj","slide":4,"name":"slide-title","text":"三分钟即可启动并进入演示","textPreview":"三分钟即可启动并进入演示","textChars":12,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/nq14vmx4","slide":4,"name":"slide-subtitle","text":"零构建：静态目录直接运行","textPreview":"零构建：静态目录直接运行","textChars":12,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/wfu58rel","slide":4,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"shape","id":"sh/xg3m1wf6","slide":4,"name":"terminal","bbox":[64,148,510,430]}
+{"kind":"textbox","id":"sh/adsn61gf","slide":4,"name":"text","text":"启动方式","textPreview":"启动方式","textChars":4,"textLines":1,"bbox":[92,174,200,34]}
+{"kind":"textbox","id":"sh/ve14zmx0","slide":4,"name":"command","text":"cd /项目目录\npython3 -m http.server 9876\n\n浏览器访问：\nhttp://127.0.0.1:9876/index.html","textPreview":"cd /项目目录 | python3 -m http.server 9876 |  | 浏览器访问： | http://127.0.0.1:9876/index.html","textChars":77,"textLines":5,"bbox":[92,228,440,190]}
+{"kind":"textbox","id":"sh/cjqlw7yh","slide":4,"name":"text","text":"患者：手机号任意演示值 / 验证码 8888\n管理员：admin@huwuyou\n密码：huwuyou2026 / 验证码 8888\n也可直接点击“一键演示登录”","textPreview":"患者：手机号任意演示值 / 验证码 8888 | 管理员：admin@huwuyou | 密码：huwuyou2026 / 验证码 8888 | 也可直接点击“一键演示登录”","textChars":81,"textLines":4,"bbox":[92,438,440,112]}
+{"kind":"shape","id":"sh/dkzmpcf2","slide":4,"name":"role-guide","bbox":[626,148,586,430]}
+{"kind":"textbox","id":"sh/xcr29sne","slide":4,"name":"text","text":"选择角色进入系统","textPreview":"选择角色进入系统","textChars":8,"textLines":1,"bbox":[666,178,500,42]}
+{"kind":"shape","id":"sh/wbi10nmt","slide":4,"name":"node","bbox":[686,258,200,110]}
+{"kind":"textbox","id":"sh/ba9k7i58","slide":4,"name":"text","text":"我是患者","textPreview":"我是患者","textChars":4,"textLines":1,"bbox":[696,266,180,76]}
+{"kind":"textbox","id":"sh/a90jyd43","slide":4,"name":"text","text":"提交需求 · 查看进度","textPreview":"提交需求 · 查看进度","textChars":11,"textLines":1,"bbox":[696,341,180,20]}
+{"kind":"shape","id":"sh/l0b2dsnq","slide":4,"name":"node","bbox":[950,258,200,110]}
+{"kind":"textbox","id":"sh/kzi14nm5","slide":4,"name":"text","text":"我是管理员","textPreview":"我是管理员","textChars":5,"textLines":1,"bbox":[960,266,180,76]}
+{"kind":"textbox","id":"sh/jy9kb25k","slide":4,"name":"text","text":"处理需求 · 管理数据","textPreview":"处理需求 · 管理数据","textChars":11,"textLines":1,"bbox":[960,341,180,20]}
+{"kind":"textbox","id":"sh/yx0j2x4z","slide":4,"name":"text","text":"角色选择 → 一键演示登录 → 进入对应工作台","textPreview":"角色选择 → 一键演示登录 → 进入对应工作台","textChars":23,"textLines":1,"bbox":[680,410,490,44]}
+{"kind":"textbox","id":"sh/t4b2hc3m","slide":4,"name":"text","text":"刷新页面可返回角色选择；退出登录需要确认。","textPreview":"刷新页面可返回角色选择；退出登录需要确认。","textChars":21,"textLines":1,"bbox":[680,474,490,34]}
+{"kind":"textbox","id":"sh/832187m1","slide":4,"name":"text","text":"注意：刷新会保留业务数据；“系统设置 → 重置演示数据”才会恢复默认数据。","textPreview":"注意：刷新会保留业务数据；“系统设置 → 重置演示数据”才会恢复默认数据。","textChars":37,"textLines":1,"bbox":[64,612,1120,36]}
+{"kind":"textbox","id":"sh/s7alkbud","slide":4,"name":"source","text":"入口：index.html · 登录逻辑：js/app.js","textPreview":"入口：index.html · 登录逻辑：js/app.js","textChars":30,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/t8jmdgby","slide":4,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/2ofq0i","slide":4,"text":"这个项目没有 npm install 和构建步骤。进入目录后启动任意静态服务器即可。首页选择患者或管理员。患者验证码固定为 8888；管理员默认账号、密码和验证码都已经预填，也可以使用一键演示登录。业务数据会在刷新后保留，重置数据需要进入后台系统设置。"}
+{"kind":"slide","id":"sl/i1okmi","slide":5,"title":"05","textShapes":17}
+{"kind":"textbox","id":"sh/kf2lcj2h","slide":5,"name":"page-no","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/jetk3elc","slide":5,"name":"slide-title","text":"患者端按“提交—跟踪—查看结果”使用","textPreview":"患者端按“提交—跟踪—查看结果”使用","textChars":18,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/idk3atkr","slide":5,"name":"slide-subtitle","text":"AI 只整理草稿，最终提交必须由患者确认","textPreview":"AI 只整理草稿，最终提交必须由患者确认","textChars":20,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/xcb21o36","slide":5,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"shape","id":"sh/vatkzel0","slide":5,"name":"pill","bbox":[570,158,40,34]}
+{"kind":"textbox","id":"sh/a9kj69kf","slide":5,"name":"text","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[578,158,24,34]}
+{"kind":"textbox","id":"sh/98r2x43u","slide":5,"name":"text","text":"首页进入“智能陪诊助理”或“我的需求”","textPreview":"首页进入“智能陪诊助理”或“我的需求”","textChars":19,"textLines":1,"bbox":[626,154,570,42]}
+{"kind":"shape","id":"sh/8ni14z2p","slide":5,"name":"pill","bbox":[570,226,40,34]}
+{"kind":"textbox","id":"sh/mtgbu9sj","slide":5,"name":"text","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[578,226,24,34]}
+{"kind":"textbox","id":"sh/nupc3u94","slide":5,"name":"text","text":"口述/填写医院、科室、日期和服务类型","textPreview":"口述/填写医院、科室、日期和服务类型","textChars":18,"textLines":1,"bbox":[626,222,570,42]}
+{"kind":"shape","id":"sh/ovytwzap","slide":5,"name":"pill","bbox":[570,294,40,34]}
+{"kind":"textbox","id":"sh/9g7u54ra","slide":5,"name":"text","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[578,294,24,34]}
+{"kind":"textbox","id":"sh/epwbqpsn","slide":5,"name":"text","text":"确认信息 → 身份证演示识别 → 检查报告","textPreview":"确认信息 → 身份证演示识别 → 检查报告","textChars":21,"textLines":1,"bbox":[626,290,570,42]}
+{"kind":"shape","id":"sh/fq5czu98","slide":5,"name":"pill","bbox":[570,362,40,34]}
+{"kind":"textbox","id":"sh/0retszad","slide":5,"name":"text","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[578,362,24,34]}
+{"kind":"textbox","id":"sh/1s7u14ry","slide":5,"name":"text","text":"最终确认并提交，需求进入“待处理”","textPreview":"最终确认并提交，需求进入“待处理”","textChars":17,"textLines":1,"bbox":[626,358,570,42]}
+{"kind":"shape","id":"sh/qlwbmpsb","slide":5,"name":"pill","bbox":[570,430,40,34]}
+{"kind":"textbox","id":"sh/rm5cva9w","slide":5,"name":"text","text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[578,430,24,34]}
+{"kind":"textbox","id":"sh/v6183qpo","slide":5,"name":"text","text":"在“陪诊进度”查看分配、服务与完成状态","textPreview":"在“陪诊进度”查看分配、服务与完成状态","textChars":19,"textLines":1,"bbox":[626,426,570,42]}
+{"kind":"shape","id":"sh/u5srul83","slide":5,"name":"pill","bbox":[570,498,40,34]}
+{"kind":"textbox","id":"sh/hsjq5g7u","slide":5,"name":"text","text":"6","textPreview":"6","textChars":1,"textLines":1,"bbox":[578,498,24,34]}
+{"kind":"textbox","id":"sh/gra9wbq9","slide":5,"name":"text","text":"完成后查看陪诊报告和通俗说明","textPreview":"完成后查看陪诊报告和通俗说明","textChars":14,"textLines":1,"bbox":[626,494,570,42]}
+{"kind":"textbox","id":"sh/3uls7qp0","slide":5,"name":"source","text":"代码依据：js/patient.js · js/workflow.js","textPreview":"代码依据：js/patient.js · js/workflow.js","textChars":35,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/itcryl8f","slide":5,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"image","id":"im/hoju10ze","slide":5,"name":"","geometry":"roundRect","alt":"患者首页","bbox":[64,150,450,470]}
+{"kind":"notes","id":"nt/i1okmi","slide":5,"text":"患者有两种入口：人工表单和 AI 助手。两条路径写入同一个需求草稿，切换不会丢失内容。AI 不是直接下单，它先解析字段，再依次进入确认、身份证、报告和最终提交阶段。提交后，患者在进度页查看管理员推进的状态；需求完成后才能看到报告。"}
+{"kind":"slide","id":"sl/47npbo","slide":6,"title":"06","textShapes":29}
+{"kind":"textbox","id":"sh/u9knux8r","slide":6,"name":"page-no","text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/1cvm5cri","slide":6,"name":"slide-title","text":"管理端完成审批、派单、履约与报告发布","textPreview":"管理端完成审批、派单、履约与报告发布","textChars":18,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/gbm5w7qx","slide":6,"name":"slide-subtitle","text":"用同一浏览器切换角色即可看到患者新提交的需求","textPreview":"用同一浏览器切换角色即可看到患者新提交的需求","textChars":22,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/3ed4rm98","slide":6,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"shape","id":"sh/2d4nyh83","slide":6,"name":"admin-map","bbox":[64,150,620,470]}
+{"kind":"textbox","id":"sh/pgvmtcre","slide":6,"name":"text","text":"管理后台导航","textPreview":"管理后台导航","textChars":6,"textLines":1,"bbox":[94,174,560,38]}
+{"kind":"shape","id":"sh/ofm507qt","slide":6,"name":"pill","bbox":[92,238,158,34]}
+{"kind":"textbox","id":"sh/jit4vi94","slide":6,"name":"text","text":"工作台","textPreview":"工作台","textChars":3,"textLines":1,"bbox":[100,238,142,34]}
+{"kind":"shape","id":"sh/ih03md8j","slide":6,"name":"pill","bbox":[272,238,158,34]}
+{"kind":"textbox","id":"sh/0ripsb6x","slide":6,"name":"text","text":"需求处理","textPreview":"需求处理","textChars":4,"textLines":1,"bbox":[280,238,142,34]}
+{"kind":"shape","id":"sh/1sr61gni","slide":6,"name":"pill","bbox":[452,238,158,34]}
+{"kind":"textbox","id":"sh/ep07q1or","slide":6,"name":"text","text":"服务跟踪","textPreview":"服务跟踪","textChars":4,"textLines":1,"bbox":[460,238,142,34]}
+{"kind":"shape","id":"sh/zq9oz65c","slide":6,"name":"pill","bbox":[92,330,158,34]}
+{"kind":"textbox","id":"sh/ovipwv6t","slide":6,"name":"text","text":"服务收费","textPreview":"服务收费","textChars":4,"textLines":1,"bbox":[100,330,142,34]}
+{"kind":"shape","id":"sh/9wrq5gne","slide":6,"name":"pill","bbox":[272,330,158,34]}
+{"kind":"textbox","id":"sh/mt07ulo3","slide":6,"name":"text","text":"患者档案","textPreview":"患者档案","textChars":4,"textLines":1,"bbox":[280,330,142,34]}
+{"kind":"shape","id":"sh/nu983q58","slide":6,"name":"pill","bbox":[452,330,158,34]}
+{"kind":"textbox","id":"sh/4zypkr6p","slide":6,"name":"text","text":"陪诊师管理","textPreview":"陪诊师管理","textChars":5,"textLines":1,"bbox":[460,330,142,34]}
+{"kind":"shape","id":"sh/p076twna","slide":6,"name":"pill","bbox":[92,422,158,34]}
+{"kind":"textbox","id":"sh/l4fe1ovm","slide":6,"name":"text","text":"医院审批与资料","textPreview":"医院审批与资料","textChars":7,"textLines":1,"bbox":[100,422,142,34]}
+{"kind":"shape","id":"sh/k36d8juh","slide":6,"name":"pill","bbox":[272,422,158,34]}
+{"kind":"textbox","id":"sh/jixwzedw","slide":6,"name":"text","text":"评价反馈","textPreview":"评价反馈","textChars":4,"textLines":1,"bbox":[280,422,142,34]}
+{"kind":"shape","id":"sh/yhov69cb","slide":6,"name":"pill","bbox":[452,422,158,34]}
+{"kind":"textbox","id":"sh/t8ze58by","slide":6,"name":"text","text":"系统设置","textPreview":"系统设置","textChars":4,"textLines":1,"bbox":[460,422,142,34]}
+{"kind":"textbox","id":"sh/876dc3ud","slide":6,"name":"text","text":"主线操作","textPreview":"主线操作","textChars":4,"textLines":1,"bbox":[94,532,120,30]}
+{"kind":"textbox","id":"sh/76xw3yts","slide":6,"name":"text","text":"需求处理 → 服务跟踪 → 发布报告","textPreview":"需求处理 → 服务跟踪 → 发布报告","textChars":18,"textLines":1,"bbox":[222,528,400,38]}
+{"kind":"textbox","id":"sh/65ovatc7","slide":6,"name":"text","text":"需求处理","textPreview":"需求处理","textChars":4,"textLines":1,"bbox":[730,156,126,34]}
+{"kind":"textbox","id":"sh/hcze98bu","slide":6,"name":"text","text":"打开待处理需求 → 分配陪诊师","textPreview":"打开待处理需求 → 分配陪诊师","textChars":15,"textLines":1,"bbox":[864,156,338,42]}
+{"kind":"shape","id":"sh/gbqxg3u9","slide":6,"name":"line","bbox":[730,205,472,1]}
+{"kind":"textbox","id":"sh/eh0ba5sr","slide":6,"name":"text","text":"服务跟踪","textPreview":"服务跟踪","textChars":4,"textLines":1,"bbox":[730,230,126,34]}
+{"kind":"textbox","id":"sh/zits3atc","slide":6,"name":"text","text":"开始服务 → 完成服务","textPreview":"开始服务 → 完成服务","textChars":11,"textLines":1,"bbox":[864,230,338,42]}
+{"kind":"shape","id":"sh/0j2tcfax","slide":6,"name":"line","bbox":[730,279,472,1]}
+{"kind":"textbox","id":"sh/1kba5kbi","slide":6,"name":"text","text":"医院审批","textPreview":"医院审批","textChars":4,"textLines":1,"bbox":[730,304,126,34]}
+{"kind":"textbox","id":"sh/mlkbeps3","slide":6,"name":"text","text":"通过后创建/关联医院并回填草稿","textPreview":"通过后创建/关联医院并回填草稿","textChars":15,"textLines":1,"bbox":[864,304,338,42]}
+{"kind":"shape","id":"sh/nmts7ato","slide":6,"name":"line","bbox":[730,353,472,1]}
+{"kind":"textbox","id":"sh/on2tgfa9","slide":6,"name":"text","text":"服务收费","textPreview":"服务收费","textChars":4,"textLines":1,"bbox":[730,378,126,34]}
+{"kind":"textbox","id":"sh/9obu9kre","slide":6,"name":"text","text":"修改公开价格，患者端立即读取","textPreview":"修改公开价格，患者端立即读取","textChars":14,"textLines":1,"bbox":[864,378,338,42]}
+{"kind":"shape","id":"sh/a94bipsz","slide":6,"name":"line","bbox":[730,427,472,1]}
+{"kind":"textbox","id":"sh/badcbu9k","slide":6,"name":"text","text":"报告管理","textPreview":"报告管理","textChars":4,"textLines":1,"bbox":[730,452,126,34]}
+{"kind":"textbox","id":"sh/j69svu1o","slide":6,"name":"text","text":"仅对已完成需求编辑并发布报告","textPreview":"仅对已完成需求编辑并发布报告","textChars":14,"textLines":1,"bbox":[864,452,338,42]}
+{"kind":"shape","id":"sh/i50b2pk3","slide":6,"name":"line","bbox":[730,501,472,1]}
+{"kind":"textbox","id":"sh/58raxkju","slide":6,"name":"text","text":"系统设置","textPreview":"系统设置","textChars":4,"textLines":1,"bbox":[730,526,126,34]}
+{"kind":"textbox","id":"sh/k7it4z29","slide":6,"name":"text","text":"查看演示边界或重置数据","textPreview":"查看演示边界或重置数据","textChars":11,"textLines":1,"bbox":[864,526,338,42]}
+{"kind":"shape","id":"sh/7u9szu10","slide":6,"name":"line","bbox":[730,575,472,1]}
+{"kind":"textbox","id":"sh/6t0b6pkf","slide":6,"name":"source","text":"代码依据：js/admin.js · js/workflow.js","textPreview":"代码依据：js/admin.js · js/workflow.js","textChars":33,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/twba14jq","slide":6,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/47npbo","slide":6,"text":"管理端的核心演示是：患者提交后退出登录，进入管理员后台，在需求处理中分配陪诊师，然后在服务跟踪中推进到服务中和已完成。医院申请、收费和报告都有独立入口。最后回到患者端，可以看到通知、状态和报告同步变化。"}
+{"kind":"slide","id":"sl/3vmcuw","slide":7,"title":"07","textShapes":18}
+{"kind":"textbox","id":"sh/tob6p4zi","slide":7,"name":"page-no","text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/6lk7u907","slide":7,"name":"slide-title","text":"端到端闭环由共享状态与显式校验驱动","textPreview":"端到端闭环由共享状态与显式校验驱动","textChars":17,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/7mtonehc","slide":7,"name":"slide-subtitle","text":"每个动作都写入 Store，并触发角色通知","textPreview":"每个动作都写入 Store，并触发角色通知","textChars":21,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/kzipszi1","slide":7,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"textbox","id":"sh/lkb6l4zm","slide":7,"name":"text","text":"患者泳道","textPreview":"患者泳道","textChars":4,"textLines":1,"bbox":[64,152,150,30]}
+{"kind":"textbox","id":"sh/yx0nqp0v","slide":7,"name":"text","text":"管理员泳道","textPreview":"管理员泳道","textChars":5,"textLines":1,"bbox":[64,408,150,30]}
+{"kind":"shape","id":"sh/jy9ojuhg","slide":7,"name":"line","bbox":[190,168,1015,1]}
+{"kind":"shape","id":"sh/cvi5ozip","slide":7,"name":"line","bbox":[190,424,1015,1]}
+{"kind":"shape","id":"sh/xwr6hkza","slide":7,"name":"arrow","bbox":[356,232,34,20]}
+{"kind":"shape","id":"sh/lkn6hsrm","slide":7,"name":"arrow","bbox":[536,232,34,20]}
+{"kind":"shape","id":"sh/kjepona1","slide":7,"name":"arrow","bbox":[716,232,34,20]}
+{"kind":"shape","id":"sh/ji5ofi9g","slide":7,"name":"arrow","bbox":[896,232,34,20]}
+{"kind":"shape","id":"sh/yhw7mdsv","slide":7,"name":"node","bbox":[220,214,132,72]}
+{"kind":"textbox","id":"sh/xg36d8ba","slide":7,"name":"text","text":"描述需求","textPreview":"描述需求","textChars":4,"textLines":1,"bbox":[230,222,112,56]}
+{"kind":"shape","id":"sh/wfupknap","slide":7,"name":"node","bbox":[400,214,132,72]}
+{"kind":"textbox","id":"sh/belobit4","slide":7,"name":"text","text":"确认资料","textPreview":"确认资料","textChars":4,"textLines":1,"bbox":[410,222,112,56]}
+{"kind":"shape","id":"sh/adc7idsz","slide":7,"name":"node","bbox":[580,214,132,72]}
+{"kind":"textbox","id":"sh/9s3698be","slide":7,"name":"text","text":"提交需求","textPreview":"提交需求","textChars":4,"textLines":1,"bbox":[590,222,112,56]}
+{"kind":"shape","id":"sh/orupg3at","slide":7,"name":"node","bbox":[760,214,132,72]}
+{"kind":"textbox","id":"sh/0vypw3ip","slide":7,"name":"text","text":"查看进度","textPreview":"查看进度","textChars":4,"textLines":1,"bbox":[770,222,112,56]}
+{"kind":"shape","id":"sh/1w76p8ja","slide":7,"name":"node","bbox":[940,214,132,72]}
+{"kind":"textbox","id":"sh/etw7ut0j","slide":7,"name":"text","text":"查看报告","textPreview":"查看报告","textChars":4,"textLines":1,"bbox":[950,222,112,56]}
+{"kind":"shape","id":"sh/fu5ony14","slide":7,"name":"arrow","bbox":[356,486,34,20]}
+{"kind":"shape","id":"sh/s7eps3id","slide":7,"name":"arrow","bbox":[536,486,34,20]}
+{"kind":"shape","id":"sh/d8n6l8jy","slide":7,"name":"arrow","bbox":[716,486,34,20]}
+{"kind":"shape","id":"sh/q5w7qt0n","slide":7,"name":"arrow","bbox":[896,486,34,20]}
+{"kind":"shape","id":"sh/r65ojy1s","slide":7,"name":"node","bbox":[220,468,132,72]}
+{"kind":"textbox","id":"sh/c3ip4nix","slide":7,"name":"text","text":"接收通知","textPreview":"接收通知","textChars":4,"textLines":1,"bbox":[230,476,112,56]}
+{"kind":"shape","id":"sh/xorqxsz2","slide":7,"name":"node","bbox":[400,468,132,72]}
+{"kind":"textbox","id":"sh/7ud0jqpg","slide":7,"name":"text","text":"分配陪诊师","textPreview":"分配陪诊师","textChars":5,"textLines":1,"bbox":[410,476,112,56]}
+{"kind":"shape","id":"sh/694jalob","slide":7,"name":"node","bbox":[580,468,132,72]}
+{"kind":"textbox","id":"sh/twv2l07m","slide":7,"name":"text","text":"开始服务","textPreview":"开始服务","textChars":4,"textLines":1,"bbox":[590,476,112,56]}
+{"kind":"shape","id":"sh/8vm1cv61","slide":7,"name":"node","bbox":[760,468,132,72]}
+{"kind":"textbox","id":"sh/vydknqps","slide":7,"name":"text","text":"完成服务","textPreview":"完成服务","textChars":4,"textLines":1,"bbox":[770,476,112,56]}
+{"kind":"shape","id":"sh/ux4jelo7","slide":7,"name":"node","bbox":[940,468,132,72]}
+{"kind":"textbox","id":"sh/h0f2p07y","slide":7,"name":"text","text":"发布报告","textPreview":"发布报告","textChars":4,"textLines":1,"bbox":[950,476,112,56]}
+{"kind":"shape","id":"sh/gz61gv6d","slide":7,"name":"cross-flow","bbox":[646,286,1,182]}
+{"kind":"shape","id":"sh/b2t0b6po","slide":7,"name":"report-back","bbox":[826,540,1,64]}
+{"kind":"textbox","id":"sh/a1kj21o3","slide":7,"name":"text","text":"CareStore.addNeed / transitionNeed / publishReport","textPreview":"CareStore.addNeed / transitionNeed / publishReport","textChars":50,"textLines":1,"bbox":[354,588,600,34]}
+{"kind":"textbox","id":"sh/2lojy1wz","slide":7,"name":"source","text":"代码依据：js/store.js · js/workflow.js","textPreview":"代码依据：js/store.js · js/workflow.js","textChars":33,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/nmxkr6x4","slide":7,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/3vmcuw","slide":7,"text":"这张图是最适合现场演示的主线。患者描述并确认资料后提交，后台收到通知并分配陪诊师，随后开始和完成服务。报告发布是独立动作，不会再次改变需求状态。所有动作都经 CareStore 写入，并通过角色通知把处理结果反馈给患者。"}
+{"kind":"slide","id":"sl/ayf11w","slide":8,"title":"08","textShapes":15}
+{"kind":"textbox","id":"sh/jqlcf2pg","slide":8,"name":"page-no","text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/kruto7q1","slide":8,"name":"slide-title","text":"技术底座是零构建的浏览器单体","textPreview":"技术底座是零构建的浏览器单体","textChars":14,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/5s3uhc7m","slide":8,"name":"slide-subtitle","text":"结构简单，但所有模块共享全局作用域","textPreview":"结构简单，但所有模块共享全局作用域","textChars":17,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/alcbix8z","slide":8,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"shape","id":"sh/vmlsb2pk","slide":8,"name":"arrow","bbox":[604,242,54,22]}
+{"kind":"shape","id":"sh/wnutk7q5","slide":8,"name":"arrow","bbox":[604,362,54,22]}
+{"kind":"shape","id":"sh/xo3udc7q","slide":8,"name":"arrow","bbox":[604,482,54,22]}
+{"kind":"shape","id":"sh/uhwbuh83","slide":8,"name":"layer","bbox":[182,150,916,92]}
+{"kind":"textbox","id":"sh/fi5cnmpo","slide":8,"name":"text","text":"界面层","textPreview":"界面层","textChars":3,"textLines":1,"bbox":[210,168,220,50]}
+{"kind":"textbox","id":"sh/vidwra9c","slide":8,"name":"text","text":"患者端 / 管理后台 / AI 抽屉","textPreview":"患者端 / 管理后台 / AI 抽屉","textChars":18,"textLines":1,"bbox":[430,168,632,50]}
+{"kind":"shape","id":"sh/uh4fy58r","slide":8,"name":"layer","bbox":[182,270,916,92]}
+{"kind":"textbox","id":"sh/hkfet0r2","slide":8,"name":"text","text":"交互层","textPreview":"交互层","textChars":3,"textLines":1,"bbox":[210,288,220,50]}
+{"kind":"textbox","id":"sh/gj6x0vqx","slide":8,"name":"text","text":"App / Patient / Admin / workflow 覆盖","textPreview":"App / Patient / Admin / workflow 覆盖","textChars":35,"textLines":1,"bbox":[430,288,632,50]}
+{"kind":"shape","id":"sh/3mxgva98","slide":8,"name":"layer","bbox":[182,390,916,92]}
+{"kind":"textbox","id":"sh/ilof258n","slide":8,"name":"text","text":"领域与状态层","textPreview":"领域与状态层","textChars":6,"textLines":1,"bbox":[210,408,220,50]}
+{"kind":"textbox","id":"sh/5ofyxkre","slide":8,"name":"text","text":"CareStore / 状态机 / 通知去重 / 价格规则","textPreview":"CareStore / 状态机 / 通知去重 / 价格规则","textChars":29,"textLines":1,"bbox":[430,408,632,50]}
+{"kind":"shape","id":"sh/4n6x4fqt","slide":8,"name":"layer","bbox":[182,510,916,92]}
+{"kind":"textbox","id":"sh/rqhgzupk","slide":8,"name":"text","text":"浏览器与部署层","textPreview":"浏览器与部署层","textChars":7,"textLines":1,"bbox":[210,528,220,50]}
+{"kind":"textbox","id":"sh/qpof6p8z","slide":8,"name":"text","text":"DOM · localStorage · Canvas · Nginx 静态目录","textPreview":"DOM · localStorage · Canvas · Nginx 静态目录","textChars":40,"textLines":1,"bbox":[430,528,632,50]}
+{"kind":"textbox","id":"sh/mxcredw3","slide":8,"name":"text","text":"优势：复制即可运行、调试门槛低","textPreview":"优势：复制即可运行、调试门槛低","textChars":15,"textLines":1,"bbox":[64,630,480,28]}
+{"kind":"textbox","id":"sh/nil8nixo","slide":8,"name":"text","text":"代价：全局耦合、无接口隔离、难以多人并行开发","textPreview":"代价：全局耦合、无接口隔离、难以多人并行开发","textChars":22,"textLines":1,"bbox":[610,630,600,28]}
+{"kind":"textbox","id":"sh/oju9gne9","slide":8,"name":"source","text":"代码依据：index.html · js/*.js · deploy/nginx-huwuyou-demo.conf","textPreview":"代码依据：index.html · js/*.js · deploy/nginx-huwuyou-demo.conf","textChars":58,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/9k3qpsfu","slide":8,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/ayf11w","slide":8,"text":"当前是浏览器单体：界面层通过 DOM 字符串渲染，App、Patient、Admin 和 workflow 在同一个全局环境工作，领域状态集中在 CareStore，最底层依赖浏览器 localStorage、FileReader 和 Canvas。优点是部署简单；缺点是全局耦合明显，后续生产化必须拆分模块和接口。"}
+{"kind":"slide","id":"sl/1jlpzd","slide":9,"title":"09","textShapes":26}
+{"kind":"textbox","id":"sh/94re1ojy","slide":9,"name":"page-no","text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/m1gf69k7","slide":9,"name":"slide-title","text":"脚本加载顺序就是模块依赖顺序","textPreview":"脚本加载顺序就是模块依赖顺序","textChars":14,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/n2pwze1s","slide":9,"name":"slide-subtitle","text":"workflow.js 最后加载，用覆盖方式扩展旧实现","textPreview":"workflow.js 最后加载，用覆盖方式扩展旧实现","textChars":27,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/0zyx4z21","slide":9,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"shape","id":"sh/107ex4jm","slide":9,"name":"arrow","bbox":[226,214,36,20]}
+{"kind":"shape","id":"sh/exgf29kb","slide":9,"name":"node","bbox":[90,194,132,64]}
+{"kind":"textbox","id":"sh/zypwvu1g","slide":9,"name":"text","text":"data.js","textPreview":"data.js","textChars":7,"textLines":1,"bbox":[100,202,112,48]}
+{"kind":"shape","id":"sh/kv2xg3il","slide":9,"name":"arrow","bbox":[400,214,36,20]}
+{"kind":"shape","id":"sh/lwby98j6","slide":9,"name":"node","bbox":[264,194,132,64]}
+{"kind":"textbox","id":"sh/h43qt47e","slide":9,"name":"text","text":"store.js","textPreview":"store.js","textChars":8,"textLines":1,"bbox":[274,202,112,48]}
+{"kind":"shape","id":"sh/g3up0zqt","slide":9,"name":"arrow","bbox":[574,214,36,20]}
+{"kind":"shape","id":"sh/v2lorep8","slide":9,"name":"node","bbox":[438,194,132,64]}
+{"kind":"textbox","id":"sh/u1s7y98n","slide":9,"name":"text","text":"app.js","textPreview":"app.js","textChars":6,"textLines":1,"bbox":[448,202,112,48]}
+{"kind":"shape","id":"sh/tgj6p472","slide":9,"name":"arrow","bbox":[748,214,36,20]}
+{"kind":"shape","id":"sh/8fapwzqh","slide":9,"name":"node","bbox":[612,194,132,64]}
+{"kind":"textbox","id":"sh/7e1onupw","slide":9,"name":"text","text":"patient.js","textPreview":"patient.js","textChars":10,"textLines":1,"bbox":[622,202,112,48]}
+{"kind":"shape","id":"sh/6ds7up8b","slide":9,"name":"arrow","bbox":[922,214,36,20]}
+{"kind":"shape","id":"sh/dcnq1o76","slide":9,"name":"node","bbox":[786,194,132,64]}
+{"kind":"textbox","id":"sh/sbep8jq1","slide":9,"name":"text","text":"admin.js","textPreview":"admin.js","textChars":8,"textLines":1,"bbox":[796,202,112,48]}
+{"kind":"shape","id":"sh/cfm947ex","slide":9,"name":"node","bbox":[960,194,132,64]}
+{"kind":"textbox","id":"sh/dgvaxcfi","slide":9,"name":"text","text":"workflow.js","textPreview":"workflow.js","textChars":11,"textLines":1,"bbox":[970,202,112,48]}
+{"kind":"textbox","id":"sh/qd4r2xwr","slide":9,"name":"text","text":"依赖方向","textPreview":"依赖方向","textChars":4,"textLines":1,"bbox":[90,150,180,28]}
+{"kind":"textbox","id":"sh/bedsv2xc","slide":9,"name":"text","text":"代码规模（行）","textPreview":"代码规模（行）","textChars":7,"textLines":1,"bbox":[64,320,240,32]}
+{"kind":"textbox","id":"sh/ob290ny1","slide":9,"name":"text","text":"data.js","textPreview":"data.js","textChars":7,"textLines":1,"bbox":[72,370,116,24]}
+{"kind":"shape","id":"sh/pcbatsfm","slide":9,"name":"bar","bbox":[202,373,138.48,20]}
+{"kind":"textbox","id":"sh/29krydgv","slide":9,"name":"text","text":"209","textPreview":"209","textChars":3,"textLines":1,"bbox":[980,368,90,28]}
+{"kind":"textbox","id":"sh/3atsrixg","slide":9,"name":"text","text":"store.js","textPreview":"store.js","textChars":8,"textLines":1,"bbox":[72,412,116,24]}
+{"kind":"shape","id":"sh/gn29wnyp","slide":9,"name":"bar","bbox":[202,415,236.55,20]}
+{"kind":"textbox","id":"sh/18bqpsfa","slide":9,"name":"text","text":"357","textPreview":"357","textChars":3,"textLines":1,"bbox":[980,410,90,28]}
+{"kind":"textbox","id":"sh/ji9sfihc","slide":9,"name":"text","text":"app.js","textPreview":"app.js","textChars":6,"textLines":1,"bbox":[72,454,116,24]}
+{"kind":"shape","id":"sh/ih0b6d0r","slide":9,"name":"bar","bbox":[202,457,393.58,20]}
+{"kind":"textbox","id":"sh/5krah8z2","slide":9,"name":"text","text":"594","textPreview":"594","textChars":3,"textLines":1,"bbox":[980,452,90,28]}
+{"kind":"textbox","id":"sh/4jit8nix","slide":9,"name":"text","text":"patient.js","textPreview":"patient.js","textChars":10,"textLines":1,"bbox":[72,496,116,24]}
+{"kind":"shape","id":"sh/rmtsjih8","slide":9,"name":"bar","bbox":[202,499,564.53,20]}
+{"kind":"textbox","id":"sh/6l0bad0n","slide":9,"name":"text","text":"852","textPreview":"852","textChars":3,"textLines":1,"bbox":[980,494,90,28]}
+{"kind":"textbox","id":"sh/t8balsze","slide":9,"name":"text","text":"admin.js","textPreview":"admin.js","textChars":8,"textLines":1,"bbox":[72,538,116,24]}
+{"kind":"shape","id":"sh/s72tcnit","slide":9,"name":"bar","bbox":[202,541,760,20]}
+{"kind":"textbox","id":"sh/fatsn2hk","slide":9,"name":"text","text":"1147","textPreview":"1147","textChars":4,"textLines":1,"bbox":[980,536,90,28]}
+{"kind":"textbox","id":"sh/e9kbex0z","slide":9,"name":"text","text":"workflow.js","textPreview":"workflow.js","textChars":11,"textLines":1,"bbox":[72,580,116,24]}
+{"kind":"shape","id":"sh/ypc365c7","slide":9,"name":"bar","bbox":[202,583,125.89,20]}
+{"kind":"textbox","id":"sh/zql4zqts","slide":9,"name":"text","text":"190","textPreview":"190","textChars":3,"textLines":1,"bbox":[980,578,90,28]}
+{"kind":"textbox","id":"sh/krul8vud","slide":9,"name":"text","text":"交接重点：admin.js 最大；workflow.js 虽短，但会重定义行为，修改前必须检查覆盖关系。","textPreview":"交接重点：admin.js 最大；workflow.js 虽短，但会重定义行为，修改前必须检查覆盖关系。","textChars":52,"textLines":1,"bbox":[64,638,1120,30]}
+{"kind":"textbox","id":"sh/ls3m10by","slide":9,"name":"source","text":"代码依据：index.html 第 16–21 行 · wc -l js/*.js","textPreview":"代码依据：index.html 第 16–21 行 · wc -l js/*.js","textChars":41,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/mtc3a5cj","slide":9,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/1jlpzd","slide":9,"text":"index.html 按 data、store、app、patient、admin、workflow 的顺序加载脚本。因为没有 ES Module，后加载脚本可以覆盖前面的对象方法。admin.js 代码量最大；workflow.js 只有约 190 行，却承担最新业务闭环的覆盖逻辑，因此修复问题时不能只看原始 app 或 admin 实现。"}
+{"kind":"slide","id":"sl/hhrvbo","slide":10,"title":"10","textShapes":18}
+{"kind":"textbox","id":"sh/f2l07i5k","slide":10,"name":"page-no","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/g3u1g365","slide":10,"name":"slide-title","text":"核心数据围绕需求 ID 关联","textPreview":"核心数据围绕需求 ID 关联","textChars":14,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/h43i98na","slide":10,"name":"slide-subtitle","text":"实体不嵌套复制，跨对象通过唯一 ID 连接","textPreview":"实体不嵌套复制，跨对象通过唯一 ID 连接","textChars":21,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/6xsjaton","slide":10,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"shape","id":"sh/7y103yp8","slide":10,"name":"line","bbox":[382,236,258,86]}
+{"kind":"shape","id":"sh/szu1c36t","slide":10,"name":"line","bbox":[640,236,258,86]}
+{"kind":"shape","id":"sh/t03i58ne","slide":10,"name":"line","bbox":[382,292,258,188]}
+{"kind":"shape","id":"sh/qtwjmxo7","slide":10,"name":"line","bbox":[640,292,258,188]}
+{"kind":"shape","id":"sh/ru5kf25s","slide":10,"name":"line","bbox":[640,292,1,188]}
+{"kind":"shape","id":"sh/fu5orqhs","slide":10,"name":"node","bbox":[520,190,240,110]}
+{"kind":"textbox","id":"sh/etw7ilg7","slide":10,"name":"text","text":"Need 需求","textPreview":"Need 需求","textChars":7,"textLines":1,"bbox":[530,198,220,76]}
+{"kind":"textbox","id":"sh/1wn6t0zy","slide":10,"name":"text","text":"状态 / 患者 / 医院 / 服务","textPreview":"状态 / 患者 / 医院 / 服务","textChars":17,"textLines":1,"bbox":[530,273,220,20]}
+{"kind":"shape","id":"sh/0vepkvyd","slide":10,"name":"node","bbox":[250,322,220,92]}
+{"kind":"textbox","id":"sh/nipovqh4","slide":10,"name":"text","text":"Draft 草稿","textPreview":"Draft 草稿","textChars":8,"textLines":1,"bbox":[260,330,200,58]}
+{"kind":"textbox","id":"sh/mhg7mlgj","slide":10,"name":"text","text":"AI 与人工表单共享","textPreview":"AI 与人工表单共享","textChars":10,"textLines":1,"bbox":[260,387,200,20]}
+{"kind":"shape","id":"sh/9k7qx0za","slide":10,"name":"node","bbox":[810,322,220,92]}
+{"kind":"textbox","id":"sh/ojypovyp","slide":10,"name":"text","text":"Escort 陪诊师","textPreview":"Escort 陪诊师","textChars":10,"textLines":1,"bbox":[820,330,200,58]}
+{"kind":"textbox","id":"sh/bmp8zax0","slide":10,"name":"text","text":"escortName / phone","textPreview":"escortName / phone","textChars":18,"textLines":1,"bbox":[820,387,200,20]}
+{"kind":"shape","id":"sh/alg7q5gf","slide":10,"name":"node","bbox":[220,480,280,92]}
+{"kind":"textbox","id":"sh/6hkry90n","slide":10,"name":"text","text":"HospitalApplication","textPreview":"HospitalApplication","textChars":19,"textLines":1,"bbox":[230,488,260,58]}
+{"kind":"textbox","id":"sh/7itsre18","slide":10,"name":"text","text":"审批后回填草稿","textPreview":"审批后回填草稿","textChars":7,"textLines":1,"bbox":[230,545,260,20]}
+{"kind":"shape","id":"sh/8j290jit","slide":10,"name":"node","bbox":[780,480,280,92]}
+{"kind":"textbox","id":"sh/tkbatoje","slide":10,"name":"text","text":"Notification","textPreview":"Notification","textChars":12,"textLines":1,"bbox":[790,488,260,58]}
+{"kind":"textbox","id":"sh/yd0rup0r","slide":10,"name":"text","text":"role + targetId + eventKey","textPreview":"role + targetId + eventKey","textChars":26,"textLines":1,"bbox":[790,545,260,20]}
+{"kind":"shape","id":"sh/je9snu1c","slide":10,"name":"node","bbox":[530,480,220,92]}
+{"kind":"textbox","id":"sh/kfi9wzix","slide":10,"name":"text","text":"EscortReport","textPreview":"EscortReport","textChars":12,"textLines":1,"bbox":[540,488,200,58]}
+{"kind":"textbox","id":"sh/lgbap4ji","slide":10,"name":"text","text":"仅完成需求可发布","textPreview":"仅完成需求可发布","textChars":8,"textLines":1,"bbox":[540,545,200,20]}
+{"kind":"textbox","id":"sh/i94b6t0v","slide":10,"name":"text","text":"持久化根对象：CareStore.state · schema version = 1 · key = huwuyou_store_v1","textPreview":"持久化根对象：CareStore.state · schema version = 1 · key = huwuyou_store_v1","textChars":68,"textLines":1,"bbox":[64,620,1120,34]}
+{"kind":"textbox","id":"sh/3adszyhg","slide":10,"name":"source","text":"代码依据：js/store.js","textPreview":"代码依据：js/store.js","textChars":16,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/d4fupsji","slide":10,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/hhrvbo","slide":10,"text":"Need 是中心实体。AI 和人工表单共用 Draft；陪诊师、医院申请、通知和报告都通过 ID 或明确字段与需求关联。Store 使用版本号 1 和固定键 huwuyou_store_v1。接手时新增字段要同步更新默认值、合并逻辑和渲染代码，否则旧浏览器数据会出现兼容问题。"}
+{"kind":"slide","id":"sl/4bqjbi","slide":11,"title":"11","textShapes":23}
+{"kind":"textbox","id":"sh/y94nmxgv","slide":11,"name":"page-no","text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/lcvmxcfm","slide":11,"name":"slide-title","text":"需求状态禁止跳级","textPreview":"需求状态禁止跳级","textChars":8,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/kbm5o7y1","slide":11,"name":"slide-subtitle","text":"界面隐藏非法按钮，Store 再做一次服务端式校验","textPreview":"界面隐藏非法按钮，Store 再做一次服务端式校验","textChars":25,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/7ex4z2xs","slide":11,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"shape","id":"sh/6d4nqxw7","slide":11,"name":"arrow","bbox":[356,268,42,24]}
+{"kind":"shape","id":"sh/tgfm1cfi","slide":11,"name":"arrow","bbox":[576,268,42,24]}
+{"kind":"shape","id":"sh/8f65s7ed","slide":11,"name":"arrow","bbox":[796,268,42,24]}
+{"kind":"shape","id":"sh/fix43mxo","slide":11,"name":"node","bbox":[80,240,170,86]}
+{"kind":"textbox","id":"sh/uhonuhw3","slide":11,"name":"text","text":"待处理","textPreview":"待处理","textChars":3,"textLines":1,"bbox":[90,248,150,70]}
+{"kind":"shape","id":"sh/cnqt4r2x","slide":11,"name":"node","bbox":[288,240,170,86]}
+{"kind":"textbox","id":"sh/xozudwji","slide":11,"name":"text","text":"已分配","textPreview":"已分配","textChars":3,"textLines":1,"bbox":[298,248,150,70]}
+{"kind":"shape","id":"sh/al8b21kr","slide":11,"name":"node","bbox":[496,240,170,86]}
+{"kind":"textbox","id":"sh/bmhcbm1c","slide":11,"name":"text","text":"服务中","textPreview":"服务中","textChars":3,"textLines":1,"bbox":[506,248,150,70]}
+{"kind":"shape","id":"sh/krqt8bi9","slide":11,"name":"node","bbox":[704,240,170,86]}
+{"kind":"textbox","id":"sh/lsjuhgju","slide":11,"name":"text","text":"已完成","textPreview":"已完成","textChars":3,"textLines":1,"bbox":[714,248,150,70]}
+{"kind":"shape","id":"sh/yp8b61k3","slide":11,"name":"line","bbox":[165,326,1,104]}
+{"kind":"shape","id":"sh/zqhcf61o","slide":11,"name":"line","bbox":[373,326,1,104]}
+{"kind":"shape","id":"sh/8vadcbi5","slide":11,"name":"node","bbox":[264,430,220,78]}
+{"kind":"textbox","id":"sh/9wjulgjq","slide":11,"name":"text","text":"已取消","textPreview":"已取消","textChars":3,"textLines":1,"bbox":[274,438,200,44]}
+{"kind":"textbox","id":"sh/h0v29w7i","slide":11,"name":"text","text":"仅待处理 / 已分配可进入","textPreview":"仅待处理 / 已分配可进入","textChars":13,"textLines":1,"bbox":[274,481,200,20]}
+{"kind":"shape","id":"sh/wzmlgr6x","slide":11,"name":"rules","bbox":[850,174,330,340]}
+{"kind":"textbox","id":"sh/vydk7mps","slide":11,"name":"text","text":"状态副作用","textPreview":"状态副作用","textChars":5,"textLines":1,"bbox":[876,196,260,34]}
+{"kind":"textbox","id":"sh/ux43eho7","slide":11,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[876,246,20,30]}
+{"kind":"textbox","id":"sh/54f2dw7u","slide":11,"name":"text","text":"已分配：通知患者","textPreview":"已分配：通知患者","textChars":8,"textLines":1,"bbox":[904,246,242,34]}
+{"kind":"textbox","id":"sh/436lkr69","slide":11,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[876,294,20,30]}
+{"kind":"textbox","id":"sh/j2xkbmpo","slide":11,"name":"text","text":"服务中：进度更新","textPreview":"服务中：进度更新","textChars":8,"textLines":1,"bbox":[904,294,242,34]}
+{"kind":"textbox","id":"sh/i1o3iho3","slide":11,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[876,342,20,30]}
+{"kind":"textbox","id":"sh/l8b21s7a","slide":11,"name":"text","text":"已完成：允许写报告","textPreview":"已完成：允许写报告","textChars":9,"textLines":1,"bbox":[904,342,242,34]}
+{"kind":"textbox","id":"sh/k72l8765","slide":11,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[876,390,20,30]}
+{"kind":"textbox","id":"sh/ad0zit4n","slide":11,"name":"text","text":"发布报告：不改变状态","textPreview":"发布报告：不改变状态","textChars":10,"textLines":1,"bbox":[904,390,242,34]}
+{"kind":"textbox","id":"sh/be90by58","slide":11,"name":"text","text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[876,438,20,30]}
+{"kind":"textbox","id":"sh/cfihk3mt","slide":11,"name":"text","text":"非法跳级：返回错误","textPreview":"非法跳级：返回错误","textChars":9,"textLines":1,"bbox":[904,438,242,34]}
+{"kind":"textbox","id":"sh/xgrid8ne","slide":11,"name":"text","text":"Allowed map 是唯一状态真相源：transitionNeed() 必须保持原子化。","textPreview":"Allowed map 是唯一状态真相源：transitionNeed() 必须保持原子化。","textChars":46,"textLines":1,"bbox":[64,588,1100,44]}
+{"kind":"textbox","id":"sh/y10zmd4z","slide":11,"name":"source","text":"代码依据：js/store.js: transitionNeed","textPreview":"代码依据：js/store.js: transitionNeed","textChars":32,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/z2t0fi5k","slide":11,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/4bqjbi","slide":11,"text":"需求只允许待处理到已分配、已分配到服务中、服务中到已完成。取消只能从待处理或已分配进入。界面会隐藏不允许的按钮，但真正的防线是 transitionNeed 中的 allowed map。发布报告不改变需求状态，只写入报告 ID 并发送通知。"}
+{"kind":"slide","id":"sl/ojmru3","slide":12,"title":"12","textShapes":22}
+{"kind":"textbox","id":"sh/o361czax","slide":12,"name":"page-no","text":"12","textPreview":"12","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/n2x03utc","slide":12,"name":"slide-title","text":"AI 助手是可解释的七阶段状态机","textPreview":"AI 助手是可解释的七阶段状态机","textChars":16,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/21oja9sr","slide":12,"name":"slide-subtitle","text":"本地规则提取字段，用户逐步确认后才提交","textPreview":"本地规则提取字段，用户逐步确认后才提交","textChars":19,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/xsz29obe","slide":12,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"shape","id":"sh/crq1gja9","slide":12,"name":"arrow","bbox":[222,260,28,18]}
+{"kind":"shape","id":"sh/bqh07eto","slide":12,"name":"node","bbox":[74,236,140,76]}
+{"kind":"textbox","id":"sh/ap8je9s3","slide":12,"name":"text","text":"开始","textPreview":"开始","textChars":2,"textLines":1,"bbox":[84,244,120,42]}
+{"kind":"textbox","id":"sh/lwj2dobq","slide":12,"name":"text","text":"idle","textPreview":"idle","textChars":4,"textLines":1,"bbox":[84,285,120,20]}
+{"kind":"shape","id":"sh/kva1kja5","slide":12,"name":"arrow","bbox":[394,260,28,18]}
+{"kind":"shape","id":"sh/69wzydcf","slide":12,"name":"node","bbox":[246,236,140,76]}
+{"kind":"textbox","id":"sh/7apg7it0","slide":12,"name":"text","text":"收集","textPreview":"收集","textChars":2,"textLines":1,"bbox":[256,244,120,42]}
+{"kind":"textbox","id":"sh/8vyh0nul","slide":12,"name":"text","text":"collecting","textPreview":"collecting","textChars":10,"textLines":1,"bbox":[256,285,120,20]}
+{"kind":"shape","id":"sh/tw7y9sb6","slide":12,"name":"arrow","bbox":[566,260,28,18]}
+{"kind":"shape","id":"sh/uxgz2xcr","slide":12,"name":"node","bbox":[418,236,140,76]}
+{"kind":"textbox","id":"sh/vypgb2tw","slide":12,"name":"text","text":"确认","textPreview":"确认","textChars":2,"textLines":1,"bbox":[428,244,120,42]}
+{"kind":"textbox","id":"sh/gzyh4nuh","slide":12,"name":"text","text":"confirm_details","textPreview":"confirm_details","textChars":15,"textLines":1,"bbox":[428,285,120,20]}
+{"kind":"shape","id":"sh/h07ydsb2","slide":12,"name":"arrow","bbox":[738,260,28,18]}
+{"kind":"shape","id":"sh/a1cfqtc7","slide":12,"name":"node","bbox":[590,236,140,76]}
+{"kind":"textbox","id":"sh/b25gzyds","slide":12,"name":"text","text":"身份证","textPreview":"身份证","textChars":3,"textLines":1,"bbox":[600,244,120,42]}
+{"kind":"textbox","id":"sh/fuh4bap8","slide":12,"name":"text","text":"upload_identity","textPreview":"upload_identity","textChars":15,"textLines":1,"bbox":[600,285,120,20]}
+{"kind":"shape","id":"sh/e98ni5on","slide":12,"name":"arrow","bbox":[910,260,28,18]}
+{"kind":"shape","id":"sh/1wzmd0ne","slide":12,"name":"node","bbox":[762,236,140,76]}
+{"kind":"textbox","id":"sh/0vq5kv6t","slide":12,"name":"text","text":"报告","textPreview":"报告","textChars":2,"textLines":1,"bbox":[772,244,120,42]}
+{"kind":"textbox","id":"sh/r6h47qpc","slide":12,"name":"text","text":"upload_reports","textPreview":"upload_reports","textChars":14,"textLines":1,"bbox":[772,285,120,20]}
+{"kind":"shape","id":"sh/q5o3elor","slide":12,"name":"arrow","bbox":[1082,260,28,18]}
+{"kind":"shape","id":"sh/d8zm907i","slide":12,"name":"node","bbox":[934,236,140,76]}
+{"kind":"textbox","id":"sh/s7qlgv6x","slide":12,"name":"text","text":"最终确认","textPreview":"最终确认","textChars":4,"textLines":1,"bbox":[944,244,120,42]}
+{"kind":"textbox","id":"sh/b214ju5g","slide":12,"name":"text","text":"final_confirm","textPreview":"final_confirm","textChars":13,"textLines":1,"bbox":[944,285,120,20]}
+{"kind":"shape","id":"sh/a1snqpov","slide":12,"name":"node","bbox":[1106,236,140,76]}
+{"kind":"textbox","id":"sh/87m1k7md","slide":12,"name":"text","text":"已提交","textPreview":"已提交","textChars":3,"textLines":1,"bbox":[1116,244,120,42]}
+{"kind":"textbox","id":"sh/98v2dcny","slide":12,"name":"text","text":"submitted","textPreview":"submitted","textChars":9,"textLines":1,"bbox":[1116,285,120,20]}
+{"kind":"shape","id":"sh/m5kjih4n","slide":12,"name":"ai-rules","bbox":[96,392,1088,148]}
+{"kind":"textbox","id":"sh/76tkbm5s","slide":12,"name":"text","text":"规则解析内容","textPreview":"规则解析内容","textChars":6,"textLines":1,"bbox":[124,412,200,30]}
+{"kind":"textbox","id":"sh/wbm1ormp","slide":12,"name":"text","text":"医院别名 · 科室别名 · 相对日期 · 服务类型 · 轮椅/耳背/搀扶备注","textPreview":"医院别名 · 科室别名 · 相对日期 · 服务类型 · 轮椅/耳背/搀扶备注","textChars":38,"textLines":1,"bbox":[124,452,990,34]}
+{"kind":"textbox","id":"sh/hcv2hwna","slide":12,"name":"text","text":"安全约束：AI 不能绕过信息确认、资料确认与最终提交。当前 workflow 主路径不依赖外部 API。","textPreview":"安全约束：AI 不能绕过信息确认、资料确认与最终提交。当前 workflow 主路径不依赖外部 API。","textChars":52,"textLines":1,"bbox":[124,498,990,28]}
+{"kind":"textbox","id":"sh/u94jmh4j","slide":12,"name":"source","text":"代码依据：js/store.js: AiAssistantService · js/workflow.js","textPreview":"代码依据：js/store.js: AiAssistantService · js/workflow.js","textChars":53,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/vadkfm54","slide":12,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/ojmru3","slide":12,"text":"最新 AI 主流程不是黑盒对话，而是七阶段状态机。本地规则会识别医院别名、科室、日期、服务类型和辅助备注；缺什么就一次问一个问题。收集完成后仍然要经过详情确认、身份证、检查报告和最终确认。这样即使未来换成大模型，提交权限也应继续留在业务状态机。"}
+{"kind":"slide","id":"sl/u1sy71","slide":13,"title":"13","textShapes":18}
+{"kind":"textbox","id":"sh/ozadk3a9","slide":13,"name":"page-no","text":"13","textPreview":"13","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/ny1wbyto","slide":13,"name":"slide-title","text":"医院申请与通知形成两个独立闭环","textPreview":"医院申请与通知形成两个独立闭环","textChars":15,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/2x8vits3","slide":13,"name":"slide-subtitle","text":"审批历史保留，通知按角色和事件去重","textPreview":"审批历史保留，通知按角色和事件去重","textChars":17,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/xojeh8bq","slide":13,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"textbox","id":"sh/wnado3a5","slide":13,"name":"text","text":"医院申请闭环","textPreview":"医院申请闭环","textChars":6,"textLines":1,"bbox":[64,154,260,32]}
+{"kind":"shape","id":"sh/bm1wfytk","slide":13,"name":"arrow","bbox":[250,234,46,22]}
+{"kind":"shape","id":"sh/alsvmdsf","slide":13,"name":"arrow","bbox":[468,234,46,22]}
+{"kind":"shape","id":"sh/dszu5obm","slide":13,"name":"arrow","bbox":[686,234,46,22]}
+{"kind":"shape","id":"sh/srqdcja1","slide":13,"name":"node","bbox":[80,210,170,82]}
+{"kind":"textbox","id":"sh/2twbe1gb","slide":13,"name":"text","text":"未收录医院","textPreview":"未收录医院","textChars":5,"textLines":1,"bbox":[90,218,150,66]}
+{"kind":"shape","id":"sh/nu5c76xw","slide":13,"name":"node","bbox":[298,210,170,82]}
+{"kind":"textbox","id":"sh/ovetgbyh","slide":13,"name":"text","text":"保存草稿","textPreview":"保存草稿","textChars":4,"textLines":1,"bbox":[308,218,150,66]}
+{"kind":"shape","id":"sh/pwnu9gf2","slide":13,"name":"node","bbox":[516,210,170,82]}
+{"kind":"textbox","id":"sh/axwbilg7","slide":13,"name":"text","text":"后台审批","textPreview":"后台审批","textChars":4,"textLines":1,"bbox":[526,218,150,66]}
+{"kind":"shape","id":"sh/bypcbqxs","slide":13,"name":"node","bbox":[734,210,170,82]}
+{"kind":"textbox","id":"sh/czytkbyd","slide":13,"name":"text","text":"通过并回填","textPreview":"通过并回填","textChars":5,"textLines":1,"bbox":[744,218,150,66]}
+{"kind":"shape","id":"sh/x07udgfy","slide":13,"name":"node","bbox":[966,210,190,82]}
+{"kind":"textbox","id":"sh/y1gbmlgj","slide":13,"name":"text","text":"驳回 + 原因","textPreview":"驳回 + 原因","textChars":7,"textLines":1,"bbox":[976,218,170,48]}
+{"kind":"textbox","id":"sh/zmpcfqx4","slide":13,"name":"text","text":"修改后新建申请","textPreview":"修改后新建申请","textChars":7,"textLines":1,"bbox":[976,265,170,20]}
+{"kind":"textbox","id":"sh/vq9s3qdc","slide":13,"name":"text","text":"通知闭环","textPreview":"通知闭环","textChars":4,"textLines":1,"bbox":[64,378,260,32]}
+{"kind":"shape","id":"sh/up0bulcr","slide":13,"name":"node","bbox":[82,436,180,82]}
+{"kind":"textbox","id":"sh/hsra50v2","slide":13,"name":"text","text":"业务事件","textPreview":"业务事件","textChars":4,"textLines":1,"bbox":[92,444,160,66]}
+{"kind":"shape","id":"sh/writwvuh","slide":13,"name":"arrow","bbox":[280,464,50,22]}
+{"kind":"shape","id":"sh/72pszqd0","slide":13,"name":"node","bbox":[348,436,180,82]}
+{"kind":"textbox","id":"sh/m1gbqlcf","slide":13,"name":"text","text":"生成通知","textPreview":"生成通知","textChars":4,"textLines":1,"bbox":[358,444,160,66]}
+{"kind":"shape","id":"sh/9o7a1gv6","slide":13,"name":"arrow","bbox":[546,464,50,22]}
+{"kind":"shape","id":"sh/83ytsvul","slide":13,"name":"node","bbox":[614,436,180,82]}
+{"kind":"textbox","id":"sh/zypsv6d4","slide":13,"name":"text","text":"角色过滤","textPreview":"角色过滤","textChars":4,"textLines":1,"bbox":[624,444,160,66]}
+{"kind":"shape","id":"sh/yxwrm1wj","slide":13,"name":"arrow","bbox":[812,464,50,22]}
+{"kind":"shape","id":"sh/o3upw7a1","slide":13,"name":"node","bbox":[880,436,180,82]}
+{"kind":"textbox","id":"sh/p43q5cbm","slide":13,"name":"text","text":"点击跳转","textPreview":"点击跳转","textChars":4,"textLines":1,"bbox":[890,444,160,66]}
+{"kind":"textbox","id":"sh/21c7uxcb","slide":13,"name":"text","text":"去重键：recipientRole : type : targetId : eventKey","textPreview":"去重键：recipientRole : type : targetId : eventKey","textChars":46,"textLines":1,"bbox":[350,560,600,34]}
+{"kind":"textbox","id":"sh/n2l832tw","slide":13,"name":"source","text":"代码依据：js/store.js: addHospitalApplication / addNotification","textPreview":"代码依据：js/store.js: addHospitalApplication / addNotification","textChars":58,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/c7ep0rad","slide":13,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/u1sy71","slide":13,"text":"未收录医院可以先进入草稿，但审批通过前不能提交需求。同一患者和医院的待审批申请会复用；驳回必须保留原因，并通过新申请重提。通知使用角色、类型、目标和事件键去重，患者和管理员只读取自己的通知。"}
+{"kind":"slide","id":"sl/nmoqgu","slide":14,"title":"14","textShapes":26}
+{"kind":"textbox","id":"sh/pozyt4v2","slide":14,"name":"page-no","text":"14","textPreview":"14","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/2lozi9cb","slide":14,"name":"slide-title","text":"持久化解决演示连续性，但不具备数据库事务","textPreview":"持久化解决演示连续性，但不具备数据库事务","textChars":20,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/3mhgrudw","slide":14,"name":"slide-subtitle","text":"图片压缩后仍以 Data URL 占用浏览器配额","textPreview":"图片压缩后仍以 Data URL 占用浏览器配额","textChars":24,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/gj6hgzu5","slide":14,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"textbox","id":"sh/1kfyp4vq","slide":14,"name":"text","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[66,156,44,40]}
+{"kind":"textbox","id":"sh/ehozepcf","slide":14,"name":"text","text":"加载","textPreview":"加载","textChars":2,"textLines":1,"bbox":[126,154,126,40]}
+{"kind":"textbox","id":"sh/fixgnud0","slide":14,"name":"text","text":"读取 huwuyou_store_v1","textPreview":"读取 huwuyou_store_v1","textChars":19,"textLines":1,"bbox":[280,154,300,40]}
+{"kind":"textbox","id":"sh/sf6hcfe9","slide":14,"name":"text","text":"版本匹配则合并默认字段","textPreview":"版本匹配则合并默认字段","textChars":11,"textLines":1,"bbox":[610,154,550,46]}
+{"kind":"shape","id":"sh/tgfylkvu","slide":14,"name":"line","bbox":[66,214,1090,1]}
+{"kind":"textbox","id":"sh/xwbqdorq","slide":14,"name":"text","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[66,244,44,40]}
+{"kind":"textbox","id":"sh/wv2p4jq5","slide":14,"name":"text","text":"损坏","textPreview":"损坏","textChars":2,"textLines":1,"bbox":[126,242,126,40]}
+{"kind":"textbox","id":"sh/vut8by90","slide":14,"name":"text","text":"备份原字符串","textPreview":"备份原字符串","textChars":6,"textLines":1,"bbox":[280,242,300,40]}
+{"kind":"textbox","id":"sh/atk72t8f","slide":14,"name":"text","text":"写入 corrupt_backup 并恢复默认","textPreview":"写入 corrupt_backup 并恢复默认","textChars":23,"textLines":1,"bbox":[610,242,550,46]}
+{"kind":"shape","id":"sh/9srq9oru","slide":14,"name":"line","bbox":[66,302,1090,1]}
+{"kind":"textbox","id":"sh/87ip0ja9","slide":14,"name":"text","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[66,332,44,40]}
+{"kind":"textbox","id":"sh/n6987e9o","slide":14,"name":"text","text":"写入","textPreview":"写入","textChars":2,"textLines":1,"bbox":[126,330,126,40]}
+{"kind":"textbox","id":"sh/m507y9s3","slide":14,"name":"text","text":"JSON.stringify + setItem","textPreview":"JSON.stringify + setItem","textChars":24,"textLines":1,"bbox":[280,330,300,40]}
+{"kind":"textbox","id":"sh/l4r654ri","slide":14,"name":"text","text":"失败提示配额不足；当前不回滚内存","textPreview":"失败提示配额不足；当前不回滚内存","textChars":16,"textLines":1,"bbox":[610,330,550,46]}
+{"kind":"shape","id":"sh/03ipwzax","slide":14,"name":"line","bbox":[66,390,1090,1]}
+{"kind":"textbox","id":"sh/cj6h83m5","slide":14,"name":"text","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[66,420,44,40]}
+{"kind":"textbox","id":"sh/dkfy183q","slide":14,"name":"text","text":"图片","textPreview":"图片","textChars":2,"textLines":1,"bbox":[126,418,126,40]}
+{"kind":"textbox","id":"sh/qx4z6t4z","slide":14,"name":"text","text":"FileReader → Canvas","textPreview":"FileReader → Canvas","textChars":19,"textLines":1,"bbox":[280,418,300,40]}
+{"kind":"textbox","id":"sh/bydgzylk","slide":14,"name":"text","text":"最长边压缩，JPEG 质量逐级降低","textPreview":"最长边压缩，JPEG 质量逐级降低","textChars":17,"textLines":1,"bbox":[610,418,550,46]}
+{"kind":"shape","id":"sh/ovmh43m9","slide":14,"name":"line","bbox":[66,478,1090,1]}
+{"kind":"textbox","id":"sh/pwvyx83u","slide":14,"name":"text","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[66,508,44,40]}
+{"kind":"textbox","id":"sh/2t4z2t43","slide":14,"name":"text","text":"重置","textPreview":"重置","textChars":2,"textLines":1,"bbox":[126,506,126,40]}
+{"kind":"textbox","id":"sh/3udgvylo","slide":14,"name":"text","text":"删除版本化键","textPreview":"删除版本化键","textChars":6,"textLines":1,"bbox":[280,506,300,40]}
+{"kind":"textbox","id":"sh/8rqhgnmd","slide":14,"name":"text","text":"刷新后重新装载默认数据","textPreview":"刷新后重新装载默认数据","textChars":11,"textLines":1,"bbox":[610,506,550,46]}
+{"kind":"shape","id":"sh/9szi9s3y","slide":14,"name":"line","bbox":[66,566,1090,1]}
+{"kind":"textbox","id":"sh/jm1kfm50","slide":14,"name":"text","text":"生产化必须迁移：对象存储 + 数据库 + 后端校验 + 审计与回滚机制","textPreview":"生产化必须迁移：对象存储 + 数据库 + 后端校验 + 审计与回滚机制","textChars":35,"textLines":1,"bbox":[66,612,1090,38]}
+{"kind":"textbox","id":"sh/ilsj6hof","slide":14,"name":"source","text":"代码依据：js/store.js: CareStore / MediaService","textPreview":"代码依据：js/store.js: CareStore / MediaService","textChars":42,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/5oj2hwn6","slide":14,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/nmoqgu","slide":14,"text":"Store 在加载时合并默认字段，JSON 损坏会备份原字符串并恢复演示数据。图片通过 FileReader 和 Canvas 压缩成 Data URL。需要特别说明：当前写入失败时会提示，但内存已经修改，并没有事务回滚。真实系统必须把图片放对象存储，把结构化数据放数据库，并在后端做校验。"}
+{"kind":"slide","id":"sl/brk28c","slide":15,"title":"15","textShapes":13}
+{"kind":"textbox","id":"sh/yd0bu94r","slide":15,"name":"page-no","text":"15","textPreview":"15","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/lgra543i","slide":15,"name":"slide-title","text":"部署只是静态文件发布","textPreview":"部署只是静态文件发布","textChars":10,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/0fitwzmx","slide":15,"name":"slide-subtitle","text":"Nginx 将 /huwuyou-demo/ 映射到前端目录","textPreview":"Nginx 将 /huwuyou-demo/ 映射到前端目录","textChars":30,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/bapszul0","slide":15,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"shape","id":"sh/q9gbqp4v","slide":15,"name":"node","bbox":[84,220,210,100]}
+{"kind":"textbox","id":"sh/dc7a1436","slide":15,"name":"text","text":"开发目录","textPreview":"开发目录","textChars":4,"textLines":1,"bbox":[94,228,190,66]}
+{"kind":"textbox","id":"sh/cbytszml","slide":15,"name":"text","text":"HTML / CSS / JS","textPreview":"HTML / CSS / JS","textChars":15,"textLines":1,"bbox":[94,293,190,20]}
+{"kind":"shape","id":"sh/3mpsval4","slide":15,"name":"arrow","bbox":[326,256,70,24]}
+{"kind":"shape","id":"sh/2lwbm54j","slide":15,"name":"node","bbox":[430,220,240,100]}
+{"kind":"textbox","id":"sh/4zypofed","slide":15,"name":"text","text":"Nginx alias","textPreview":"Nginx alias","textChars":11,"textLines":1,"bbox":[440,228,220,66]}
+{"kind":"textbox","id":"sh/507qxkvy","slide":15,"name":"text","text":"/var/www/huwuyou-demo/","textPreview":"/var/www/huwuyou-demo/","textChars":22,"textLines":1,"bbox":[440,293,220,20]}
+{"kind":"shape","id":"sh/ixg7mpwn","slide":15,"name":"arrow","bbox":[704,256,70,24]}
+{"kind":"shape","id":"sh/jyp8vad8","slide":15,"name":"node","bbox":[808,220,260,100]}
+{"kind":"textbox","id":"sh/wvepkfeh","slide":15,"name":"text","text":"浏览器访问","textPreview":"浏览器访问","textChars":5,"textLines":1,"bbox":[818,228,240,66]}
+{"kind":"textbox","id":"sh/hw76tkv2","slide":15,"name":"text","text":"/huwuyou-demo/","textPreview":"/huwuyou-demo/","textChars":14,"textLines":1,"bbox":[818,293,240,20]}
+{"kind":"shape","id":"sh/utw7i5wb","slide":15,"name":"nginx-code","bbox":[84,388,984,160]}
+{"kind":"textbox","id":"sh/vu5oradw","slide":15,"name":"text","text":"location ^~ /huwuyou-demo/ {\n    alias /var/www/huwuyou-demo/;\n    index index.html;\n}","textPreview":"location ^~ /huwuyou-demo/ { |     alias /var/www/huwuyou-demo/; |     index index.html; | }","textChars":86,"textLines":4,"bbox":[116,410,920,110]}
+{"kind":"textbox","id":"sh/gripwzel","slide":15,"name":"text","text":"发布前检查：文件权限 · 路径尾斜杠 · 缓存刷新 · 禁止上传真实资料提示","textPreview":"发布前检查：文件权限 · 路径尾斜杠 · 缓存刷新 · 禁止上传真实资料提示","textChars":38,"textLines":1,"bbox":[84,594,1080,34]}
+{"kind":"textbox","id":"sh/1srq54v6","slide":15,"name":"source","text":"代码依据：deploy/nginx-huwuyou-demo.conf","textPreview":"代码依据：deploy/nginx-huwuyou-demo.conf","textChars":35,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/pc3yt0jy","slide":15,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/brk28c","slide":15,"text":"部署不需要编译产物，只需把静态文件同步到服务器目录。Nginx 配置将 huwuyou-demo 路径映射到 var/www 下的目录，并设置 index.html。上线演示前重点检查目录权限、尾斜杠跳转、浏览器缓存和敏感资料警示。"}
+{"kind":"slide","id":"sl/037hit","slide":16,"title":"16","textShapes":24}
+{"kind":"textbox","id":"sh/7ed8nm98","slide":16,"name":"page-no","text":"16","textPreview":"16","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/8fm9grad","slide":16,"name":"slide-title","text":"生产化改造应先补安全与数据底座","textPreview":"生产化改造应先补安全与数据底座","textChars":15,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/9gvqpcry","slide":16,"name":"slide-subtitle","text":"不要先把原型直接迁移成框架项目","textPreview":"不要先把原型直接迁移成框架项目","textChars":15,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/ypkraxsb","slide":16,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"shape","id":"sh/zqt8j29w","slide":16,"name":"pill","bbox":[66,154,58,34]}
+{"kind":"textbox","id":"sh/kr29c7ah","slide":16,"name":"text","text":"P0","textPreview":"P0","textChars":2,"textLines":1,"bbox":[74,154,42,34]}
+{"kind":"textbox","id":"sh/lsbqlcr2","slide":16,"name":"text","text":"隐私与鉴权","textPreview":"隐私与鉴权","textChars":5,"textLines":1,"bbox":[148,154,190,34]}
+{"kind":"textbox","id":"sh/ilorm18v","slide":16,"name":"text","text":"后端登录、权限、脱敏、审计、加密","textPreview":"后端登录、权限、脱敏、审计、加密","textChars":16,"textLines":1,"bbox":[356,154,810,40]}
+{"kind":"shape","id":"sh/jmxsv69g","slide":16,"name":"line","bbox":[66,208,1100,1]}
+{"kind":"shape","id":"sh/3y9gva5w","slide":16,"name":"pill","bbox":[66,230,58,34]}
+{"kind":"textbox","id":"sh/2x0fm54b","slide":16,"name":"text","text":"P0","textPreview":"P0","textChars":2,"textLines":1,"bbox":[74,230,42,34]}
+{"kind":"textbox","id":"sh/pkryxkn2","slide":16,"name":"text","text":"数据与文件","textPreview":"数据与文件","textChars":5,"textLines":1,"bbox":[148,230,190,34]}
+{"kind":"textbox","id":"sh/ojihofmh","slide":16,"name":"text","text":"PostgreSQL + 对象存储 + 备份恢复","textPreview":"PostgreSQL + 对象存储 + 备份恢复","textChars":24,"textLines":1,"bbox":[356,230,810,40]}
+{"kind":"shape","id":"sh/bm9gzu58","slide":16,"name":"line","bbox":[66,284,1100,1]}
+{"kind":"shape","id":"sh/ql0zqp4n","slide":16,"name":"pill","bbox":[66,306,58,34]}
+{"kind":"textbox","id":"sh/doby1kny","slide":16,"name":"text","text":"P1","textPreview":"P1","textChars":2,"textLines":1,"bbox":[74,306,42,34]}
+{"kind":"textbox","id":"sh/cn2hszmt","slide":16,"name":"text","text":"业务 API","textPreview":"业务 API","textChars":6,"textLines":1,"bbox":[148,306,190,34]}
+{"kind":"textbox","id":"sh/zqtg3u54","slide":16,"name":"text","text":"需求、审批、通知、报告拆成领域接口","textPreview":"需求、审批、通知、报告拆成领域接口","textChars":17,"textLines":1,"bbox":[356,306,810,40]}
+{"kind":"shape","id":"sh/ypkzup4j","slide":16,"name":"line","bbox":[66,360,1100,1]}
+{"kind":"shape","id":"sh/al4jmtor","slide":16,"name":"pill","bbox":[66,382,58,34]}
+{"kind":"textbox","id":"sh/vmdkvypc","slide":16,"name":"text","text":"P1","textPreview":"P1","textChars":2,"textLines":1,"bbox":[74,382,42,34]}
+{"kind":"textbox","id":"sh/wn61o36x","slide":16,"name":"text","text":"AI/OCR 网关","textPreview":"AI/OCR 网关","textChars":9,"textLines":1,"bbox":[148,382,190,34]}
+{"kind":"textbox","id":"sh/hof2x87i","slide":16,"name":"text","text":"后端代理、结构化输出、人工确认、模型审计","textPreview":"后端代理、结构化输出、人工确认、模型审计","textChars":20,"textLines":1,"bbox":[356,382,810,40]}
+{"kind":"shape","id":"sh/mh4jitov","slide":16,"name":"line","bbox":[66,436,1100,1]}
+{"kind":"shape","id":"sh/nid0rypg","slide":16,"name":"pill","bbox":[66,458,58,34]}
+{"kind":"textbox","id":"sh/8jm1kj61","slide":16,"name":"text","text":"P2","textPreview":"P2","textChars":2,"textLines":1,"bbox":[74,458,42,34]}
+{"kind":"textbox","id":"sh/9kvito76","slide":16,"name":"text","text":"工程化","textPreview":"工程化","textChars":3,"textLines":1,"bbox":[148,458,190,34]}
+{"kind":"textbox","id":"sh/6dojudoz","slide":16,"name":"text","text":"TypeScript、模块化、单元/端到端测试、CI/CD","textPreview":"TypeScript、模块化、单元/端到端测试、CI/CD","textChars":29,"textLines":1,"bbox":[356,458,810,40]}
+{"kind":"shape","id":"sh/rehk3i5k","slide":16,"name":"line","bbox":[66,512,1100,1]}
+{"kind":"shape","id":"sh/1k3u9gvy","slide":16,"name":"pill","bbox":[66,534,58,34]}
+{"kind":"textbox","id":"sh/0judgbud","slide":16,"name":"text","text":"P2","textPreview":"P2","textChars":2,"textLines":1,"bbox":[74,534,42,34]}
+{"kind":"textbox","id":"sh/fi1c76ds","slide":16,"name":"text","text":"可观测性","textPreview":"可观测性","textChars":4,"textLines":1,"bbox":[148,534,190,34]}
+{"kind":"textbox","id":"sh/ehsve1c7","slide":16,"name":"text","text":"日志、指标、告警、错误追踪与容量规划","textPreview":"日志、指标、告警、错误追踪与容量规划","textChars":18,"textLines":1,"bbox":[356,534,810,40]}
+{"kind":"shape","id":"sh/dgju5wv2","slide":16,"name":"line","bbox":[66,588,1100,1]}
+{"kind":"textbox","id":"sh/sfadcruh","slide":16,"name":"text","text":"原则：先定义接口和数据契约，再替换前端实现；状态机与安全确认逻辑继续作为业务核心。","textPreview":"原则：先定义接口和数据契约，再替换前端实现；状态机与安全确认逻辑继续作为业务核心。","textChars":41,"textLines":1,"bbox":[66,626,1100,34]}
+{"kind":"textbox","id":"sh/re1c36dw","slide":16,"name":"source","text":"依据：当前代码边界与需求设计文档","textPreview":"依据：当前代码边界与需求设计文档","textChars":16,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/qtsva1cb","slide":16,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/037hit","slide":16,"text":"生产化不要从换 Vue 或 React 开始。第一优先级是隐私、鉴权、数据库和文件存储；第二步把业务能力封装为 API，并建立 AI/OCR 后端网关；最后才是工程化与可观测性。现有状态机和用户确认原则可以保留，页面实现可以逐步替换。"}
+{"kind":"slide","id":"sl/w0dkow","slide":17,"title":"17","textShapes":21}
+{"kind":"textbox","id":"sh/axgzmp4j","slide":17,"name":"page-no","text":"17","textPreview":"17","textChars":2,"textLines":1,"bbox":[56,34,58,34]}
+{"kind":"textbox","id":"sh/x0ryx43a","slide":17,"name":"slide-title","text":"接手顺序：先跑通，再守住状态规则，最后重构","textPreview":"接手顺序：先跑通，再守住状态规则，最后重构","textChars":21,"textLines":1,"bbox":[118,26,1060,58]}
+{"kind":"textbox","id":"sh/wzihozmp","slide":17,"name":"slide-subtitle","text":"一周内完成可控接管","textPreview":"一周内完成可控接管","textChars":9,"textLines":1,"bbox":[120,84,1040,28]}
+{"kind":"shape","id":"sh/nupgral8","slide":17,"name":"title-rule","bbox":[56,118,1168,1]}
+{"kind":"textbox","id":"sh/mtgfi54n","slide":17,"name":"text","text":"Day 1","textPreview":"Day 1","textChars":5,"textLines":1,"bbox":[66,150,112,38]}
+{"kind":"textbox","id":"sh/9w7ytk3y","slide":17,"name":"text","text":"启动与全链路演示","textPreview":"启动与全链路演示","textChars":8,"textLines":1,"bbox":[190,150,260,38]}
+{"kind":"textbox","id":"sh/ovyhkfmt","slide":17,"name":"text","text":"患者提交 → 管理员处理 → 患者查看报告","textPreview":"患者提交 → 管理员处理 → 患者查看报告","textChars":21,"textLines":1,"bbox":[480,150,700,44]}
+{"kind":"shape","id":"sh/zq5gnalw","slide":17,"name":"line","bbox":[66,210,1114,1]}
+{"kind":"textbox","id":"sh/epwfe54b","slide":17,"name":"text","text":"Day 2","textPreview":"Day 2","textChars":5,"textLines":1,"bbox":[66,238,112,38]}
+{"kind":"textbox","id":"sh/0vahg361","slide":17,"name":"text","text":"阅读核心代码","textPreview":"阅读核心代码","textChars":6,"textLines":1,"bbox":[190,238,260,38]}
+{"kind":"textbox","id":"sh/1gjip8nm","slide":17,"name":"text","text":"store.js → workflow.js → app.js → 两端页面","textPreview":"store.js → workflow.js → app.js → 两端页面","textChars":38,"textLines":1,"bbox":[480,238,700,44]}
+{"kind":"shape","id":"sh/etszetov","slide":17,"name":"line","bbox":[66,298,1114,1]}
+{"kind":"textbox","id":"sh/zu10ny5g","slide":17,"name":"text","text":"Day 3","textPreview":"Day 3","textChars":5,"textLines":1,"bbox":[66,326,112,38]}
+{"kind":"textbox","id":"sh/srqhc36p","slide":17,"name":"text","text":"建立回归清单","textPreview":"建立回归清单","textChars":6,"textLines":1,"bbox":[190,326,260,38]}
+{"kind":"textbox","id":"sh/dsjil8na","slide":17,"name":"text","text":"状态转换、医院审批、通知、价格、报告、刷新","textPreview":"状态转换、医院审批、通知、价格、报告、刷新","textChars":21,"textLines":1,"bbox":[480,326,700,44]}
+{"kind":"shape","id":"sh/qp8zatoz","slide":17,"name":"line","bbox":[66,386,1114,1]}
+{"kind":"textbox","id":"sh/rqh0jy54","slide":17,"name":"text","text":"Day 4–5","textPreview":"Day 4–5","textChars":7,"textLines":1,"bbox":[66,414,112,38]}
+{"kind":"textbox","id":"sh/wnu1on69","slide":17,"name":"text","text":"修复与补测试","textPreview":"修复与补测试","textChars":6,"textLines":1,"bbox":[190,414,260,38]}
+{"kind":"textbox","id":"sh/xo3ixsnu","slide":17,"name":"text","text":"先覆盖 P0 规则，不做无关样式重构","textPreview":"先覆盖 P0 规则，不做无关样式重构","textChars":18,"textLines":1,"bbox":[480,414,700,44]}
+{"kind":"shape","id":"sh/54zi1sfy","slide":17,"name":"line","bbox":[66,474,1114,1]}
+{"kind":"textbox","id":"sh/k3qh8ned","slide":17,"name":"text","text":"Week 2+","textPreview":"Week 2+","textChars":7,"textLines":1,"bbox":[66,502,112,38]}
+{"kind":"textbox","id":"sh/j2h0zixs","slide":17,"name":"text","text":"制定生产化 ADR","textPreview":"制定生产化 ADR","textChars":9,"textLines":1,"bbox":[190,502,260,38]}
+{"kind":"textbox","id":"sh/i18z6dw7","slide":17,"name":"text","text":"数据模型、API、鉴权、文件与 AI 网关","textPreview":"数据模型、API、鉴权、文件与 AI 网关","textChars":21,"textLines":1,"bbox":[480,502,700,44]}
+{"kind":"shape","id":"sh/xgzix8fm","slide":17,"name":"line","bbox":[66,562,1114,1]}
+{"kind":"shape","id":"sh/wfqh4ny1","slide":17,"name":"closing","bbox":[66,594,1114,54]}
+{"kind":"textbox","id":"sh/vehgvixg","slide":17,"name":"text","text":"交接完成标准：能复现闭环、能解释边界、能修改状态规则而不破坏既有流程。","textPreview":"交接完成标准：能复现闭环、能解释边界、能修改状态规则而不破坏既有流程。","textChars":35,"textLines":1,"bbox":[84,600,1080,40]}
+{"kind":"textbox","id":"sh/adoz2dgb","slide":17,"name":"source","text":"事实来源：index.html · js/*.js · css/*.css · deploy/nginx-huwuyou-demo.conf · 当前需求与设计文档","textPreview":"事实来源：index.html · js/*.js · css/*.css · deploy/nginx-huwuyou-demo.conf · 当前需求与设计文档","textChars":82,"textLines":1,"bbox":[56,678,1050,20]}
+{"kind":"textbox","id":"sh/9cfyt8fq","slide":17,"name":"footer","text":"护无忧 · 技术交接","textPreview":"护无忧 · 技术交接","textChars":10,"textLines":1,"bbox":[1110,678,114,20]}
+{"kind":"notes","id":"nt/w0dkow","slide":17,"text":"建议第一天只做运行和全链路演示；第二天按 Store、workflow、App 和页面的顺序读代码；第三天建立回归清单；之后再修复和补测试。交接是否成功，不看是否把所有代码读完，而看能否复现业务闭环、解释当前边界，并在修改状态规则时不破坏其他流程。"}

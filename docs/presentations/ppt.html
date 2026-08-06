@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>护无忧·智陪诊全链路平台 · 技术交接汇报</title>
+<link rel="stylesheet" href="../../src/styles/style.css" />
+<style>
+  /* ===== PPT 专属样式 ===== */
+  body { background: #0f172a; overflow: hidden; }
+  body.ppt-mode { background: #0f172a; }
+  .ppt-stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .ppt-slide {
+    width: 1280px; height: 720px; background: var(--bg-secondary);
+    border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    position: relative; overflow: hidden;
+    display: none; flex-direction: column;
+    color: var(--text-primary);
+  }
+  .ppt-slide.active { display: flex; }
+
+  /* 顶部标题栏 */
+  .ppt-head {
+    padding: 28px 48px 16px; border-bottom: 1px solid var(--border-color);
+    display: flex; justify-content: space-between; align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .ppt-head .ph-title { font-size: 26px; font-weight: 700; font-family: 'Noto Serif SC', serif; color: var(--text-primary); }
+  .ppt-head .ph-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.5px; }
+  .ppt-head .ph-num { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+  .ppt-head .ph-num span { color: var(--accent); font-weight: 700; font-size: 16px; }
+
+  /* 内容区 */
+  .ppt-body { flex: 1; padding: 28px 48px; overflow-y: auto; }
+  .ppt-body::-webkit-scrollbar { width: 4px; }
+  .ppt-body::-webkit-scrollbar-thumb { background: var(--border-light); }
+
+  /* 底部控制条 */
+  .ppt-foot {
+    padding: 14px 48px; border-top: 1px solid var(--border-color);
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--bg-tertiary); flex-shrink: 0;
+  }
+  .ppt-foot .pf-hint { font-size: 11px; color: var(--text-muted); }
+  .ppt-foot .pf-hint kbd {
+    display: inline-block; padding: 2px 8px; background: #fff; border: 1px solid var(--border-color);
+    border-radius: 4px; font-size: 11px; color: var(--text-primary); margin: 0 2px; font-family: monospace;
+  }
+  .ppt-foot .pf-nav { display: flex; gap: 8px; }
+  .ppt-foot .pf-nav button {
+    padding: 6px 14px; border: 1px solid var(--border-color); background: #fff;
+    border-radius: 6px; font-size: 12px; cursor: pointer; color: var(--text-secondary);
+  }
+  .ppt-foot .pf-nav button:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* === 封面 === */
+  .cover { padding: 0; }
+  .cover-inner {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+    color: #fff; padding: 48px;
+  }
+  .cover-logo { width: 80px; height: 80px; border-radius: 20px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 700; font-family: 'Noto Serif SC', serif; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.25); }
+  .cover-title { font-size: 44px; font-weight: 700; font-family: 'Noto Serif SC', serif; letter-spacing: 2px; margin-bottom: 12px; }
+  .cover-sub { font-size: 18px; opacity: 0.9; letter-spacing: 1px; margin-bottom: 32px; }
+  .cover-meta { display: flex; gap: 24px; font-size: 13px; opacity: 0.85; }
+  .cover-meta div { padding: 8px 16px; background: rgba(255,255,255,0.1); border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); }
+  .cover-foot { padding: 18px 48px; background: var(--bg-secondary); color: var(--text-muted); font-size: 12px; display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); }
+
+  /* === 内容卡片 === */
+  .s-grid { display: grid; gap: 14px; }
+  .s-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .s-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .s-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .s-card {
+    background: var(--bg-secondary); border: 1px solid var(--border-color);
+    border-radius: 8px; padding: 16px; transition: all .2s;
+  }
+  .s-card.accent { border-left: 3px solid var(--accent); }
+  .s-card.warn { border-left: 3px solid var(--accent-amber); }
+  .s-card.success { border-left: 3px solid var(--status-covered); }
+  .s-card.danger { border-left: 3px solid var(--status-notfound); }
+  .s-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: var(--text-primary); }
+  .s-card h4 .num { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  .s-card p, .s-card li { font-size: 12.5px; color: var(--text-secondary); line-height: 1.7; }
+  .s-card ul { padding-left: 16px; }
+  .s-card code { background: var(--bg-tertiary); padding: 1px 6px; border-radius: 3px; font-size: 11.5px; color: var(--accent-deep); font-family: 'SF Mono', Consolas, monospace; }
+  .s-card .tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; display: inline-block; }
+  .s-card .tag-blue { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(59,108,181,0.2); }
+
+  /* === 目录 === */
+  .toc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .toc-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg-tertiary); border-radius: 8px; cursor: pointer; transition: all .15s; border: 1px solid transparent; }
+  .toc-item:hover { background: var(--accent-bg); border-color: var(--accent); }
+  .toc-num { width: 28px; height: 28px; border-radius: 8px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  .toc-text { font-size: 13px; color: var(--text-primary); font-weight: 500; }
+
+  /* === 文件树 === */
+  .file-tree { font-family: 'SF Mono', Consolas, monospace; font-size: 12.5px; line-height: 1.9; color: var(--text-secondary); background: var(--bg-tertiary); padding: 16px 20px; border-radius: 8px; }
+  .file-tree .dir { color: var(--accent); font-weight: 600; }
+  .file-tree .file { color: var(--text-primary); }
+  .file-tree .desc { color: var(--text-muted); font-family: 'Noto Sans SC', sans-serif; font-size: 11.5px; margin-left: 12px; }
+  .file-tree .lines { color: var(--accent-amber); font-size: 11px; margin-left: 8px; }
+
+  /* === 架构图 === */
+  .arch { padding: 14px; background: var(--bg-tertiary); border-radius: 8px; }
+  .arch-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
+  .arch-row:last-child { margin-bottom: 0; }
+  .arch-box { background: #fff; border: 1.5px solid var(--border-color); padding: 10px 14px; border-radius: 6px; font-size: 12px; text-align: center; min-width: 100px; }
+  .arch-box.blue { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  .arch-box.amber { border-color: var(--accent-amber); background: rgba(196,146,46,0.08); color: var(--accent-amber); font-weight: 600; }
+  .arch-box.green { border-color: var(--status-covered); background: rgba(22,163,74,0.08); color: var(--status-covered); font-weight: 600; }
+  .arch-arrow { display: flex; align-items: center; color: var(--text-muted); font-size: 14px; }
+
+  /* === 流程图 === */
+  .flow { display: flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: wrap; padding: 8px 0; }
+  .flow-step { background: var(--accent); color: #fff; padding: 10px 16px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+  .flow-step.alt { background: var(--accent-amber); }
+  .flow-step.end { background: var(--status-covered); }
+  .flow-step.cancel { background: var(--status-notfound); }
+  .flow-arrow { color: var(--text-muted); font-size: 16px; margin: 0 2px; }
+
+  /* === 代码块 === */
+  pre.code {
+    background: #1e293b; color: #e2e8f0; padding: 14px 18px; border-radius: 8px;
+    font-family: 'SF Mono', Consolas, monospace; font-size: 11.5px; line-height: 1.65;
+    overflow-x: auto; margin: 8px 0;
+  }
+  pre.code .kw { color: #c084fc; }
+  pre.code .str { color: #86efac; }
+  pre.code .com { color: #64748b; font-style: italic; }
+  pre.code .num { color: #fbbf24; }
+  pre.code .fn { color: #60a5fa; }
+
+  /* === 表格 === */
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; border-radius: 6px; overflow: hidden; }
+  table.tbl th { background: var(--bg-tertiary); padding: 10px 12px; text-align: left; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); font-size: 11.5px; }
+  table.tbl td { padding: 10px 12px; border-bottom: 1px solid var(--border-color); color: var(--text-primary); vertical-align: top; }
+  table.tbl tr:last-child td { border-bottom: none; }
+  table.tbl code { background: var(--bg-tertiary); padding: 1px 6px; border-radius: 3px; font-size: 11px; color: var(--accent-deep); font-family: monospace; }
+
+  /* === 重点提示 === */
+  .callout { padding: 14px 16px; border-radius: 8px; font-size: 12.5px; line-height: 1.7; display: flex; gap: 10px; align-items: flex-start; margin: 10px 0; }
+  .callout.info { background: var(--accent-bg); border-left: 3px solid var(--accent); color: var(--text-primary); }
+  .callout.warn { background: rgba(196,146,46,0.08); border-left: 3px solid var(--accent-amber); color: var(--text-primary); }
+  .callout.success { background: rgba(22,163,74,0.08); border-left: 3px solid var(--status-covered); color: var(--text-primary); }
+  .callout .ci { font-size: 16px; flex-shrink: 0; }
+
+  /* 列表 */
+  ul.bullet { list-style: none; padding: 0; }
+  ul.bullet li { padding: 6px 0 6px 18px; position: relative; font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+  ul.bullet li::before { content: "▸"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+  ul.bullet li strong { color: var(--text-primary); }
+
+  /* 大数据展示 */
+  .stat-row { display: flex; gap: 12px; }
+  .stat-block { flex: 1; background: var(--bg-tertiary); padding: 12px; border-radius: 8px; text-align: center; }
+  .stat-block .v { font-size: 22px; font-weight: 700; color: var(--accent); }
+  .stat-block .l { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+</style>
+</head>
+<body class="ppt-mode">
+<div class="ppt-stage">
+
+<!-- ============ Slide 1: 封面 ============ -->
+<div class="ppt-slide active" data-slide="1">
+  <div class="cover-inner">
+    <div class="cover-logo">护</div>
+    <div class="cover-title">护无忧 · 智陪诊全链路平台</div>
+    <div class="cover-sub">技术交接汇报 · 让接手者快速上手</div>
+    <div class="cover-meta">
+      <div>📁 纯前端 SaaS 应用</div>
+      <div>🚀 GitHub Pages 部署</div>
+      <div>🤖 DeepSeek AI 集成</div>
+      <div>📱 双端架构（患者+后台）</div>
+    </div>
+  </div>
+  <div class="cover-foot">
+    <span>汇报人：研发组</span>
+    <span>版本：v2.0 · 2026-07</span>
+    <span>仓库：github.com/16zyc/huwuyou-platform</span>
+  </div>
+</div>
+
+<!-- ============ Slide 2: 目录 ============ -->
+<div class="ppt-slide" data-slide="2">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">目录</div>
+      <div class="ph-sub">CONTENTS</div>
+    </div>
+    <div class="ph-num"><span>02</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="toc-list">
+      <div class="toc-item" onclick="goSlide(3)"><div class="toc-num">1</div><div class="toc-text">项目概述与定位</div></div>
+      <div class="toc-item" onclick="goSlide(4)"><div class="toc-num">2</div><div class="toc-text">技术底座选型说明</div></div>
+      <div class="toc-item" onclick="goSlide(5)"><div class="toc-num">3</div><div class="toc-text">系统整体架构</div></div>
+      <div class="toc-item" onclick="goSlide(6)"><div class="toc-num">4</div><div class="toc-text">文件结构与代码组织</div></div>
+      <div class="toc-item" onclick="goSlide(7)"><div class="toc-num">5</div><div class="toc-text">核心数据模型（5 大全局池）</div></div>
+      <div class="toc-item" onclick="goSlide(8)"><div class="toc-num">6</div><div class="toc-text">路由与状态机</div></div>
+      <div class="toc-item" onclick="goSlide(9)"><div class="toc-num">7</div><div class="toc-text">患者端 5 大功能模块</div></div>
+      <div class="toc-item" onclick="goSlide(10)"><div class="toc-num">8</div><div class="toc-text">管理后台 9 大菜单</div></div>
+      <div class="toc-item" onclick="goSlide(11)"><div class="toc-num">9</div><div class="toc-text">跨端数据流转全链路</div></div>
+      <div class="toc-item" onclick="goSlide(12)"><div class="toc-num">10</div><div class="toc-text">AI 集成方案</div></div>
+      <div class="toc-item" onclick="goSlide(13)"><div class="toc-num">11</div><div class="toc-text">部署与发布流程</div></div>
+      <div class="toc-item" onclick="goSlide(14)"><div class="toc-num">12</div><div class="toc-text">演示账号与功能入口</div></div>
+      <div class="toc-item" onclick="goSlide(15)"><div class="toc-num">13</div><div class="toc-text">接手维护指南</div></div>
+      <div class="toc-item" onclick="goSlide(16)"><div class="toc-num">14</div><div class="toc-text">后续优化方向 & Q&A</div></div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">提示：使用 <kbd>←</kbd> <kbd>→</kbd> 切换幻灯片，<kbd>F</kbd> 全屏</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 3: 项目概述 ============ -->
+<div class="ppt-slide" data-slide="3">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">1. 项目概述与定位</div>
+      <div class="ph-sub">PRODUCT OVERVIEW</div>
+    </div>
+    <div class="ph-num"><span>03</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="callout info">
+      <span class="ci">🎯</span>
+      <div><strong>定位：</strong>面向老人/行动不便人群的智能陪诊服务 SaaS 平台，连接<strong>患者</strong>、<strong>陪诊师</strong>、<strong>医院</strong>、<strong>运营管理员</strong>四方，实现"需求提交 → AI 解析 → 派单 → 医院对接 → 服务跟踪 → 评价反馈"的<strong>全链路闭环</strong>。</div>
+    </div>
+
+    <div class="s-grid cols-2" style="margin-top:16px;">
+      <div class="s-card accent">
+        <h4><span class="num">1</span>解决什么问题</h4>
+        <ul class="bullet">
+          <li>老人子女不在身边，<strong>看病无人陪同</strong></li>
+          <li>挂号、排队、取药流程复杂，<strong>老人搞不定</strong></li>
+          <li>陪诊师资源分散，<strong>缺乏统一调度</strong></li>
+          <li>服务质量难追踪，<strong>出问题无据可查</strong></li>
+        </ul>
+      </div>
+      <div class="s-card success">
+        <h4><span class="num">2</span>核心价值</h4>
+        <ul class="bullet">
+          <li><strong>患者端：</strong>AI 说话填单 + 进度透明 + 紧急联系</li>
+          <li><strong>陪诊师：</strong>统一接单 + 智能匹配（专长+区域）</li>
+          <li><strong>医院：</strong>申请对接 + 后台审批 + 累计订单</li>
+          <li><strong>管理员：</strong>SaaS 后台 + 风险预警 + 审计日志</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="s-card warn" style="margin-top:14px;">
+      <h4><span class="num">3</span>演示规模数据</h4>
+      <div class="stat-row" style="margin-top:8px;">
+        <div class="stat-block"><div class="v">5</div><div class="l">陪诊师</div></div>
+        <div class="stat-block"><div class="v">4</div><div class="l">合作医院</div></div>
+        <div class="stat-block"><div class="v">4</div><div class="l">患者档案</div></div>
+        <div class="stat-block"><div class="v">4</div><div class="l">服务套餐</div></div>
+        <div class="stat-block"><div class="v">3</div><div class="l">预置订单</div></div>
+        <div class="stat-block"><div class="v">9</div><div class="l">后台菜单</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">访问地址：<kbd>https://16zyc.github.io/huwuyou-platform/</kbd></div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 4: 技术底座 ============ -->
+<div class="ppt-slide" data-slide="4">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">2. 技术底座选型</div>
+      <div class="ph-sub">TECH STACK</div>
+    </div>
+    <div class="ph-num"><span>04</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="s-grid cols-2">
+      <div class="s-card accent">
+        <h4>前端基础</h4>
+        <ul class="bullet">
+          <li><strong>HTML5 + CSS3 + 原生 JavaScript</strong>（无任何框架）</li>
+          <li>ES6+ 语法：模板字符串、async/await、解构、箭头函数</li>
+          <li>CSS Variables（设计 token 系统，对齐科研2 SaaS）</li>
+          <li>无构建工具，<strong>改完即上线</strong>，无 webpack/vite</li>
+        </ul>
+      </div>
+      <div class="s-card accent">
+        <h4>样式系统</h4>
+        <ul class="bullet">
+          <li><strong>Noto Sans SC</strong>（正文）+ <strong>Noto Serif SC</strong>（标题）</li>
+          <li>系统字体 fallback：PingFang SC / 微软雅黑</li>
+          <li>设计 token：主色 <code>#3b6cb5</code>、圆角 <code>8px/12px</code></li>
+          <li>SVG 线条图标库（lucide-react 风格，约 25 个）</li>
+        </ul>
+      </div>
+      <div class="s-card success">
+        <h4>AI 集成</h4>
+        <ul class="bullet">
+          <li><strong>DeepSeek Chat API</strong>（OpenAI 兼容协议）</li>
+          <li>REST 接口：<code>POST /v1/chat/completions</code></li>
+          <li>模型：<code>deepseek-chat</code>，temperature=0.3</li>
+          <li>本地 fallback：<code>parseSpokenNeed()</code> 口语化解析</li>
+          <li>API Key 存浏览器 localStorage</li>
+        </ul>
+      </div>
+      <div class="s-card success">
+        <h4>部署架构</h4>
+        <ul class="bullet">
+          <li><strong>GitHub Pages</strong> 静态托管（零成本）</li>
+          <li>仓库：<code>16zyc/huwuyou-platform</code></li>
+          <li>git push → 自动构建 → 全球 CDN</li>
+          <li>无后端服务器、无数据库（数据在内存）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout warn" style="margin-top:14px;">
+      <span class="ci">💡</span>
+      <div><strong>选型理由：</strong>本项目为<strong>演示/POC 阶段</strong>，纯前端架构保证"零运维成本 + 极速迭代"。后续若投入生产，需在后端补 FastAPI + PostgreSQL + Redis，前端可平滑迁移到 Vue3/React（核心逻辑都在 JS 模块对象里，可移植性好）。</div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">技术栈极简，<strong>一个会 JavaScript 的工程师即可接手</strong></div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 5: 系统架构 ============ -->
+<div class="ppt-slide" data-slide="5">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">3. 系统整体架构</div>
+      <div class="ph-sub">SYSTEM ARCHITECTURE</div>
+    </div>
+    <div class="ph-num"><span>05</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="arch">
+      <div style="text-align:center; font-size:11px; color:var(--text-muted); margin-bottom:10px; letter-spacing:1px;">用户层</div>
+      <div class="arch-row">
+        <div class="arch-box blue">👤 患者<br><span style="font-size:10px; color:var(--text-muted);">手机端</span></div>
+        <div class="arch-box blue">👨‍💼 管理员<br><span style="font-size:10px; color:var(--text-muted);">PC 端 SaaS</span></div>
+      </div>
+
+      <div style="text-align:center; margin:8px 0; color:var(--text-muted);">↓</div>
+
+      <div style="text-align:center; font-size:11px; color:var(--text-muted); margin-bottom:10px; letter-spacing:1px;">前端路由层（App 状态机）</div>
+      <div class="arch-row">
+        <div class="arch-box">loginSelect</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">patientLogin / adminLogin</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box amber">Patient.render()<br>Admin.render()</div>
+      </div>
+
+      <div style="text-align:center; margin:8px 0; color:var(--text-muted);">↓</div>
+
+      <div style="text-align:center; font-size:11px; color:var(--text-muted); margin-bottom:10px; letter-spacing:1px;">业务逻辑层（4 个全局对象）</div>
+      <div class="arch-row">
+        <div class="arch-box green">App<br><span style="font-size:10px;">路由+AI</span></div>
+        <div class="arch-box green">Patient<br><span style="font-size:10px;">5 Tab 渲染</span></div>
+        <div class="arch-box green">Admin<br><span style="font-size:10px;">9 菜单渲染</span></div>
+        <div class="arch-box green">MockData<br><span style="font-size:10px;">模拟数据</span></div>
+      </div>
+
+      <div style="text-align:center; margin:8px 0; color:var(--text-muted);">↓</div>
+
+      <div style="text-align:center; font-size:11px; color:var(--text-muted); margin-bottom:10px; letter-spacing:1px;">数据池层（内存数据库）</div>
+      <div class="arch-row">
+        <div class="arch-box">NeedPool<br><span style="font-size:10px; color:var(--text-muted);">需求池</span></div>
+        <div class="arch-box">PriceTable<br><span style="font-size:10px; color:var(--text-muted);">价格表</span></div>
+        <div class="arch-box">HospitalApplyPool<br><span style="font-size:10px; color:var(--text-muted);">医院申请</span></div>
+        <div class="arch-box">NotifyPool<br><span style="font-size:10px; color:var(--text-muted);">通知池</span></div>
+      </div>
+
+      <div style="text-align:center; margin:8px 0; color:var(--text-muted);">↓</div>
+
+      <div style="text-align:center; font-size:11px; color:var(--text-muted); margin-bottom:10px; letter-spacing:1px;">外部服务</div>
+      <div class="arch-row">
+        <div class="arch-box" style="border-color:var(--accent-amber); background:rgba(196,146,46,0.08); color:var(--accent-amber);">DeepSeek API<br><span style="font-size:10px; color:var(--text-muted);">api.deepseek.com</span></div>
+        <div class="arch-box" style="border-color:var(--accent-amber); background:rgba(196,146,46,0.08); color:var(--accent-amber);">GitHub Pages<br><span style="font-size:10px; color:var(--text-muted);">CDN 部署</span></div>
+        <div class="arch-box" style="border-color:var(--accent-amber); background:rgba(196,146,46,0.08); color:var(--accent-amber);">Google Fonts<br><span style="font-size:10px; color:var(--text-muted);">字体 CDN</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">分层清晰：<strong>用户→路由→业务→数据→外部</strong> 五层架构</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 6: 文件结构 ============ -->
+<div class="ppt-slide" data-slide="6">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">4. 文件结构与代码组织</div>
+      <div class="ph-sub">FILE STRUCTURE</div>
+    </div>
+    <div class="ph-num"><span>06</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="file-tree">
+<span class="dir">huwuyou-platform/</span>
+├── <span class="file">index.html</span> <span class="desc">入口页（仅 20 行，引入 CSS 和 4 个 JS）</span>
+├── <span class="dir">src/styles/</span> <span class="desc">全局样式 + 工作流样式</span>
+├── <span class="dir">src/scripts/</span>
+│   ├── <span class="file">data.js</span> <span class="desc">数据池 + MockData 模拟数据</span>
+│   ├── <span class="file">store.js</span> <span class="desc">统一状态层 + 服务适配器</span>
+│   ├── <span class="file">app.js</span> <span class="desc">App 主控：状态机路由 + 登录页</span>
+│   ├── <span class="file">patient.js</span> <span class="desc">Patient 对象：患者端 5 Tab 渲染</span>
+│   ├── <span class="file">admin.js</span> <span class="desc">Admin 对象：后台菜单与业务逻辑</span>
+│   └── <span class="file">workflow.js</span> <span class="desc">患者、AI 与管理端统一工作流</span>
+├── <span class="dir">docs/</span> <span class="desc">需求、演示稿、截图和设计记录</span>
+└── <span class="file">README.md</span> <span class="desc">开发与交接说明</span>
+    </div>
+
+    <div class="s-grid cols-2" style="margin-top:14px;">
+      <div class="s-card accent">
+        <h4>加载顺序（关键！）</h4>
+        <pre class="code"><span class="com">&lt;!-- index.html --&gt;</span>
+&lt;<span class="kw">link</span> <span class="str">rel</span>=<span class="str">"stylesheet"</span> <span class="str">href</span>=<span class="str">"src/styles/style.css"</span>&gt;
+&lt;<span class="kw">div</span> <span class="str">id</span>=<span class="str">"root"</span>&gt;&lt;/<span class="kw">div</span>&gt;
+&lt;<span class="kw">script</span> <span class="str">src</span>=<span class="str">"src/scripts/data.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;
+&lt;<span class="kw">script</span> <span class="str">src</span>=<span class="str">"src/scripts/store.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;
+&lt;<span class="kw">script</span> <span class="str">src</span>=<span class="str">"src/scripts/app.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;
+&lt;<span class="kw">script</span> <span class="str">src</span>=<span class="str">"src/scripts/patient.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;
+&lt;<span class="kw">script</span> <span class="str">src</span>=<span class="str">"src/scripts/admin.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;
+&lt;<span class="kw">script</span> <span class="str">src</span>=<span class="str">"src/scripts/workflow.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;</pre>
+        <p style="margin-top:6px;">⚠️ <strong>顺序不能错！</strong>data → store → app → patient → admin → workflow，后加载文件依赖前面的全局对象。</p>
+      </div>
+      <div class="s-card success">
+        <h4>命名约定</h4>
+        <ul class="bullet">
+          <li><strong>全局对象</strong>：首字母大写驼峰 <code>NeedPool</code></li>
+          <li><strong>方法</strong>：小驼峰 <code>renderHome(el)</code></li>
+          <li><strong>常量</strong>：全大写下划线 <code>P_ICON</code></li>
+          <li><strong>CSS 类</strong>：kebab-case <code>.role-bar</code></li>
+          <li><strong>状态值</strong>：中文枚举 <code>'待处理'</code> <code>'服务中'</code></li>
+          <li><strong>事件</strong>：onclick 内联 + addEventListener 混用</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">总代码量 ~<strong>3000 行</strong>，无任何依赖包</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 7: 数据模型 ============ -->
+<div class="ppt-slide" data-slide="7">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">5. 核心数据模型（5 大全局池）</div>
+      <div class="ph-sub">DATA MODELS</div>
+    </div>
+    <div class="ph-num"><span>07</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <table class="tbl">
+      <thead><tr><th width="20%">数据池</th><th width="35%">作用</th><th width="45%">关键方法</th></tr></thead>
+      <tbody>
+        <tr><td><code>NeedPool</code><br><span class="tag tag-blue" style="background:var(--accent-bg); color:var(--accent);">核心</span></td>
+          <td>需求/订单池，<strong>驱动全链路</strong>。状态：待处理→已分配→已对接→服务中→已完成/已取消</td>
+          <td><code>add(need)</code> 新增<br><code>getById(id)</code> 查询<br><code>update(id, patch)</code> 更新状态</td></tr>
+        <tr><td><code>PriceTable</code></td>
+          <td>服务套餐价格表（后台可改，患者端联动）</td>
+          <td><code>getPrice(name)</code> 取价<br><code>updatePrice(id, price)</code> 改价</td></tr>
+        <tr><td><code>HospitalApplyPool</code></td>
+          <td>患者申请对接新医院 → 后台审批</td>
+          <td><code>add(item)</code> 提交申请<br><code>approve(id, contact, phone)</code> 通过<br><code>reject(id)</code> 驳回</td></tr>
+        <tr><td><code>NotifyPool</code></td>
+          <td>后台顶部铃铛通知池（新患者/医院申请/状态变更）</td>
+          <td><code>add(text, type)</code> 推送<br><code>markAllRead()</code> 全部已读<br><code>unread</code> getter 取未读数</td></tr>
+        <tr><td><code>AIConfig</code></td>
+          <td>DeepSeek API 配置（Key 存 localStorage）</td>
+          <td><code>setKey(key)</code> 保存 Key<br>属性：<code>apiKey</code> <code>baseUrl</code> <code>model</code></td></tr>
+        <tr><td><code>MockData</code></td>
+          <td>模拟数据：患者信息/陪诊师/医院/患者档案/财务/评价/风险预警/KPI</td>
+          <td>启动时执行 <code>MockData.initNeeds.forEach(n =&gt; NeedPool.add(n))</code> 注入预置订单</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout info" style="margin-top:14px;">
+      <span class="ci">📦</span>
+      <div><strong>数据生命周期：</strong>所有数据<strong>仅存内存</strong>（页面刷新即丢失），适合演示。<strong>生产化要点：</strong>将每个 Pool 改为 FastAPI 后端 + PostgreSQL 表，前端 fetch 调用即可，业务逻辑零改动。</div>
+    </div>
+
+    <pre class="code"><span class="com">// data.js 中 NeedPool 的定义（典型 Pool 模式）</span>
+<span class="kw">const</span> <span class="fn">NeedPool</span> = {
+  list: [], seq: <span class="num">1</span>,
+  <span class="fn">add</span>(need) {
+    <span class="kw">const</span> id = <span class="str">'N'</span> + <span class="fn">String</span>(<span class="fn">Date.now</span>().<span class="fn">slice</span>(-<span class="num">6</span>)) + <span class="kw">this</span>.seq++;
+    <span class="kw">const</span> n = <span class="fn">Object.assign</span>({ id, status: <span class="str">'待处理'</span>, createTime: now, ... }, need);
+    <span class="kw">this</span>.list.<span class="fn">unshift</span>(n); <span class="kw">return</span> n;
+  },
+  <span class="fn">update</span>(id, patch) { <span class="kw">const</span> n = <span class="kw">this</span>.<span class="fn">getById</span>(id); <span class="kw">if</span> (n) <span class="fn">Object.assign</span>(n, patch); }
+};</pre>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">所有数据池采用<strong>统一的 Pool 模式</strong>，扩展新池只需 5 行代码</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 8: 路由状态机 ============ -->
+<div class="ppt-slide" data-slide="8">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">6. 路由与状态机</div>
+      <div class="ph-sub">ROUTING & STATE MACHINE</div>
+    </div>
+    <div class="ph-num"><span>08</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="callout info">
+      <span class="ci">🔀</span>
+      <div>采用<strong>纯 JS 状态机路由</strong>（无 react-router / vue-router），所有路由切换通过 <code>App.state</code> 驱动 <code>App.render()</code> 重渲染 <code>#root</code>。</div>
+    </div>
+
+    <div class="flow" style="margin-top:18px;">
+      <div class="flow-step">loginSelect<br><span style="font-size:10px;">登录选择页</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step alt">patientLogin<br><span style="font-size:10px;">患者登录</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step end">patient<br><span style="font-size:10px;">患者端 5 Tab</span></div>
+    </div>
+    <div class="flow" style="margin-top:8px;">
+      <div class="flow-step">loginSelect</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step alt">adminLogin<br><span style="font-size:10px;">管理员登录</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step end">admin<br><span style="font-size:10px;">后台 9 菜单</span></div>
+    </div>
+
+    <div class="s-grid cols-2" style="margin-top:18px;">
+      <div class="s-card accent">
+        <h4>App.state 5 个取值</h4>
+        <ul class="bullet">
+          <li><code>loginSelect</code> - 登录方式选择</li>
+          <li><code>patientLogin</code> - 患者登录表单</li>
+          <li><code>adminLogin</code> - 管理员登录表单</li>
+          <li><code>patient</code> - 患者端主界面</li>
+          <li><code>admin</code> - 后台主界面</li>
+        </ul>
+      </div>
+      <div class="s-card success">
+        <h4>路由切换核心代码</h4>
+        <pre class="code"><span class="fn">render</span>() {
+  <span class="kw">const</span> root = <span class="fn">getElementById</span>(<span class="str">'root'</span>);
+  document.body.className = <span class="kw">this</span>.state;
+  <span class="kw">if</span> (<span class="kw">this</span>.state === <span class="str">'patient'</span>)
+    <span class="kw">this</span>.<span class="fn">renderPatientApp</span>(root);
+  <span class="kw">else if</span> (<span class="kw">this</span>.state === <span class="str">'admin'</span>)
+    <span class="fn">Admin</span>.<span class="fn">render</span>(root);
+  ...
+}</pre>
+      </div>
+    </div>
+
+    <div class="callout warn" style="margin-top:14px;">
+      <span class="ci">⚠️</span>
+      <div><strong>接手注意：</strong>每次状态切换都会<strong>整个 root 重新渲染</strong>（无 Virtual DOM diff），所以事件监听必须<strong>在 render 之后</strong>通过 <code>addEventListener</code> 绑定。<code>onclick</code> 内联事件调用全局对象方法（如 <code>onclick="App.logout()"</code>）。</div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">Body class 同步 state：<code>body.patient</code> / <code>body.admin</code> 控制布局</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 9: 患者端功能 ============ -->
+<div class="ppt-slide" data-slide="9">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">7. 患者端 5 大功能模块</div>
+      <div class="ph-sub">PATIENT APP FEATURES</div>
+    </div>
+    <div class="ph-num"><span>09</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <table class="tbl">
+      <thead><tr><th width="14%">Tab</th><th width="20%">名称</th><th width="46%">核心功能</th><th width="20%">关键方法</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>🏠 首页</td>
+          <td>问候卡 + AI 入口 + 快捷入口 + 今日陪诊卡 + 紧急求助/客服热线</td>
+          <td><code>renderHome(el)</code></td></tr>
+        <tr><td>1</td><td>📋 我的需求</td>
+          <td>表单填写（基本信息/病史/联系方式/服务要求）+ <strong>身份证 OCR 上传</strong>（正反面）+ <strong>检查报告多图上传</strong> + 价格联动 + 提交入 NeedPool</td>
+          <td><code>renderNeed(el)</code><br><code>submitNeed()</code></td></tr>
+        <tr><td>2</td><td>📍 陪诊进度</td>
+          <td>5 步进度条（待处理→已分配→已对接→服务中→已完成）+ 陪诊师信息卡 + 实时状态 + 评价入口（5 星+标签+文字）</td>
+          <td><code>renderProgress(el)</code><br><code>submitFeedback(id)</code></td></tr>
+        <tr><td>3</td><td>🏥 医院介绍</td>
+          <td>合作医院列表（等级/地址/简介） + <strong>申请对接新医院</strong>表单 → HospitalApplyPool</td>
+          <td><code>renderHospitals(el)</code><br><code>applyHospital()</code></td></tr>
+        <tr><td>4</td><td>👤 我的</td>
+          <td>头像+基本信息 + 服务统计卡 + 权益卡（剩余次数）+ 常用信息（病史/过敏/用药）+ 紧急联系人 + 最近评价</td>
+          <td><code>renderProfile(el)</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="s-grid cols-3" style="margin-top:14px;">
+      <div class="s-card accent">
+        <h4>🤖 AI 悬浮球</h4>
+        <p>右下角悬浮球，点击展开 AI 对话面板。支持<strong>3 个快捷指令</strong> + 自由输入。AI 解析成功后<strong>自动创建需求</strong>并引导上传证件。</p>
+      </div>
+      <div class="s-card success">
+        <h4>📱 手机壳布局</h4>
+        <p>PC 端居中显示<strong>420px 宽手机壳</strong>（带圆角阴影），手机端<strong>全屏自适应</strong>。5 个 Tab 高度一致（100vh + flex column + 独立滚动）。</p>
+      </div>
+      <div class="s-card warn">
+        <h4>🆘 紧急联系</h4>
+        <p>首页底部两个按钮：<strong>紧急求助</strong>（发送通知给后台+陪诊师）、<strong>客服热线</strong>（24h 客服）。</p>
+      </div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">患者端核心入口：<kbd>App.openAI()</kbd> 唤起 AI 面板</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 10: 后台菜单 ============ -->
+<div class="ppt-slide" data-slide="10">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">8. 管理后台 9 大菜单</div>
+      <div class="ph-sub">ADMIN PANEL MENUS</div>
+    </div>
+    <div class="ph-num"><span>10</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <table class="tbl">
+      <thead><tr><th width="14%">分组</th><th width="14%">菜单</th><th width="44%">核心功能</th><th width="28%">关键交互</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="3">运营总览</td><td>📊 工作台</td><td>6 个 KPI 卡片 + 待处理需求列表 + 服务中订单 + 风险预警</td><td>KPI hover、点击需求跳详情</td></tr>
+        <tr><td>📍 服务跟踪</td><td>4 个状态 KPI + 进行中订单表格 + 5 步进度迷你点</td><td>点击"详情"打开订单弹窗</td></tr>
+        <tr><td>💰 服务收费</td><td>4 个财务 KPI + <strong>价格表（可改）</strong> + 改价操作记录</td><td>输入价格→onchange 保存</td></tr>
+        <tr><td rowspan="4">业务管理</td><td>👥 患者档案</td><td>5 位患者表格（含病史/过敏/订单数/满意度） + 详情弹窗</td><td>点击"详情"看完整档案</td></tr>
+        <tr><td>📥 需求处理</td><td>6 个状态筛选 Tab + 需求表格 + <strong>详情弹窗（含 AI 派单推荐）</strong></td><td>分配陪诊师 / 对接医院 / 开始服务</td></tr>
+        <tr><td>🧑‍⚕️ 陪诊师管理</td><td>陪诊师卡片网格（评分/订单/收入/完成率）+ 详情弹窗</td><td>点击卡片查看档案</td></tr>
+        <tr><td>🏥 医院审批</td><td>3 个审批 KPI + 待审批申请 + 已处理记录 + 已合作医院</td><td>通过(填对接人)/驳回/编辑简介</td></tr>
+        <tr><td rowspan="2">系统</td><td>⭐ 评价反馈</td><td>4 个评价 KPI + 评价卡片（差评自动标记红色边框）</td><td>差评创建回访工单</td></tr>
+        <tr><td>⚙️ 系统设置</td><td>价格配置 + <strong>AI 模型监控（准确率条）</strong> + DeepSeek Key 输入 + 审计日志 + 公告推送</td><td>保存 API Key 到 localStorage</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout success" style="margin-top:14px;">
+      <span class="ci">🎯</span>
+      <div><strong>核心业务闭环（重点）：</strong>需求处理菜单 → 详情弹窗 → <strong>AI 推荐陪诊师（按专长+病史+区域打分）</strong> → 分配 → 对接医院 → 确认开始服务 → 完成服务。<strong>每一步都同步通知到 NotifyPool，铃铛数字实时更新。</strong></div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">SaaS 布局：240px 左侧导航 + 60px 顶栏 + 主内容区</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 11: 跨端数据流 ============ -->
+<div class="ppt-slide" data-slide="11">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">9. 跨端数据流转全链路</div>
+      <div class="ph-sub">END-TO-END DATA FLOW</div>
+    </div>
+    <div class="ph-num"><span>11</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="callout info">
+      <span class="ci">🔄</span>
+      <div><strong>核心机制：</strong>患者端和后台共享<strong>同一份 NeedPool</strong>（内存中）。患者提交 → NeedPool.add() → 后台铃铛+1 → 管理员处理 → NeedPool.update() → 患者端进度页同步更新。<strong>无需任何接口调用，数据天然联动。</strong></div>
+    </div>
+
+    <div style="background:var(--bg-tertiary); padding:18px; border-radius:8px; margin-top:14px;">
+      <div style="text-align:center; font-size:12px; color:var(--text-muted); margin-bottom:12px; letter-spacing:1px;">完整订单生命周期（7 步）</div>
+
+      <div class="flow">
+        <div class="flow-step">1. 患者提交<br><span style="font-size:9px;">AI 或表单</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step alt">2. 后台铃铛+1<br><span style="font-size:9px;">NotifyPool.add</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step alt">3. 管理员查看<br><span style="font-size:9px;">openNeed(id)</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">4. AI 推荐陪诊师<br><span style="font-size:9px;">matchScore 评分</span></div>
+      </div>
+      <div class="flow" style="margin-top:6px;">
+        <div class="flow-step">5. 分配+对接医院<br><span style="font-size:9px;">assignEscort</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">6. 开始服务<br><span style="font-size:9px;">startService</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step end">7. 完成服务<br><span style="font-size:9px;">finishService</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step end">8. 患者评价<br><span style="font-size:9px;">submitFeedback</span></div>
+      </div>
+    </div>
+
+    <div class="s-grid cols-2" style="margin-top:14px;">
+      <div class="s-card accent">
+        <h4>📌 状态机（5 状态）</h4>
+        <pre class="code"><span class="com">// 订单状态流转</span>
+待处理 <span class="kw">--assignEscort--&gt;</span> 已分配
+已分配 <span class="kw">--contactHospital--&gt;</span> 已对接
+已对接 <span class="kw">--startService--&gt;</span> 服务中
+服务中 <span class="kw">--finishService--&gt;</span> 已完成
+待处理 <span class="kw">--cancelNeed--&gt;</span> 已取消
+
+<span class="com">// 特殊：分配+对接顺序可换，都完成才可开始服务</span>
+<span class="com">// 在 openNeed() 中判断 n.escortName && n.hospitalContact</span></pre>
+      </div>
+      <div class="s-card success">
+        <h4>🔔 通知联动机制</h4>
+        <ul class="bullet">
+          <li><strong>新患者提交</strong>：NotifyPool.add('新患者 xxx 提交了需求')</li>
+          <li><strong>分配完成</strong>：Admin.toast() 提示，患者端进度+1</li>
+          <li><strong>开始服务</strong>：患者端进度变"陪诊中"</li>
+          <li><strong>完成服务</strong>：患者端弹评价入口</li>
+          <li><strong>医院申请</strong>：进入 HospitalApplyPool，后台待审批+1</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">所有状态变更通过 <code>NeedPool.update()</code> 统一处理</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 12: AI 集成 ============ -->
+<div class="ppt-slide" data-slide="12">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">10. AI 集成方案（DeepSeek）</div>
+      <div class="ph-sub">AI INTEGRATION</div>
+    </div>
+    <div class="ph-num"><span>12</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="s-grid cols-2">
+      <div class="s-card accent">
+        <h4>🎯 三层降级策略</h4>
+        <ul class="bullet">
+          <li><strong>第一层：</strong>快捷指令匹配（如"今天"+"安排"）→ 直接返回 MockData.todaySchedule</li>
+          <li><strong>第二层：</strong>DeepSeek API 真实调用（带 system prompt）</li>
+          <li><strong>第三层：</strong>API 失败时 fallback <code>parseSpokenNeed()</code> 本地口语化解析</li>
+        </ul>
+      </div>
+      <div class="s-card success">
+        <h4>🤖 System Prompt 设计</h4>
+        <ul class="bullet">
+          <li>注入<strong>当前患者完整档案</strong>（病史/过敏/用药/联系人）</li>
+          <li>列出<strong>可选医院/科室/服务类型+价格</strong></li>
+          <li>要求返回<strong>纯 JSON</strong>：<code>{"action":"create_need",...}</code></li>
+          <li>信息不全时<strong>用自然语言追问</strong></li>
+          <li>禁止杜撰（防幻觉）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="s-card" style="margin-top:14px;">
+      <h4>📡 API 调用核心代码（app.js）</h4>
+      <pre class="code"><span class="kw">const</span> resp = <span class="kw">await</span> <span class="fn">fetch</span>(AIConfig.baseUrl + <span class="str">'/chat/completions'</span>, {
+  <span class="str">method</span>: <span class="str">'POST'</span>,
+  <span class="str">headers</span>: {
+    <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+    <span class="str">'Authorization'</span>: <span class="str">'Bearer '</span> + AIConfig.apiKey
+  },
+  <span class="str">body</span>: <span class="fn">JSON.stringify</span>({
+    <span class="str">model</span>: <span class="str">'deepseek-chat'</span>,
+    <span class="str">messages</span>: [
+      { <span class="str">role</span>: <span class="str">'system'</span>, <span class="str">content</span>: systemPrompt },
+      { <span class="str">role</span>: <span class="str">'user'</span>, <span class="str">content</span>: q }
+    ],
+    <span class="str">temperature</span>: <span class="num">0.3</span>, <span class="str">max_tokens</span>: <span class="num">500</span>
+  })
+});
+<span class="kw">const</span> data = <span class="kw">await</span> resp.<span class="fn">json</span>();
+<span class="kw">const</span> content = data.choices?.[<span class="num">0</span>]?.message?.content?.<span class="fn">trim</span>();
+<span class="com">// 兼容 markdown 代码块 ```json ... ```</span>
+<span class="kw">const</span> jsonStr = <span class="kw">this</span>.<span class="fn">extractJSON</span>(content); <span class="com">// 提取 JSON</span>
+<span class="kw">if</span> (jsonStr) {
+  <span class="kw">const</span> parsed = <span class="fn">JSON.parse</span>(jsonStr);
+  <span class="kw">if</span> (parsed.action === <span class="str">'create_need'</span>) <span class="kw">return</span> <span class="kw">this</span>.<span class="fn">createNeedFromAI</span>(parsed, q);
+}</pre>
+    </div>
+
+    <div class="s-grid cols-2" style="margin-top:14px;">
+      <div class="s-card warn">
+        <h4>🛡️ 本地 fallback 解析器</h4>
+        <p><code>parseSpokenNeed(q)</code> 支持：</p>
+        <ul class="bullet">
+          <li>医院简称：协和/同仁/301/三零一</li>
+          <li>科室口语：心/心脏/心血管→心内科，脑/脑梗→神经内科，腿/腰→骨科</li>
+          <li>日期：下周X、后天、明天、周X</li>
+          <li>服务类型：全程/半程/代办/复诊</li>
+        </ul>
+      </div>
+      <div class="s-card danger">
+        <h4>🔑 API Key 管理</h4>
+        <ul class="bullet">
+          <li>存储：<code>localStorage['huwuyou_ai_key']</code></li>
+          <li>默认 Key 在 <code>data.js</code> 中（演示用）</li>
+          <li>后台「系统设置」可改 Key</li>
+          <li><strong>生产环境务必用后端代理</strong>，不能暴露在前端</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">AI 返回的 <code>[文字](#action)</code> 链接会被 <code>renderAiMessage()</code> 转成可点击按钮</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 13: 部署 ============ -->
+<div class="ppt-slide" data-slide="13">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">11. 部署与发布流程</div>
+      <div class="ph-sub">DEPLOYMENT</div>
+    </div>
+    <div class="ph-num"><span>13</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="s-grid cols-2">
+      <div class="s-card accent">
+        <h4>📦 仓库信息</h4>
+        <ul class="bullet">
+          <li><strong>GitHub：</strong><code>github.com/16zyc/huwuyou-platform</code></li>
+          <li><strong>分支：</strong>main（受保护）</li>
+          <li><strong>访问：</strong><code>https://16zyc.github.io/huwuyou-platform/</code></li>
+          <li><strong>CDN：</strong>GitHub Pages 全球加速</li>
+          <li><strong>HTTPS：</strong>自动签发证书</li>
+        </ul>
+      </div>
+      <div class="s-card success">
+        <h4>🚀 发布流程（3 步）</h4>
+        <pre class="code"><span class="com"># 1. 修改代码（本地编辑器）</span>
+<span class="com"># 2. 提交并推送</span>
+git add .
+git commit -m <span class="str">"feat: xxx"</span>
+git push origin main
+
+<span class="com"># 3. GitHub Actions 自动构建</span>
+<span class="com"># 约 30 秒后生效</span></pre>
+        <p style="margin-top:6px;">⚠️ <strong>无需构建步骤</strong>，纯静态文件直接部署。</p>
+      </div>
+    </div>
+
+    <div class="s-card warn" style="margin-top:14px;">
+      <h4>⚙️ 本地调试</h4>
+      <pre class="code"><span class="com"># 方式 1：Python 内置服务器（推荐，无需安装）</span>
+cd /Users/a1111/Desktop/智能陪护
+python3 -m http.server 8765
+<span class="com"># 访问 http://localhost:8765/</span>
+
+<span class="com"># 方式 2：用 VSCode Live Server 插件</span>
+<span class="com"># 右键 index.html → Open with Live Server</span></pre>
+    </div>
+
+    <div class="callout info" style="margin-top:14px;">
+      <span class="ci">💡</span>
+      <div><strong>缓存问题：</strong>GitHub Pages 有 CDN 缓存（约 5-10 分钟）。强制刷新：<kbd>Cmd+Shift+R</kbd>（Mac）/<kbd>Ctrl+Shift+R</kbd>（Win）。也可在 URL 加 <code>?v=时间戳</code> 参数绕过缓存。</div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">零成本部署，<strong>git push 即上线</strong></div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 14: 演示账号 ============ -->
+<div class="ppt-slide" data-slide="14">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">12. 演示账号与功能入口</div>
+      <div class="ph-sub">DEMO ACCOUNTS</div>
+    </div>
+    <div class="ph-num"><span>14</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="s-grid cols-2">
+      <div class="s-card accent">
+        <h4>👤 患者端登录</h4>
+        <table class="tbl">
+          <tbody>
+            <tr><td>手机号</td><td><code>138 8866 8866</code></td></tr>
+            <tr><td>验证码</td><td><code>8888</code>（任意 4 位都可）</td></tr>
+            <tr><td>快捷登录</td><td>点"<strong>一键演示登录</strong>"按钮</td></tr>
+            <tr><td>当前患者</td><td>王秀兰（女，68 岁）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="s-card success">
+        <h4>👨‍💼 管理员登录</h4>
+        <table class="tbl">
+          <tbody>
+            <tr><td>账号</td><td><code>admin@huwuyou</code></td></tr>
+            <tr><td>密码</td><td><code>huwuyou2026</code></td></tr>
+            <tr><td>验证码</td><td><code>8888</code></td></tr>
+            <tr><td>快捷登录</td><td>点"<strong>一键演示登录</strong>"按钮</td></tr>
+            <tr><td>当前管理员</td><td>牛管理员（超级管理员）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="s-card" style="margin-top:14px;">
+      <h4>🎬 推荐演示路径（5 分钟跑通全流程）</h4>
+      <ol style="padding-left:20px; font-size:13px; color:var(--text-secondary); line-height:1.9;">
+        <li><strong>患者端</strong>登录 → 首页点 AI 悬浮球 → 输入"下周二带我妈去协和看心内科，要全程陪"</li>
+        <li>AI 自动解析并创建需求 → 提示上传身份证 → 点"<strong>立即上传证件</strong>"按钮</li>
+        <li>切到"<strong>我的需求</strong>"Tab → 上传身份证（正反面）+ 检查报告 → 提交</li>
+        <li><strong>退出登录</strong> → 选"<strong>我是管理员</strong>" → 一键登录</li>
+        <li>后台首页 → 看到铃铛红点 +1 → 点击铃铛 → 进入"<strong>需求处理</strong>"菜单</li>
+        <li>看到新需求 → 点"<strong>处理</strong>" → 详情弹窗显示<strong>AI 推荐陪诊师</strong>（按 matchScore 排序）</li>
+        <li>点"<strong>分配</strong>" → 选李敏 → 点"<strong>确认对接</strong>"医院 → 点"<strong>开始服务</strong>"</li>
+        <li>退出 → 切回患者端 → "<strong>陪诊进度</strong>"Tab → 看到状态变"陪诊中" → 提交评价</li>
+      </ol>
+    </div>
+
+    <div class="callout warn" style="margin-top:14px;">
+      <span class="ci">⚠️</span>
+      <div><strong>注意：</strong>所有数据在内存中，<strong>刷新页面会丢失</strong>。重新登录即恢复初始演示数据。</div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">两套登录都已预填账号，直接点"登录"按钮即可</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 15: 接手指南 ============ -->
+<div class="ppt-slide" data-slide="15">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">13. 接手维护指南</div>
+      <div class="ph-sub">HANDOVER GUIDE</div>
+    </div>
+    <div class="ph-num"><span>15</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="s-grid cols-2">
+      <div class="s-card accent">
+        <h4>🛠️ 改 UI 样式</h4>
+        <ul class="bullet">
+          <li>改设计 token：<code>src/styles/style.css</code> 顶部 <code>:root</code></li>
+          <li>改组件：<code>.kpi-card</code> / <code>.btn</code> / <code>.data-table</code></li>
+          <li>新增组件类：在文件末尾追加，遵循 BEM 简化风格</li>
+          <li>颜色变量：<code>--accent</code>(主色) <code>--status-covered</code>(成功) 等</li>
+        </ul>
+      </div>
+      <div class="s-card success">
+        <h4>🛠️ 改业务逻辑</h4>
+        <ul class="bullet">
+          <li>患者端 UI：<code>src/scripts/patient.js</code> 对应 <code>renderHome/renderNeed/...</code></li>
+          <li>后台 UI：<code>src/scripts/admin.js</code> 对应 <code>renderDashboard/renderNeeds/...</code></li>
+          <li>路由/登录：<code>src/scripts/app.js</code> 的 <code>App.state</code></li>
+          <li>AI 工作流：<code>src/scripts/workflow.js</code> 与 <code>AiAssistantService</code></li>
+        </ul>
+      </div>
+      <div class="s-card warn">
+        <h4>🛠️ 改数据</h4>
+        <ul class="bullet">
+          <li>改预置订单：<code>src/scripts/data.js</code> 的 <code>MockData</code></li>
+          <li>改陪诊师/医院：<code>MockData.escorts</code> / <code>MockData.hospitals</code></li>
+          <li>改价格：<code>PriceTable.items</code>（或后台"服务收费"菜单改）</li>
+          <li>加新数据池：参考 <code>NeedPool</code> 模式（list+add+update）</li>
+        </ul>
+      </div>
+      <div class="s-card danger">
+        <h4>🛠️ 加新菜单/Tab</h4>
+        <ul class="bullet">
+          <li>后台加菜单：<code>admin.js</code> 的 <code>Admin.menus</code> + 新增 <code>renderXxx(el)</code> + <code>renderContent</code> 加分支</li>
+          <li>患者端加 Tab：<code>patient.js</code> 的 <code>Patient.tabs</code> + 新增渲染方法</li>
+          <li>记得在 <code>renderContent()</code> / <code>render()</code> 中加 if 分支</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="s-card" style="margin-top:14px;">
+      <h4>⚠️ 常见坑点（务必避免）</h4>
+      <table class="tbl">
+        <thead><tr><th width="30%">问题</th><th width="70%">解决方案</th></tr></thead>
+        <tbody>
+          <tr><td>修改后页面没变化</td><td>GitHub Pages 缓存，<kbd>Cmd+Shift+R</kbd> 强刷 / URL 加 <code>?v=时间戳</code></td></tr>
+          <tr><td>事件不触发</td><td>检查元素是否在 render 之后用 addEventListener 绑定；onclick 内联需用全局对象方法</td></tr>
+          <tr><td>SVG 图标显示异常</td><td>检查 <code>svg.icon</code> CSS 类是否应用 stroke-width=2 fill=none</td></tr>
+          <tr><td>AI 调用失败</td><td>检查 DeepSeek API Key 是否过期；fallback 会自动用本地解析</td></tr>
+          <tr><td>手机端布局错乱</td><td>检查 <code>body.patient</code> 是否应用；<code>#phone-frame</code> 必须 flex column</td></tr>
+          <tr><td>新增状态后筛选 Tab 没数据</td><td>在 <code>renderNeedsList()</code> 的 filter 逻辑中加新状态</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">改完代码 <kbd>git push</kbd> 即可，无需构建</div>
+    <div class="pf-nav"><button onclick="prevSlide()">上一页</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+<!-- ============ Slide 16: 后续方向 & Q&A ============ -->
+<div class="ppt-slide" data-slide="16">
+  <div class="ppt-head">
+    <div>
+      <div class="ph-title">14. 后续优化方向 & Q&A</div>
+      <div class="ph-sub">ROADMAP & Q&A</div>
+    </div>
+    <div class="ph-num"><span>16</span> / 16</div>
+  </div>
+  <div class="ppt-body">
+    <div class="s-grid cols-2">
+      <div class="s-card accent">
+        <h4>🚀 短期优化（1-2 周）</h4>
+        <ul class="bullet">
+          <li>陪诊师端独立 App（接单/签到/上传现场照片）</li>
+          <li>患者端加微信小程序版（扫码即用）</li>
+          <li>身份证 OCR 接入真实接口（百度/腾讯云 OCR）</li>
+          <li>AI 对话支持语音输入（Web Speech API）</li>
+          <li>订单详情弹窗加聊天记录区</li>
+        </ul>
+      </div>
+      <div class="s-card success">
+        <h4>🏗️ 中期重构（1-2 月）</h4>
+        <ul class="bullet">
+          <li><strong>后端化：</strong>FastAPI + PostgreSQL + Redis</li>
+          <li>前端迁移 Vue3（保持组件化）</li>
+          <li>加用户认证（JWT）+ 权限系统（RBAC）</li>
+          <li>支付集成（微信支付/支付宝）</li>
+          <li>消息推送（短信/微信模板消息）</li>
+        </ul>
+      </div>
+      <div class="s-card warn">
+        <h4>🏢 长期演进（3-6 月）</h4>
+        <ul class="bullet">
+          <li>多租户 SaaS（每个医院/机构独立实例）</li>
+          <li>陪诊师调度算法优化（区域+专长+负载均衡）</li>
+          <li>BI 数据看板（订单趋势/客户画像/财务分析）</li>
+          <li>知识图谱（医院-科室-病症-陪诊师标签）</li>
+          <li>合规化：HIPAA / 等保三级</li>
+        </ul>
+      </div>
+      <div class="s-card danger">
+        <h4>❓ Q&A 时间</h4>
+        <ul class="bullet">
+          <li>关于代码结构？</li>
+          <li>关于业务流程？</li>
+          <li>关于 AI 集成？</li>
+          <li>关于部署上线？</li>
+          <li>关于后续迭代？</li>
+        </ul>
+        <p style="margin-top:10px; font-size:11px; color:var(--text-muted);">📄 详细文档见仓库 README.md<br>📧 联系人：原研发组</p>
+      </div>
+    </div>
+
+    <div class="callout success" style="margin-top:18px;">
+      <span class="ci">🎉</span>
+      <div><strong>感谢聆听！</strong> 本系统虽为纯前端演示版本，但已跑通<strong>从患者提交到完成评价的完整业务闭环</strong>。接手后重点维护 <code>admin.js</code>（后台核心）和 <code>app.js</code>（AI 与路由），患者端 <code>patient.js</code> 相对稳定。期待各位在此基础上继续打磨成真正可商用的医疗陪诊 SaaS 产品。</div>
+    </div>
+  </div>
+  <div class="ppt-foot">
+    <div class="pf-hint">— END —</div>
+    <div class="pf-nav"><button onclick="goSlide(1)">回到封面</button><button onclick="nextSlide()">下一页</button></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+  // === PPT 控制 ===
+  let currentSlide = 1;
+  const totalSlides = 16;
+
+  function showSlide(n) {
+    document.querySelectorAll('.ppt-slide').forEach(s => s.classList.remove('active'));
+    const target = document.querySelector('.ppt-slide[data-slide="' + n + '"]');
+    if (target) {
+      target.classList.add('active');
+      currentSlide = n;
+    }
+  }
+  function nextSlide() { if (currentSlide < totalSlides) showSlide(currentSlide + 1); }
+  function prevSlide() { if (currentSlide > 1) showSlide(currentSlide - 1); }
+  function goSlide(n) { if (n >= 1 && n <= totalSlides) showSlide(n); }
+
+  // 键盘控制
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+    else if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+    else if (e.key === 'Home') showSlide(1);
+    else if (e.key === 'End') showSlide(totalSlides);
+    else if (e.key >= '1' && e.key <= '9') {
+      const n = parseInt(e.key);
+      if (n <= totalSlides) showSlide(n);
+    }
+  });
+
+  // 鼠标滚轮
+  let wheelLock = false;
+  document.addEventListener('wheel', e => {
+    if (wheelLock) return;
+    wheelLock = true;
+    setTimeout(() => wheelLock = false, 600);
+    if (e.deltaY > 0) nextSlide();
+    else if (e.deltaY < 0) prevSlide();
+  });
+</script>
+</body>
+</html>

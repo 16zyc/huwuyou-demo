@@ -1,0 +1,15 @@
+.DS_Store
+Thumbs.db
+*.zip
+*.log
+.idea/
+.vscode/
+.vs/
+node_modules/
+dist/
+tmp/
+temp/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
