@@ -621,29 +621,29 @@ const Patient = {
       consult: {
         title: '诊前咨询', subTitle: '诊前咨询服务', desc: '为您提供专业的就诊前咨询服务',
         items: [
-          { key: 'consult_diagnosis', title: '就诊咨询', desc: '详述病情 → 介绍陪诊服务内容 → 给出合理化建议 → 人工服务 → 填写服务需求', icon: P_ICON.star, price: 128, origPrice: 158 },
-          { key: 'consult_agent', title: '代办咨询', desc: '详述病情 → 介绍代办范围 → 给出合理化建议 → 提供相关材料 → 填写需求', icon: P_ICON.card, price: 158, origPrice: 188 },
+          { key: 'consult_diagnosis', title: '就诊咨询', desc: '详述病情 → 介绍陪诊服务内容 → 给出合理化建议 → 人工服务 → 填写服务需求', icon: P_ICON.star, price: PriceTable.getPrice('半程陪诊'), origPrice: 398 },
+          { key: 'consult_agent', title: '代办咨询', desc: '详述病情 → 介绍代办范围 → 给出合理化建议 → 提供相关材料 → 填写需求', icon: P_ICON.card, price: PriceTable.getPrice('全程陪诊'), origPrice: 698 },
         ]
       },
       agent: {
         title: '代办服务', subTitle: '代办服务', desc: '代取报告、代诊咨询等代办服务',
         items: [
-          { key: 'agent_report', title: '代取报告', desc: '详述病情 → 介绍代办服务内容 → 给出合理化建议 → 人工服务 → 填写代取服务需求', icon: P_ICON.clipboard, price: 98, origPrice: 128 },
-          { key: 'agent_diagnosis', title: '代诊咨询', desc: '详述病情 → 介绍代诊范围 → 给出合理化建议 → 人工服务 → 填写代诊服务需求', icon: P_ICON.messageCircle, price: 198, origPrice: 238 },
+          { key: 'agent_report', title: '代取报告', desc: '详述病情 → 介绍代办服务内容 → 给出合理化建议 → 人工服务 → 填写代取服务需求', icon: P_ICON.clipboard, price: PriceTable.getPrice('代办跑腿'), origPrice: 158 },
+          { key: 'agent_diagnosis', title: '代诊咨询', desc: '详述病情 → 介绍代诊范围 → 给出合理化建议 → 人工服务 → 填写代诊服务需求', icon: P_ICON.messageCircle, price: PriceTable.getPrice('全程陪诊'), origPrice: 698 },
         ]
       },
       special: {
         title: '特需服务', subTitle: '特需陪诊服务', desc: '预约车辆、轮椅助行等特需服务',
         items: [
-          { key: 'special_car', title: '预约车辆', desc: '详述需求 → 介绍服务车辆 → 给出合理化建议 → 人工服务 → 填写预约服务需求', icon: P_ICON.clock, price: 158, origPrice: 188 },
-          { key: 'special_wheelchair', title: '轮椅助行', desc: '详述需求 → 介绍服务内容 → 给出合理化建议 → 人工服务 → 填写需求', icon: P_ICON.userCheck, price: 198, origPrice: 228 },
+          { key: 'special_car', title: '预约车辆', desc: '详述需求 → 介绍服务车辆 → 给出合理化建议 → 人工服务 → 填写预约服务需求', icon: P_ICON.clock, price: PriceTable.getPrice('全程陪诊'), origPrice: 698 },
+          { key: 'special_wheelchair', title: '轮椅助行', desc: '详述需求 → 介绍服务内容 → 给出合理化建议 → 人工服务 → 填写需求', icon: P_ICON.userCheck, price: PriceTable.getPrice('全程陪诊'), origPrice: 698 },
         ]
       },
       featured: {
         title: '特色介绍', subTitle: '特色医疗', desc: '特色医院、特色专家推荐',
         items: [
-          { key: 'featured_hospital', title: '特色医院', desc: '详述病情 → 介绍特色医院 → 给出合理化建议 → 人工服务 → 填写需求情况', icon: P_ICON.building, price: 98, origPrice: 128 },
-          { key: 'featured_expert', title: '特色专家', desc: '详述病情 → 介绍特色专家 → 给出合理化建议 → 提供相关材料 → 填写需求情况', icon: P_ICON.star, price: 298, origPrice: 338 },
+          { key: 'featured_hospital', title: '特色医院', desc: '详述病情 → 介绍特色医院 → 给出合理化建议 → 人工服务 → 填写需求情况', icon: P_ICON.building, price: PriceTable.getPrice('陪同复诊'), origPrice: 498 },
+          { key: 'featured_expert', title: '特色专家', desc: '详述病情 → 介绍特色专家 → 给出合理化建议 → 提供相关材料 → 填写需求情况', icon: P_ICON.star, price: PriceTable.getPrice('全程陪诊'), origPrice: 698 },
         ]
       },
     };
@@ -1176,7 +1176,8 @@ const Patient = {
 
   _bookHospital(id) {
     if (!App.requireLogin('预订服务')) return;
-    App.switchTab(1);
+    const h = (MockData.hospitals || []).find(x => x.id === id);
+    this._openBookingForm('consult_diagnosis', '就诊咨询', '', '', h ? h.name : '');
   },
 
   // ===== 陪诊师页 =====
@@ -1465,7 +1466,7 @@ const Patient = {
   // ===== 订单页 =====
   renderOrders(el) {
     const tabs = ['全部', '待付款', '待接单', '待服务', '进行中', '已完成'];
-    const statusMap = { '全部': null, '待付款': '待处理', '待接单': '已分配', '进行中': '服务中', '已完成': '已完成' };
+    const statusMap = { '全部': null, '待审核': '待处理', '待服务': '已分配', '进行中': '服务中', '已完成': '已完成' };
     const user = MockData.patient.user;
     let needs = NeedPool.list.filter(n => n.patientName === user.name);
 

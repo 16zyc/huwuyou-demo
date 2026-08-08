@@ -122,6 +122,7 @@ const CareStore = {
     NotifyPool.markAllRead = () => this.markAllNotifications('admin');
     Object.defineProperty(NotifyPool, 'unread', { configurable:true, get:() => this.notificationsFor('admin').filter(n => !n.read) });
     MockData.hospitals = this.state.hospitals;
+    MockData.escorts = this.state.escorts;
   },
   save() {
     try {
@@ -361,6 +362,11 @@ const AiAssistantService = {
     else if (/半程|半天/.test(q)) fields.serviceType='半程陪诊';
     const notes=[]; if(/轮椅/.test(q))notes.push('需要轮椅'); if(/耳背|听不清/.test(q))notes.push('老人耳背，请耐心沟通'); if(/搀扶/.test(q))notes.push('需要搀扶');
     if(notes.length) fields.note=notes.join('；');
+    // 日期统一为范围语义：识别"尽快""急""1-3天""一周"
+    if (/尽快|着急|急|马上/.test(q)) fields.date='尽快';
+    else if (/一周|这周|本周/.test(q)) fields.date='一周';
+    else if (/1-3|三天|一两天/.test(q)) fields.date='1-3天';
+    else if (date) fields.date='1-3天'; // 降级：有具体日期则默认1-3天
     const merged = { ...draft, ...fields };
     const missingFields = ['hospital','dept','date','serviceType'].filter(k => !merged[k]);
     let intent = 'create_need';
