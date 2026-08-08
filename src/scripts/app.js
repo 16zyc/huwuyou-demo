@@ -218,7 +218,7 @@ const App = {
     modal.querySelector('#lm_cancel').onclick = () => modal.remove();
     modal.querySelector('#lm_login').onclick = () => {
       modal.remove();
-      this.state = 'patientLogin';
+      this.state = 'loginSelect';
       this.render();
     };
     setTimeout(() => {
@@ -241,7 +241,7 @@ const App = {
               </div>
             </div>
             ${isGuest
-              ? `<button class="role-btn role-btn-login" onclick="App.state='patientLogin';App.render()">登录</button>`
+              ? `<button class="role-btn role-btn-login" onclick="App.state='loginSelect';App.render()">登录</button>`
               : `<button class="role-btn" onclick="App.logout()">退出</button>`
             }
           </header>

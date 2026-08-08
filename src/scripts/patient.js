@@ -315,13 +315,95 @@ const P_ICON = {
     .p-image-add svg { width:24px; height:24px; margin-bottom:2px; }
     .p-empty { text-align:center; padding:40px 20px; color:var(--text-muted); font-size:14px; }
 
+    /* 首页服务2x2网格 */
+    .ph-grid-2x2 { display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-bottom:14px; }
+    .ph-svc-tile { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); padding:14px 12px; cursor:pointer; transition:all .15s; position:relative; overflow:hidden; }
+    .ph-svc-tile:active { transform:scale(0.97); }
+    .ph-svc-tile .ph-st-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+    .ph-svc-tile .ph-st-icon svg { width:22px; height:22px; stroke-width:2; }
+    .ph-svc-tile .ph-st-title { font-size:14px; font-weight:600; color:var(--text-primary); }
+    .ph-svc-tile .ph-st-desc { font-size:11px; color:var(--text-muted); margin-top:3px; line-height:1.3; }
+    .ph-svc-tile.c1 .ph-st-icon { background:rgba(59,108,181,0.1); color:var(--accent); }
+    .ph-svc-tile.c2 .ph-st-icon { background:rgba(22,163,74,0.1); color:var(--status-covered); }
+    .ph-svc-tile.c3 .ph-st-icon { background:rgba(234,88,12,0.1); color:#ea580c; }
+    .ph-svc-tile.c4 .ph-st-icon { background:rgba(202,138,4,0.1); color:#ca8a04; }
+
+    /* AI下单入口 */
+    .ai-order-banner { background:linear-gradient(135deg, #3b6cb5, #6b8fc7); border-radius:var(--radius-lg); padding:16px; margin-bottom:14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all .15s; }
+    .ai-order-banner:active { transform:scale(0.98); }
+    .ai-order-icon { width:48px; height:48px; background:rgba(255,255,255,0.2); border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .ai-order-icon svg { width:28px; height:28px; stroke:#fff; }
+    .ai-order-text { flex:1; color:#fff; }
+    .ai-order-title { font-size:16px; font-weight:700; }
+    .ai-order-desc { font-size:12px; opacity:0.9; margin-top:4px; }
+    .ai-order-badge { background:#fff; color:var(--accent); font-size:10px; font-weight:700; padding:3px 8px; border-radius:10px; margin-left:8px; }
+
+    /* 二级目录页 */
+    .sub-page { }
+    .sub-list { display:flex; flex-direction:column; gap:10px; }
+    .sub-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); padding:14px; cursor:pointer; transition:all .15s; }
+    .sub-card:active { background:var(--bg-hover); }
+    .sub-card-head { display:flex; align-items:center; gap:10px; }
+    .sub-card-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .sub-card-icon svg { width:20px; height:20px; stroke-width:2; }
+    .sub-card-title { flex:1; font-size:15px; font-weight:600; }
+    .sub-card-arrow { color:var(--text-muted); }
+    .sub-card-arrow svg { width:16px; height:16px; }
+    .sub-card-desc { font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.4; padding-left:46px; }
+    .sub-card-price { font-size:13px; color:var(--accent); font-weight:700; margin-top:6px; padding-left:46px; }
+    .sub-card-price small { font-size:10px; color:var(--text-muted); text-decoration:line-through; font-weight:normal; margin-left:4px; }
+
+    /* 流程步骤页 */
+    .steps-list { display:flex; flex-direction:column; gap:16px; }
+    .step-item { display:flex; gap:12px; }
+    .step-num { width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; }
+    .step-content { flex:1; }
+    .step-title { font-size:14px; font-weight:600; margin-bottom:4px; }
+    .step-desc { font-size:12px; color:var(--text-muted); line-height:1.5; }
+    .step-input { margin-top:8px; }
+    .step-input textarea { width:100%; padding:10px; background:var(--bg-tertiary); border:1px solid var(--border-color); border-radius:var(--radius); font-size:13px; outline:none; resize:vertical; min-height:60px; }
+    .step-input textarea:focus { border-color:var(--accent); }
+
+    /* 预约表单页 */
+    .booking-form { display:flex; flex-direction:column; gap:14px; }
+    .bf-section-title { font-size:15px; font-weight:700; margin-bottom:8px; padding-left:10px; border-left:3px solid var(--accent); }
+    .bf-card { background:var(--bg-card); border-radius:var(--radius); padding:14px; display:flex; flex-direction:column; gap:12px; }
+    .bf-item { display:flex; flex-direction:column; gap:6px; }
+    .bf-item label { font-size:13px; font-weight:500; }
+    .bf-item input, .bf-item select, .bf-item textarea { width:100%; padding:10px 12px; background:var(--bg-tertiary); border:1px solid var(--border-color); border-radius:var(--radius); font-size:14px; outline:none; color:var(--text-primary); }
+    .bf-item input:focus, .bf-item select:focus { border-color:var(--accent); }
+    .bf-time-group { display:flex; gap:8px; }
+    .bf-time-opt { flex:1; padding:10px; background:var(--bg-tertiary); border:1px solid var(--border-color); border-radius:var(--radius); text-align:center; cursor:pointer; font-size:13px; transition:all .15s; }
+    .bf-time-opt.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .bf-submit-btn { width:100%; padding:14px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius); font-size:16px; font-weight:700; cursor:pointer; margin-top:8px; }
+    .bf-submit-btn:active { transform:scale(0.98); }
+
+    /* 登录页区分样式 */
+    .login-tabs { display:flex; background:var(--bg-card); border-radius:var(--radius); padding:4px; margin-bottom:16px; }
+    .login-tab { flex:1; padding:10px; text-align:center; font-size:14px; font-weight:600; border-radius:calc(var(--radius) - 2px); cursor:pointer; transition:all .15s; }
+    .login-tab.active { background:var(--accent); color:#fff; }
+    .login-tab:not(.active) { color:var(--text-secondary); }
+    .login-form { display:flex; flex-direction:column; gap:14px; }
+    .login-form input { width:100%; padding:12px 14px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); font-size:15px; outline:none; }
+    .login-form input:focus { border-color:var(--accent); }
+    .login-hint { font-size:11px; color:var(--text-muted); }
+    .login-admin-field { display:none; }
+    .login-admin-field.show { display:block; }
+
+    /* 订单状态badge更新 */
+    .order-status.allocating { background:var(--warning-bg); color:#d97706; }
+    .order-status.allocated { background:var(--accent-bg); color:var(--accent); }
+
     /* 响应式 */
     @media (max-width:374px) {
-      .ph-svc-sub-list { grid-template-columns:1fr; }
-      .ph-svc-big-card .ph-sbc-head { padding:12px; }
-      .ph-sbc-icon-wrap { width:44px; height:44px; }
-      .ph-sbc-icon-wrap svg { width:22px; height:22px; }
-      .ph-sbc-title { font-size:15px; }
+      .ph-grid-2x2 { gap:8px; }
+      .ph-svc-tile { padding:12px 10px; }
+      .ph-svc-tile .ph-st-icon { width:36px; height:36px; }
+      .ph-svc-tile .ph-st-icon svg { width:20px; height:20px; }
+      .ph-svc-tile .ph-st-title { font-size:13px; }
+      .ai-order-banner { padding:14px; }
+      .ai-order-icon { width:40px; height:40px; }
+      .ai-order-icon svg { width:24px; height:24px; }
     }
   `;
   document.head.appendChild(style);
@@ -331,7 +413,7 @@ const P_ICON = {
 const Patient = {
   tabs: [
     { name: '首页', icon: P_ICON.home },
-    { name: '陪诊师', icon: P_ICON.escort },
+    { name: '特色', icon: P_ICON.building },
     { name: '订单', icon: P_ICON.orders },
     { name: '我的', icon: P_ICON.user },
   ],
@@ -344,9 +426,34 @@ const Patient = {
 
   render(tab, el) {
     if (tab === 0) this.renderHome(el);
-    else if (tab === 1) this.renderEscorts(el);
+    else if (tab === 1) this.renderFeaturedHospitals(el);
     else if (tab === 2) this.renderOrders(el);
     else this.renderProfile(el);
+  },
+
+  // ===== 特色医院页 =====
+  renderFeaturedHospitals(el) {
+    const hospitals = (MockData.hospitals || []).filter(h => h.hot);
+    el.innerHTML = `
+      <div class="page-head" style="margin-bottom:12px;">
+        <h2 style="font-size:18px; font-weight:700;">特色医院</h2>
+        <div>查看热门推荐医院及专科介绍</div>
+      </div>
+      <div class="ph-hosp-list">
+        ${hospitals.map(h => `
+          <div class="ph-hosp-card" onclick="Patient._openHospitalDetail('${h.name}')">
+            <div class="ph-hosp-img">${h.shortName?.charAt(0) || h.name.charAt(0)}</div>
+            <div class="ph-hosp-info">
+              <div class="ph-hosp-name">${h.name}</div>
+              <div class="ph-hosp-sub">${h.category || '综合医院'} · ${h.city || ''}</div>
+              <div class="ph-hosp-tags">
+                ${(h.keyDepts || []).slice(0, 3).map(d => `<span class="ph-hosp-tag">${d}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
   },
 
   // ===== 首页 =====
@@ -360,12 +467,37 @@ const Patient = {
         <div class="bp-sub">陪诊咨询 · 代办服务 · 特需服务</div>
       </div>
 
-      <!-- 四大业务入口（大卡片形式）-->
-      <div class="ph-svc-list">
-        ${this._renderServiceBigCard('consult', '诊前咨询', '没头绪？不知道看什么科？专业陪诊师为您解答', 'c1', P_ICON.service_consult, ['专业解答', '流程指导', '科室推荐'])}
-        ${this._renderServiceBigCard('agent', '代办服务', '代取药、代挂号、代办跑腿，足不出户搞定', 'c2', P_ICON.service_agent_cat, ['代办跑腿', '代办问诊', '辅助就医'])}
-        ${this._renderServiceBigCard('special', '特需服务', '孕妇/儿童/老人/轮椅等特殊人群陪诊', 'c3', P_ICON.service_special, ['孕妇陪诊', '儿童陪诊', '专病陪诊'])}
-        ${this._renderServiceBigCard('featured', '特色介绍', '国风助行、专家会诊等特色服务', 'c4', P_ICON.service_featured, ['国风助行', '专家会诊', '康复陪诊'])}
+      <!-- AI下单入口（清晰标注）-->
+      <div class="ai-order-banner" onclick="Patient._openAIOrder()">
+        <div class="ai-order-icon">${P_ICON.service_consult}</div>
+        <div class="ai-order-text">
+          <div class="ai-order-title">AI智能下单 <span class="ai-order-badge">推荐</span></div>
+          <div class="ai-order-desc">描述您的症状，AI智能推荐服务方案</div>
+        </div>
+      </div>
+
+      <!-- 四大业务入口（2x2网格）-->
+      <div class="ph-grid-2x2">
+        <div class="ph-svc-tile c1" onclick="Patient.onServiceClick('consult')">
+          <div class="ph-st-icon">${P_ICON.service_consult}</div>
+          <div class="ph-st-title">诊前咨询</div>
+          <div class="ph-st-desc">就诊咨询/代办咨询</div>
+        </div>
+        <div class="ph-svc-tile c2" onclick="Patient.onServiceClick('agent')">
+          <div class="ph-st-icon">${P_ICON.service_agent_cat}</div>
+          <div class="ph-st-title">代办服务</div>
+          <div class="ph-st-desc">代取报告/代诊咨询</div>
+        </div>
+        <div class="ph-svc-tile c3" onclick="Patient.onServiceClick('special')">
+          <div class="ph-st-icon">${P_ICON.service_special}</div>
+          <div class="ph-st-title">特需服务</div>
+          <div class="ph-st-desc">预约车辆/轮椅助行</div>
+        </div>
+        <div class="ph-svc-tile c4" onclick="Patient.onServiceClick('featured')">
+          <div class="ph-st-icon">${P_ICON.service_featured}</div>
+          <div class="ph-st-title">特色介绍</div>
+          <div class="ph-st-desc">特色医院/特色专家</div>
+        </div>
       </div>
 
       <!-- 热门医院 -->
@@ -378,7 +510,6 @@ const Patient = {
       </div>
 
       ${isGuest ? `
-      <!-- 登录提示 -->
       <div style="margin-top:16px; padding:14px; background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius); text-align:center; cursor:pointer;" onclick="App.state='patientLogin';App.render()">
         <div style="font-size:14px; font-weight:600; color:var(--accent); margin-bottom:4px;">登录后享受更多服务</div>
         <div style="font-size:12px; color:var(--text-secondary);">提交需求、查看进度、紧急联系等功能需登录</div>
@@ -413,6 +544,8 @@ const Patient = {
   },
 
   _renderHospitalCard(h) {
+    // 提取总院地址（取分号或"；"前的部分），保持首页卡片简洁
+    const shortAddr = (h.address || '').split(/[;；]/)[0].replace(/^总院：/, '');
     return `
       <div class="ph-hosp-card" onclick="Patient.goHospitalDetail('${h.id}')">
         <div class="ph-hosp-img">
@@ -422,12 +555,12 @@ const Patient = {
         <div class="ph-hosp-info">
           <div class="ph-hosp-name">${h.name}</div>
           <div class="ph-hosp-tags">
-            <span class="ph-hosp-tag">${h.level}</span>
             <span class="ph-hosp-tag cat">${h.category}</span>
+            <span class="ph-hosp-tag">${h.keyDepts ? h.keyDepts.slice(0,2).join(' · ') : ''}</span>
           </div>
           <div class="ph-hosp-intro">${h.intro}</div>
           <div class="ph-hosp-meta">
-            ${P_ICON.location} ${h.address}
+            <span class="ph-hosp-addr">${P_ICON.location} ${shortAddr}</span>
             <span class="ph-hosp-order">已服务 ${h.orders} 单</span>
           </div>
         </div>
@@ -435,317 +568,399 @@ const Patient = {
     `;
   },
 
-  // ===== 服务点击 → 跳转到对应服务详情页 =====
+  // ===== 服务点击 → 跳转到二级目录页 =====
   onServiceClick(type) {
-    this._renderServiceDetailPage(type);
+    this._renderSubCategoryPage(type);
   },
 
-  // ===== 服务详情页 =====
-  _renderServiceDetailPage(type) {
+  // ===== 二级目录页 =====
+  _renderSubCategoryPage(type) {
     const screen = document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
 
-    const pages = {
-      consult: this._renderConsultPage(),
-      agent: this._renderAgentPage(),
-      special: this._renderSpecialPage(),
-      featured: this._renderFeaturedPage(),
+    const configs = {
+      consult: {
+        title: '诊前咨询', subTitle: '诊前咨询服务', desc: '为您提供专业的就诊前咨询服务',
+        items: [
+          { key: 'consult_diagnosis', title: '就诊咨询', desc: '详述病情 → 介绍陪诊服务内容 → 给出合理化建议 → 人工服务 → 填写服务需求', icon: P_ICON.star, price: 128, origPrice: 158 },
+          { key: 'consult_agent', title: '代办咨询', desc: '详述病情 → 介绍代办范围 → 给出合理化建议 → 提供相关材料 → 填写需求', icon: P_ICON.card, price: 158, origPrice: 188 },
+        ]
+      },
+      agent: {
+        title: '代办服务', subTitle: '代办服务', desc: '代取报告、代诊咨询等代办服务',
+        items: [
+          { key: 'agent_report', title: '代取报告', desc: '详述病情 → 介绍代办服务内容 → 给出合理化建议 → 人工服务 → 填写代取服务需求', icon: P_ICON.clipboard, price: 98, origPrice: 128 },
+          { key: 'agent_diagnosis', title: '代诊咨询', desc: '详述病情 → 介绍代诊范围 → 给出合理化建议 → 人工服务 → 填写代诊服务需求', icon: P_ICON.messageCircle, price: 198, origPrice: 238 },
+        ]
+      },
+      special: {
+        title: '特需服务', subTitle: '特需陪诊服务', desc: '预约车辆、轮椅助行等特需服务',
+        items: [
+          { key: 'special_car', title: '预约车辆', desc: '详述需求 → 介绍服务车辆 → 给出合理化建议 → 人工服务 → 填写预约服务需求', icon: P_ICON.clock, price: 158, origPrice: 188 },
+          { key: 'special_wheelchair', title: '轮椅助行', desc: '详述需求 → 介绍服务内容 → 给出合理化建议 → 人工服务 → 填写需求', icon: P_ICON.userCheck, price: 198, origPrice: 228 },
+        ]
+      },
+      featured: {
+        title: '特色介绍', subTitle: '特色医疗', desc: '特色医院、特色专家推荐',
+        items: [
+          { key: 'featured_hospital', title: '特色医院', desc: '详述病情 → 介绍特色医院 → 给出合理化建议 → 人工服务 → 填写需求情况', icon: P_ICON.building, price: 98, origPrice: 128 },
+          { key: 'featured_expert', title: '特色专家', desc: '详述病情 → 介绍特色专家 → 给出合理化建议 → 提供相关材料 → 填写需求情况', icon: P_ICON.star, price: 298, origPrice: 338 },
+        ]
+      },
     };
-    screen.innerHTML = pages[type] || pages.consult;
-  },
 
-  _renderConsultPage() {
-    return `
-      <div class="svc-detail">
+    const cfg = configs[type];
+    if (!cfg) return;
+
+    screen.innerHTML = `
+      <div class="sub-page">
         <div class="svd-header">
           <div class="svd-back" onclick="App.switchTab(0)">${P_ICON.chevronLeft}</div>
-          <h2>诊前咨询</h2>
+          <h2>${cfg.title}</h2>
         </div>
         <div class="svd-hero">
-          <div class="svd-hero-banner" style="background:linear-gradient(135deg,#3b6cb5,#2a4d8f);">诊前咨询</div>
+          <div class="svd-hero-banner" style="background:linear-gradient(135deg,#3b6cb5,#2a4d8f);">${cfg.subTitle}</div>
           <div class="svd-hero-info">
-            <div class="svd-hero-title">就诊前方案定制</div>
-            <div class="svd-hero-desc">专业陪诊师为您解答就诊疑问</div>
+            <div class="svd-hero-title">${cfg.desc}</div>
+            <div class="svd-hero-desc">选择以下服务项目</div>
           </div>
         </div>
-        <div class="svd-section">
-          <div class="svd-section-title">为什么要诊前咨询</div>
-          <div class="svd-reason-list">
-            <div class="svd-reason-item">
-              <div class="svd-reason-icon" style="background:rgba(234,88,12,0.1);color:#ea580c;">${P_ICON.alert}</div>
-              <div class="svd-reason-content">
-                <div class="svd-reason-title">没头绪</div>
-                <div class="svd-reason-text">对就诊城市/医院/科室/专家不了解</div>
+        <div class="sub-list">
+          ${cfg.items.map(item => `
+            <div class="sub-card" onclick="Patient._openServiceSteps('${item.key}')">
+              <div class="sub-card-head">
+                <div class="sub-card-icon" style="background:var(--accent-bg);color:var(--accent);">${item.icon}</div>
+                <div class="sub-card-title">${item.title}</div>
+                <div class="sub-card-arrow">${P_ICON.chevronRight}</div>
               </div>
+              <div class="sub-card-price">¥${item.price} <small>¥${item.origPrice}</small></div>
             </div>
-            <div class="svd-reason-item">
-              <div class="svd-reason-icon" style="background:rgba(59,108,181,0.1);color:var(--accent);">${P_ICON.search}</div>
-              <div class="svd-reason-content">
-                <div class="svd-reason-title">对就诊流程/环境陌生</div>
-                <div class="svd-reason-text">不知道如何挂号/不知道怎么走</div>
-              </div>
-            </div>
-            <div class="svd-reason-item">
-              <div class="svd-reason-icon" style="background:rgba(202,138,4,0.1);color:#ca8a04;">${P_ICON.clipboard}</div>
-              <div class="svd-reason-content">
-                <div class="svd-reason-title">没重点</div>
-                <div class="svd-reason-text">不知道如何挂号/不懂怎么问</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="svd-section">
-          <div class="svd-section-title">服务流程</div>
-          <div class="svd-process-list">
-            <div class="svd-process-item">
-              <div class="svd-process-num">1</div>
-              <div class="svd-process-content">
-                <div class="svd-process-title">就诊咨询</div>
-                <div class="svd-process-text">就诊医院/科室/专家信息咨询，包括医生擅长、是否有号等信息核实查询</div>
-              </div>
-            </div>
-            <div class="svd-process-item">
-              <div class="svd-process-num">2</div>
-              <div class="svd-process-content">
-                <div class="svd-process-title">挂号指导</div>
-                <div class="svd-process-text">手把手教您如何挂号</div>
-              </div>
-            </div>
-            <div class="svd-process-item">
-              <div class="svd-process-num">3</div>
-              <div class="svd-process-content">
-                <div class="svd-process-title">路线规划</div>
-                <div class="svd-process-text">从家到就诊医院线路规划，就诊住宿交通规划等</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="svd-bottom-bar">
-          <button class="btn btn-outline" onclick="App.requireLogin('诊前咨询') ? Patient._contactService('诊前咨询') : null">一键咨询</button>
-          <button class="btn" onclick="Patient._bookService('consult')">立即预约</button>
+          `).join('')}
         </div>
       </div>
     `;
   },
 
-  _renderAgentPage() {
-    return `
-      <div class="svc-detail">
-        <div class="svd-header">
-          <div class="svd-back" onclick="App.switchTab(0)">${P_ICON.chevronLeft}</div>
-          <h2>代办服务</h2>
-        </div>
-        <div class="svd-hero">
-          <div class="svd-hero-banner" style="background:linear-gradient(135deg,#16a34a,#0d7a38);">特色陪诊</div>
-          <div class="svd-hero-info">
-            <div class="svd-hero-title">代办跑腿 · 代办问诊</div>
-            <div class="svd-hero-desc">足不出户，专业代办帮您搞定</div>
-          </div>
-        </div>
-        <div class="svd-section">
-          <div class="svd-section-title">服务项目</div>
-          <div class="svd-sub-list">
-            <div class="svd-sub-card" onclick="Patient._bookService('agent_run')">
-              <div class="svd-sub-img" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#16a34a;">${P_ICON.clipboard}</div>
-              <div class="svd-sub-info">
-                <div class="svd-sub-title">代办跑腿</div>
-                <div class="svd-sub-price">¥188 <small>¥198</small></div>
-                <div class="svd-sub-tags">
-                  <span class="svd-sub-tag">代取药</span>
-                  <span class="svd-sub-tag">代取报告</span>
-                </div>
-              </div>
-            </div>
-            <div class="svd-sub-card" onclick="Patient._bookService('agent_consult')">
-              <div class="svd-sub-img" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#16a34a;">${P_ICON.messageCircle}</div>
-              <div class="svd-sub-info">
-                <div class="svd-sub-title">代办问诊</div>
-                <div class="svd-sub-price">¥258 <small>¥298</small></div>
-                <div class="svd-sub-tags">
-                  <span class="svd-sub-tag">代挂号</span>
-                  <span class="svd-sub-tag">代问诊</span>
-                </div>
-              </div>
-            </div>
-            <div class="svd-sub-card" onclick="Patient._bookService('agent_report')">
-              <div class="svd-sub-img" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#16a34a;">${P_ICON.search}</div>
-              <div class="svd-sub-info">
-                <div class="svd-sub-title">代约检查/取报告</div>
-                <div class="svd-sub-price">¥98 <small>¥128</small></div>
-                <div class="svd-sub-tags">
-                  <span class="svd-sub-tag">代预约</span>
-                  <span class="svd-sub-tag">代取报告</span>
-                </div>
-              </div>
-            </div>
-            <div class="svd-sub-card" onclick="Patient._bookService('agent_assist')">
-              <div class="svd-sub-img" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#16a34a;">${P_ICON.userCheck}</div>
-              <div class="svd-sub-info">
-                <div class="svd-sub-title">辅助就医</div>
-                <div class="svd-sub-price">¥158 <small>¥198</small></div>
-                <div class="svd-sub-tags">
-                  <span class="svd-sub-tag">辅助就医</span>
-                  <span class="svd-sub-tag">路线引导</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="svd-bottom-bar">
-          <button class="btn" onclick="Patient._bookService('agent')">立即预约</button>
-        </div>
-      </div>
-    `;
-  },
+  // ===== 服务流程步骤页 =====
+  _openServiceSteps(key) {
+    const stepsMap = {
+      consult_diagnosis: { title: '就诊咨询', steps: [
+        { title: '提交订单', desc: '填写患者信息、就诊医院、科室等并提交预约' },
+        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
+        { title: '陪诊师联系患者', desc: '陪诊师接单后主动联系患者了解病情' },
+        { title: '预约就诊时间', desc: '与陪诊师协商确定具体就诊时间' },
+        { title: '陪诊服务', desc: '陪诊师按时前往医院提供全程陪诊服务' },
+        { title: '服务完成', desc: '就诊结束后确认服务完成' },
+      ]},
+      consult_agent: { title: '代办咨询', steps: [
+        { title: '提交订单', desc: '填写代办内容、患者信息等并提交预约' },
+        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
+        { title: '陪诊师联系患者', desc: '陪诊师接单后确认代办需求和材料' },
+        { title: '确认代办范围', desc: '明确代办事项、地点、时间等细节' },
+        { title: '执行代办服务', desc: '陪诊师按约定完成代办事项并反馈结果' },
+        { title: '服务完成', desc: '确认代办结果无误后完成服务' },
+      ]},
+      agent_report: { title: '代取报告', steps: [
+        { title: '提交订单', desc: '填写患者信息、就诊医院等并提交预约' },
+        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
+        { title: '陪诊师接单', desc: '陪诊师接单后确认取报告的医院和时间' },
+        { title: '前往医院取报告', desc: '陪诊师按时前往医院自助机或窗口取报告' },
+        { title: '报告送达', desc: '通过快递或同城配送将报告送至患者手中' },
+        { title: '服务完成', desc: '确认收到报告后完成服务' },
+      ]},
+      agent_diagnosis: { title: '代诊咨询', steps: [
+        { title: '提交订单', desc: '填写患者病情、咨询需求等并提交预约' },
+        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
+        { title: '陪诊师联系患者', desc: '陪诊师接单后详细了解患者病情' },
+        { title: '准备相关材料', desc: '整理病历、检查报告等代诊所需材料' },
+        { title: '远程代诊', desc: '陪诊师代为线上就诊咨询并反馈结果' },
+        { title: '服务完成', desc: '反馈诊疗建议后完成服务' },
+      ]},
+      special_car: { title: '预约车辆', steps: [
+        { title: '提交订单', desc: '填写用车时间、地点、车型等并提交预约' },
+        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
+        { title: '陪诊师确认需求', desc: '陪诊师接单后确认用车时间和地点' },
+        { title: '调度车辆', desc: '根据需求安排合适的车辆和司机' },
+        { title: '按时接送', desc: '车辆按时到达指定地点接送患者' },
+        { title: '服务完成', desc: '送达目的地后确认服务完成' },
+      ]},
+      special_wheelchair: { title: '轮椅助行', steps: [
+        { title: '提交订单', desc: '填写需求时间、地点等并提交预约' },
+        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
+        { title: '陪诊师确认需求', desc: '陪诊师接单后确认助行需求和地点' },
+        { title: '准备助行设备', desc: '根据需求准备轮椅等助行设备' },
+        { title: '提供助行服务', desc: '陪诊师提供全程轮椅助行服务' },
+        { title: '服务完成', desc: '送达目的地后确认服务完成' },
+      ]},
+      featured_hospital: { title: '特色医院', steps: [
+        { title: '提交订单', desc: '填写患者病情、意向医院等并提交预约' },
+        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
+        { title: '陪诊师联系患者', desc: '陪诊师接单后详细了解患者病情' },
+        { title: '推荐特色医院', desc: '根据病情推荐合适的特色专科三甲医院' },
+        { title: '协助挂号就诊', desc: '协助预约挂号并提供陪诊服务' },
+        { title: '服务完成', desc: '就诊结束后确认服务完成' },
+      ]},
+      featured_expert: { title: '特色专家', steps: [
+        { title: '提交订单', desc: '填写患者病情、需求等并提交预约' },
+        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
+        { title: '陪诊师联系患者', desc: '陪诊师接单后详细了解患者病情' },
+        { title: '推荐特色专家', desc: '根据病情推荐领域内知名专家' },
+        { title: '协助预约就诊', desc: '协助预约专家号并提供陪诊服务' },
+        { title: '服务完成', desc: '就诊结束后确认服务完成' },
+      ]},
+    };
 
-  _renderSpecialPage() {
-    const specials = [
-      { title: '孕妇陪诊', icon: '🤰', price: 268, origPrice: 298, tags: ['问诊陪伴', '检查陪同', '心理疏导'], desc: '全程陪伴孕妇就诊，提供专业建议' },
-      { title: '儿童陪诊', icon: '🧒', price: 268, origPrice: 298, tags: ['问诊陪伴', '心理建设', '安抚情绪'], desc: '专业陪诊师陪同儿童就诊，安抚紧张情绪' },
-      { title: '专病陪诊', icon: '🏥', price: 578, origPrice: 598, tags: ['专病专治', '专家陪同', '方案定制'], desc: '针对疑难病症，专家级陪诊师陪同就诊' },
-      { title: '老人陪诊', icon: '👴', price: 228, origPrice: 258, tags: ['全程陪同', '沟通翻译', '贴心照顾'], desc: '为老年人提供全程贴心陪诊服务' },
-      { title: '轮椅陪诊', icon: '♿', price: 198, origPrice: 228, tags: ['轮椅服务', '移动协助', '贴心陪诊'], desc: '提供轮椅及移动协助服务' },
-      { title: '护士陪诊', icon: '👩‍⚕️', price: 368, origPrice: 398, tags: ['专业护理', '健康指导', '用药监督'], desc: '专业护士提供陪诊及健康指导服务' },
-    ];
-    return `
-      <div class="svc-detail">
+    const cfg = stepsMap[key];
+    if (!cfg) return;
+    this._currentServiceKey = key;
+    this._currentServiceTitle = cfg.title;
+
+    const screen = document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+
+    screen.innerHTML = `
+      <div class="sub-page">
         <div class="svd-header">
-          <div class="svd-back" onclick="App.switchTab(0)">${P_ICON.chevronLeft}</div>
-          <h2>特需服务</h2>
-        </div>
-        <div class="svd-hero">
-          <div class="svd-hero-banner" style="background:linear-gradient(135deg,#ea580c,#c24a0a);">特需陪诊</div>
-          <div class="svd-hero-info">
-            <div class="svd-hero-title">特殊人群 · 专业陪诊</div>
-            <div class="svd-hero-desc">为孕妇、儿童、老人、轮椅等特殊人群提供专属陪诊服务</div>
-          </div>
+          <div class="svd-back" onclick="history.back()">${P_ICON.chevronLeft}</div>
+          <h2>${cfg.title} · 操作流程</h2>
         </div>
         <div class="svd-section">
-          <div class="svd-section-title">特需服务项目</div>
-          <div class="svd-sub-list">
-            ${specials.map((s, i) => `
-              <div class="svd-sub-card" onclick="Patient._bookService('special_${i}')">
-                <div class="svd-sub-img" style="background:linear-gradient(135deg,#ffedd5,#fed7aa);color:#c24a0a;font-size:28px;">${s.icon}</div>
-                <div class="svd-sub-info">
-                  <div class="svd-sub-title">${s.title}</div>
-                  <div class="svd-sub-price">¥${s.price} <small>¥${s.origPrice}</small></div>
-                  <div class="svd-sub-tags">
-                    ${s.tags.slice(0,2).map(t => `<span class="svd-sub-tag">${t}</span>`).join('')}
-                  </div>
+          <div class="svd-section-title">操作流程</div>
+          <div class="steps-list">
+            ${cfg.steps.map((s, i) => `
+              <div class="step-item">
+                <div class="step-num">${i+1}</div>
+                <div class="step-content">
+                  <div class="step-title">${s.title}</div>
+                  <div class="step-desc">${s.desc}</div>
                 </div>
               </div>
             `).join('')}
           </div>
         </div>
         <div class="svd-section">
-          <div class="svd-section-title">服务承诺</div>
-          <div class="svd-reason-list">
-            <div class="svd-reason-item">
-              <div class="svd-reason-icon" style="background:rgba(234,88,12,0.1);color:#ea580c;">${P_ICON.shield}</div>
-              <div class="svd-reason-content">
-                <div class="svd-reason-title">服务保障</div>
-                <div class="svd-reason-text">专业资质认证，服务不满意全额退款</div>
-              </div>
-            </div>
-            <div class="svd-reason-item">
-              <div class="svd-reason-icon" style="background:rgba(59,108,181,0.1);color:var(--accent);">${P_ICON.clock}</div>
-              <div class="svd-reason-content">
-                <div class="svd-reason-title">准时到达</div>
-                <div class="svd-reason-text">约定时间准时到达，迟到赔付</div>
-              </div>
-            </div>
-            <div class="svd-reason-item">
-              <div class="svd-reason-icon" style="background:rgba(22,163,74,0.1);color:var(--status-covered);">${P_ICON.phone}</div>
-              <div class="svd-reason-content">
-                <div class="svd-reason-title">24小时客服</div>
-                <div class="svd-reason-text">全程电话畅通，随时联系陪诊师</div>
-              </div>
-            </div>
+          <div class="svd-section-title">注意事项</div>
+          <div style="background:var(--bg-card); border-radius:var(--radius); padding:14px; font-size:12px; color:var(--text-secondary); line-height:1.8;">
+            <div>1. 至少提前24小时预约</div>
+            <div>2. 急、重、传染病不在服务范围</div>
+            <div>3. 超时30分钟将自动取消服务要求</div>
+            <div>4. 遇到服务费外增收费用请联系服务平台，谨防假冒</div>
           </div>
         </div>
         <div class="svd-bottom-bar">
-          <button class="btn" onclick="Patient._bookService('special')">立即预约</button>
+          <button class="btn" onclick="Patient._openBookingForm('${key}')">立即预约</button>
         </div>
       </div>
     `;
   },
 
-  _renderFeaturedPage() {
-    return `
-      <div class="svc-detail">
+  // ===== AI智能下单入口 =====
+  _openAIOrder() {
+    if (!App.requireLogin('AI智能下单')) return;
+    const screen = document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+    screen.innerHTML = `
+      <div class="booking-form">
         <div class="svd-header">
           <div class="svd-back" onclick="App.switchTab(0)">${P_ICON.chevronLeft}</div>
-          <h2>特色陪诊</h2>
-        </div>
-        <div class="svd-hero">
-          <div class="svd-hero-banner" style="background:linear-gradient(135deg,#ca8a04,#a67203);">特色陪诊</div>
-          <div class="svd-hero-info">
-            <div class="svd-hero-title">专业陪诊 · 家人般陪伴</div>
-            <div class="svd-hero-desc">针对不同人群提供专业陪诊服务</div>
-          </div>
+          <h2>AI智能下单</h2>
         </div>
         <div class="svd-section">
-          <div class="svd-section-title">特色服务</div>
-          <div class="svd-sub-list">
-            <div class="svd-sub-card" onclick="Patient._bookService('pregnant')">
-              <div class="svd-sub-img" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#d97706;">👶</div>
-              <div class="svd-sub-info">
-                <div class="svd-sub-title">孕妇陪诊</div>
-                <div class="svd-sub-price">¥168 <small>¥198</small></div>
-                <div class="svd-sub-tags">
-                  <span class="svd-sub-tag">问诊陪伴</span>
-                  <span class="svd-sub-tag">检查陪同</span>
-                </div>
-              </div>
+          <div class="svd-section-title">症状描述</div>
+          <div class="bf-card">
+            <div class="bf-item">
+              <label>请描述您的症状或需求</label>
+              <textarea id="aiSymptom" placeholder="如：头痛三天，伴有恶心呕吐..." rows="3"></textarea>
             </div>
-            <div class="svd-sub-card" onclick="Patient._bookService('children')">
-              <div class="svd-sub-img" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#d97706;">🧒</div>
-              <div class="svd-sub-info">
-                <div class="svd-sub-title">儿童陪诊</div>
-                <div class="svd-sub-price">¥168 <small>¥198</small></div>
-                <div class="svd-sub-tags">
-                  <span class="svd-sub-tag">问诊陪伴</span>
-                  <span class="svd-sub-tag">心理建设</span>
-                </div>
-              </div>
-            </div>
-            <div class="svd-sub-card" onclick="Patient._bookService('whitecollar')">
-              <div class="svd-sub-img" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#d97706;">💼</div>
-              <div class="svd-sub-info">
-                <div class="svd-sub-title">白领陪诊</div>
-                <div class="svd-sub-price">¥168 <small>¥198</small></div>
-                <div class="svd-sub-tags">
-                  <span class="svd-sub-tag">快速就诊</span>
-                  <span class="svd-sub-tag">效率陪诊</span>
-                </div>
-              </div>
-            </div>
-            <div class="svd-sub-card" onclick="Patient._bookService('nurse')">
-              <div class="svd-sub-img" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#d97706;">👩‍⚕️</div>
-              <div class="svd-sub-info">
-                <div class="svd-sub-title">护士陪诊</div>
-                <div class="svd-sub-price">¥368 <small>¥398</small></div>
-                <div class="svd-sub-tags">
-                  <span class="svd-sub-tag">专业护理</span>
-                  <span class="svd-sub-tag">健康指导</span>
-                </div>
-              </div>
-            </div>
-            <div class="svd-sub-card" onclick="Patient._bookService('specialty')">
-              <div class="svd-sub-img" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#d97706;">🏥</div>
-              <div class="svd-sub-info">
-                <div class="svd-sub-title">专病陪诊</div>
-                <div class="svd-sub-price">¥578 <small>¥598</small></div>
-                <div class="svd-sub-tags">
-                  <span class="svd-sub-tag">专病专治</span>
-                  <span class="svd-sub-tag">专家陪同</span>
-                </div>
-              </div>
+            <div class="bf-item">
+              <label>期望就诊医院</label>
+              <select id="aiHospital">
+                ${(MockData.hospitals || []).filter(h => h.hot).map(h => `<option value="${h.name}">${h.name}</option>`).join('')}
+              </select>
             </div>
           </div>
         </div>
+        <button class="bf-submit-btn" onclick="Patient._submitAIOrder()">AI智能推荐</button>
       </div>
     `;
+  },
+
+  _submitAIOrder() {
+    const symptom = document.getElementById('aiSymptom')?.value?.trim() || '';
+    const hospital = document.getElementById('aiHospital')?.value || '未指定';
+    if (!symptom) { App.toast('请描述您的症状'); return; }
+    if (!App.requireLogin('AI智能下单')) return;
+
+    // AI模拟推荐科室
+    const deptMap = {
+      '头痛': '神经内科', '胸闷': '心内科', '咳嗽': '呼吸科', '胃痛': '消化内科',
+      '发热': '感染科', '视力': '眼科', '皮肤': '皮肤科', '': '综合门诊'
+    };
+    let dept = '综合门诊';
+    for (const k in deptMap) { if (symptom.includes(k)) { dept = deptMap[k]; break; } }
+
+    this._openBookingForm('ai_auto', 'AI智能推荐', dept, symptom, hospital);
+  },
+
+  // ===== 统一预约表单 =====
+  _openBookingForm(serviceKey, serviceTitle, preDept, preSymptom, preHospital) {
+    if (!App.requireLogin('预约服务')) return;
+
+    const screen = document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+
+    const u = MockData.patient.user;
+    const hospitals = (MockData.hospitals || []).filter(h => h.hot);
+
+    screen.innerHTML = `
+      <div class="booking-form">
+        <div class="svd-header">
+          <div class="svd-back" onclick="App.switchTab(0)">${P_ICON.chevronLeft}</div>
+          <h2>填写预约信息</h2>
+        </div>
+
+        ${serviceTitle ? `
+        <div style="background:var(--accent-bg); border-radius:var(--radius); padding:12px 14px; font-size:13px; color:var(--accent); margin-bottom:4px;">
+          服务类型：<strong>${serviceTitle}</strong>
+        </div>` : ''}
+
+        <!-- 患者信息 -->
+        <div class="bf-section-title">患者信息</div>
+        <div class="bf-card">
+          <div class="bf-item">
+            <label>姓名</label>
+            <input type="text" id="bfName" value="${u.name}" placeholder="请输入患者姓名" />
+          </div>
+          <div class="bf-item">
+            <label>性别</label>
+            <div style="display:flex; gap:10px;">
+              <label style="flex:1;"><input type="radio" name="bfGender" value="男" ${u.gender==='男'?'checked':''}/> 男</label>
+              <label style="flex:1;"><input type="radio" name="bfGender" value="女" ${u.gender==='女'?'checked':''}/> 女</label>
+            </div>
+          </div>
+          <div class="bf-item">
+            <label>年龄</label>
+            <input type="number" id="bfAge" value="${u.age}" placeholder="请输入年龄" min="0" max="150" />
+          </div>
+          <div class="bf-item">
+            <label>联系电话</label>
+            <input type="tel" id="bfPhone" value="${u.phone}" placeholder="请输入联系电话" />
+          </div>
+          <div class="bf-item">
+            <label>病史信息</label>
+            <textarea id="bfHistory" placeholder="如：高血压、糖尿病等" rows="2">${u.medical?.history || ''}</textarea>
+          </div>
+        </div>
+
+        <!-- 就医信息 -->
+        <div class="bf-section-title">就医信息</div>
+        <div class="bf-card">
+          <div class="bf-item">
+            <label>就诊医院</label>
+            <select id="bfHospital">
+              ${hospitals.map(h => `<option value="${h.name}" ${preHospital===h.name?'selected':''}>${h.name}</option>`).join('')}
+            </select>
+          </div>
+          <div class="bf-item">
+            <label>就诊科室</label>
+            <input type="text" id="bfDept" value="${preDept || ''}" placeholder="如：心内科、神经内科" />
+          </div>
+          ${preSymptom ? `
+          <div class="bf-item">
+            <label>症状描述</label>
+            <div style="padding:10px 12px; background:var(--bg-tertiary); border-radius:var(--radius); font-size:13px; color:var(--text-secondary);">${preSymptom}</div>
+          </div>` : ''}
+        </div>
+
+        <!-- 就诊时间（范围选择）-->
+        <div class="bf-section-title">就诊时间</div>
+        <div class="bf-card">
+          <div class="bf-item">
+            <label>期望预约时间范围</label>
+            <div class="bf-time-group">
+              <div class="bf-time-opt active" data-range="1-3天" onclick="Patient._selectTimeRange(this)">1-3天内</div>
+              <div class="bf-time-opt" data-range="一周" onclick="Patient._selectTimeRange(this)">一周内</div>
+              <div class="bf-time-opt" data-range="尽快" onclick="Patient._selectTimeRange(this)">尽快</div>
+            </div>
+          </div>
+          <div class="bf-item">
+            <label>备注说明</label>
+            <textarea id="bfNote" placeholder="如有特殊需求请填写" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div style="font-size:12px; color:var(--text-muted); text-align:center; padding:4px 0;">
+          * 提交后系统将自动为您分配陪诊师
+        </div>
+
+        <button class="bf-submit-btn" onclick="Patient._submitBooking('${serviceKey}')">提交预约</button>
+      </div>
+    `;
+  },
+
+  _selectTimeRange(el) {
+    el.parentNode.querySelectorAll('.bf-time-opt').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+  },
+
+  _submitBooking(serviceKey) {
+    const name = document.getElementById('bfName')?.value?.trim();
+    const gender = document.querySelector('input[name="bfGender"]:checked')?.value || '男';
+    const age = document.getElementById('bfAge')?.value;
+    const phone = document.getElementById('bfPhone')?.value?.trim();
+    const history = document.getElementById('bfHistory')?.value || '';
+    const hospital = document.getElementById('bfHospital')?.value || '未指定';
+    const dept = document.getElementById('bfDept')?.value?.trim() || '';
+    const note = document.getElementById('bfNote')?.value || '';
+    const timeRange = document.querySelector('.bf-time-opt.active')?.dataset.range || '1-3天';
+
+    if (!name) { App.toast('请填写患者姓名'); return; }
+    if (!age || age < 0) { App.toast('请填写有效年龄'); return; }
+    if (!dept) { App.toast('请填写就诊科室'); return; }
+
+    if (!App.requireLogin('提交预约')) return;
+
+    // 价格映射
+    const priceMap = {
+      consult_diagnosis: 128, consult_agent: 158,
+      agent_report: 98, agent_diagnosis: 198,
+      special_car: 158, special_wheelchair: 198,
+      featured_hospital: 98, featured_expert: 298,
+      ai_auto: 298,
+    };
+    const serviceNameMap = {
+      consult_diagnosis: '就诊咨询', consult_agent: '代办咨询',
+      agent_report: '代取报告', agent_diagnosis: '代诊咨询',
+      special_car: '预约车辆', special_wheelchair: '轮椅助行',
+      featured_hospital: '特色医院', featured_expert: '特色专家',
+      ai_auto: 'AI智能推荐',
+    };
+
+    const amount = priceMap[serviceKey] || 298;
+    const serviceName = serviceNameMap[serviceKey] || '陪诊服务';
+
+    // 后台自动分配陪诊师（随机选一个在线的）
+    const escorts = MockData.escorts || [];
+    const available = escorts.filter(e => e.status !== '服务中');
+    const assigned = available.length > 0
+      ? available[Math.floor(Math.random() * available.length)]
+      : escorts[Math.floor(Math.random() * escorts.length)];
+
+    const req = NeedPool.add({
+      patientName: name, gender, age: parseInt(age), phone,
+      emergencyName: '', emergencyPhone: '',
+      history, allergy: '',
+      medicine: '', mobility: '', insurance: '',
+      hospital, dept, date: timeRange,
+      serviceType: serviceName, amount,
+      note: note || `通过${serviceName}下单`,
+      status: '已分配',
+      escortId: assigned.id, escortName: assigned.name, escortPhone: assigned.phone,
+      idCardFront: null, idCardBack: null, reportFiles: [],
+    });
+
+    App.toast('预约成功！陪诊师' + assigned.name + '已为您分配');
+    setTimeout(() => App.switchTab(2), 1000);
   },
 
   _contactService(name) {
@@ -755,39 +970,7 @@ const Patient = {
 
   _bookService(type) {
     if (!App.requireLogin('预约服务')) return;
-    const names = {
-      consult: '诊前咨询', agent: '代办服务', special: '特需服务', featured: '特色陪诊',
-      agent_run: '代办跑腿', agent_consult: '代办问诊', agent_report: '代约检查', agent_assist: '辅助就医',
-      pregnant: '孕妇陪诊', children: '儿童陪诊', whitecollar: '白领陪诊', nurse: '护士陪诊', specialty: '专病陪诊',
-      special_0: '孕妇陪诊', special_1: '儿童陪诊', special_2: '专病陪诊', special_3: '老人陪诊', special_4: '轮椅陪诊', special_5: '护士陪诊',
-    };
-    const prices = {
-      special_0: 268, special_1: 268, special_2: 578, special_3: 228, special_4: 198, special_5: 368,
-    };
-
-    // 如果是子服务类型（代办/特需/特色子项），直接创建订单
-    const isSubType = /^(agent_|special_|pregnant|children|whitecollar|nurse|specialty)/.test(type);
-    if (isSubType) {
-      const u = MockData.patient.user;
-      const price = prices[type] || 298;
-      const typeName = names[type] || '服务';
-      const req = NeedPool.add({
-        patientName: u.name, gender: u.gender, age: u.age, phone: u.phone,
-        emergencyName: u.emergencyName, emergencyPhone: u.emergencyPhone,
-        history: u.medical?.history || '', allergy: u.medical?.allergy || '',
-        medicine: '', mobility: '', insurance: '',
-        hospital: '待确认', dept: '待确认', date: '待确认',
-        serviceType: typeName, amount: price,
-        note: '通过' + typeName + '详情页下单',
-        status: '待处理',
-        idCardFront: null, idCardBack: null, reportFiles: [],
-      });
-      App.toast('下单成功！订单号：' + req.id);
-      setTimeout(() => App.switchTab(2), 800);
-    } else {
-      App.toast('已选择' + (names[type] || '服务') + '，正在跳转预约…');
-      setTimeout(() => App.switchTab(1), 500);
-    }
+    this._openBookingForm(type);
   },
 
   // ===== 医院列表页 =====
@@ -795,6 +978,11 @@ const Patient = {
     this._searchKeyword = '';
     this._searchFilter = { category: '', city: '', sort: '' };
     this._renderHospitalListPage();
+  },
+
+  _openHospitalDetail(name) {
+    const h = (MockData.hospitals || []).find(x => x.name === name);
+    if (h) this.goHospitalDetail(h.id);
   },
 
   _renderHospitalListPage() {
