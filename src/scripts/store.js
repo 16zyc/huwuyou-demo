@@ -142,6 +142,11 @@ const CareStore = {
   },
   need(id) { return this.state.needs.find(n => n.id === id); },
   addNeed(input) {
+    // 状态白名单：通过 addNeed 只允许创建 待处理 订单
+    if (input.status && input.status !== '待处理') {
+      console.warn('CareStore.addNeed: 不允许创建状态 "' + input.status + '"，已重置为待处理');
+      delete input.status;
+    }
     const id = input.id || this.uid('N');
     const service = this.state.prices.find(p => p.name === input.serviceType) || this.state.prices[0];
     const need = {

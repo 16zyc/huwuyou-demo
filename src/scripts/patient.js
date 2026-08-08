@@ -467,12 +467,21 @@ const Patient = {
         <div class="bp-sub">陪诊咨询 · 代办服务 · 特需服务</div>
       </div>
 
-      <!-- AI下单入口（清晰标注）-->
-      <div class="ai-order-banner" onclick="Patient._openAIOrder()">
-        <div class="ai-order-icon">${P_ICON.service_consult}</div>
-        <div class="ai-order-text">
-          <div class="ai-order-title">AI智能下单 <span class="ai-order-badge">推荐</span></div>
-          <div class="ai-order-desc">描述您的症状，AI智能推荐服务方案</div>
+      <!-- 人工下单 + AI下单 双入口 -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+        <div class="ai-order-banner" style="background:linear-gradient(135deg, var(--status-covered), #0d7a38); box-shadow:0 4px 16px rgba(22,163,74,0.25);" onclick="Patient.onServiceClick('consult')">
+          <div class="ai-order-icon">${P_ICON.clipboard}</div>
+          <div class="ai-order-text">
+            <div class="ai-order-title">人工下单</div>
+            <div class="ai-order-desc">填写就诊需求，平台为您匹配陪诊师</div>
+          </div>
+        </div>
+        <div class="ai-order-banner" onclick="Patient._openAIOrder()">
+          <div class="ai-order-icon">${P_ICON.service_consult}</div>
+          <div class="ai-order-text">
+            <div class="ai-order-title">AI智能下单 <span class="ai-order-badge">推荐</span></div>
+            <div class="ai-order-desc">描述您的症状，AI智能推荐服务方案</div>
+          </div>
         </div>
       </div>
 
@@ -848,7 +857,34 @@ const Patient = {
           </div>
           <div class="bf-item">
             <label>病史信息</label>
-            <textarea id="bfHistory" placeholder="如：高血压、糖尿病等" rows="2">${u.medical?.history || ''}</textarea>
+            <textarea id="bfHistory" placeholder="如：高血压、糖尿病等" rows="2">${MockData.patient.medical?.history || ''}</textarea>
+          </div>
+          <div class="bf-item">
+            <label>过敏史</label>
+            <input type="text" id="bfAllergy" value="${MockData.patient.medical?.allergy || ''}" placeholder="如：青霉素过敏" />
+          </div>
+          <div class="bf-item">
+            <label>用药情况</label>
+            <input type="text" id="bfMedicine" value="${MockData.patient.medical?.medicine || ''}" placeholder="如：氨氯地平 5mg/日" />
+          </div>
+          <div class="bf-item">
+            <label>行动能力</label>
+            <select id="bfMobility">
+              <option value="可独立行走" ${MockData.patient.medical?.mobility==='可独立行走'?'selected':''}>可独立行走</option>
+              <option value="需拐杖" ${MockData.patient.medical?.mobility==='需拐杖'?'selected':''}>需拐杖</option>
+              <option value="需轮椅" ${MockData.patient.medical?.mobility==='需轮椅'?'selected':''}>需轮椅</option>
+              <option value="需搀扶" ${MockData.patient.medical?.mobility==='需搀扶'?'selected':''}>需搀扶</option>
+            </select>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="bf-item">
+              <label>紧急联系人</label>
+              <input type="text" id="bfEmergencyName" value="${u.emergencyName || ''}" placeholder="姓名" />
+            </div>
+            <div class="bf-item">
+              <label>联系人电话</label>
+              <input type="tel" id="bfEmergencyPhone" value="${u.emergencyPhone || ''}" placeholder="手机号" />
+            </div>
           </div>
         </div>
 
@@ -890,7 +926,7 @@ const Patient = {
         </div>
 
         <div style="font-size:12px; color:var(--text-muted); text-align:center; padding:4px 0;">
-          * 提交后系统将自动为您分配陪诊师
+          * 提交后由管理员审核并为您匹配陪诊师
         </div>
 
         <button class="bf-submit-btn" onclick="Patient._submitBooking('${serviceKey}')">提交预约</button>
@@ -909,6 +945,11 @@ const Patient = {
     const age = document.getElementById('bfAge')?.value;
     const phone = document.getElementById('bfPhone')?.value?.trim();
     const history = document.getElementById('bfHistory')?.value || '';
+    const allergy = document.getElementById('bfAllergy')?.value || '';
+    const medicine = document.getElementById('bfMedicine')?.value || '';
+    const mobility = document.getElementById('bfMobility')?.value || '可独立行走';
+    const emergencyName = document.getElementById('bfEmergencyName')?.value || '';
+    const emergencyPhone = document.getElementById('bfEmergencyPhone')?.value || '';
     const hospital = document.getElementById('bfHospital')?.value || '未指定';
     const dept = document.getElementById('bfDept')?.value?.trim() || '';
     const note = document.getElementById('bfNote')?.value || '';
@@ -920,46 +961,29 @@ const Patient = {
 
     if (!App.requireLogin('提交预约')) return;
 
-    // 价格映射
-    const priceMap = {
-      consult_diagnosis: 128, consult_agent: 158,
-      agent_report: 98, agent_diagnosis: 198,
-      special_car: 158, special_wheelchair: 198,
-      featured_hospital: 98, featured_expert: 298,
-      ai_auto: 298,
-    };
+    // 从 PriceTable 获取价格（匹配服务名）
     const serviceNameMap = {
-      consult_diagnosis: '就诊咨询', consult_agent: '代办咨询',
-      agent_report: '代取报告', agent_diagnosis: '代诊咨询',
-      special_car: '预约车辆', special_wheelchair: '轮椅助行',
-      featured_hospital: '特色医院', featured_expert: '特色专家',
-      ai_auto: 'AI智能推荐',
+      consult_diagnosis: '半程陪诊', consult_agent: '全程陪诊',
+      agent_report: '代办跑腿', agent_diagnosis: '全程陪诊',
+      special_car: '全程陪诊', special_wheelchair: '全程陪诊',
+      featured_hospital: '陪同复诊', featured_expert: '全程陪诊',
+      ai_auto: '半程陪诊',
     };
-
-    const amount = priceMap[serviceKey] || 298;
-    const serviceName = serviceNameMap[serviceKey] || '陪诊服务';
-
-    // 后台自动分配陪诊师（随机选一个在线的）
-    const escorts = MockData.escorts || [];
-    const available = escorts.filter(e => e.status !== '服务中');
-    const assigned = available.length > 0
-      ? available[Math.floor(Math.random() * available.length)]
-      : escorts[Math.floor(Math.random() * escorts.length)];
+    const priceName = serviceNameMap[serviceKey] || '半程陪诊';
+    const amount = PriceTable.getPrice(priceName);
 
     const req = NeedPool.add({
       patientName: name, gender, age: parseInt(age), phone,
-      emergencyName: '', emergencyPhone: '',
-      history, allergy: '',
-      medicine: '', mobility: '', insurance: '',
+      emergencyName, emergencyPhone,
+      history, allergy, medicine, mobility, insurance: '',
       hospital, dept, date: timeRange,
-      serviceType: serviceName, amount,
-      note: note || `通过${serviceName}下单`,
-      status: '已分配',
-      escortId: assigned.id, escortName: assigned.name, escortPhone: assigned.phone,
+      serviceType: priceName, amount,
+      note: note || `通过人工下单（${priceName}）`,
+      status: '待处理',
       idCardFront: null, idCardBack: null, reportFiles: [],
     });
 
-    App.toast('预约成功！陪诊师' + assigned.name + '已为您分配');
+    App.toast('预约已提交，等待管理员审核并匹配陪诊师');
     setTimeout(() => App.switchTab(2), 1000);
   },
 
@@ -1380,33 +1404,32 @@ const Patient = {
     const serviceType = document.getElementById('edServiceType')?.value || '半程陪诊';
     const dept = document.getElementById('edDept')?.value || '';
     const note = document.getElementById('edNote')?.value || '';
-    const prices = { '半程陪诊': 298, '全程陪诊': 498, '代办跑腿': 188, '代办问诊': 258, '特需陪诊': 688 };
-    const amount = prices[serviceType] || 298;
+    const amount = PriceTable.getPrice(serviceType);
 
     if (!date) { App.toast('请选择就诊日期'); return; }
     if (!dept) { App.toast('请填写就诊科室'); return; }
 
     const u = MockData.patient.user;
+    const med = MockData.patient.medical;
     const req = NeedPool.add({
       patientName: u.name, gender: u.gender, age: u.age, phone: u.phone,
       emergencyName: u.emergencyName, emergencyPhone: u.emergencyPhone,
-      history: u.medical?.history || '', allergy: u.medical?.allergy || '',
-      medicine: '', mobility: '', insurance: '',
+      history: med.history || '', allergy: med.allergy || '',
+      medicine: med.medicine || '', mobility: med.mobility || '', insurance: '',
       hospital, dept, date, serviceType, amount,
       note: note || '通过陪诊师详情页下单',
-      status: '已对接',
-      escortId: e.id, escortName: e.name,
+      status: '待处理',
       idCardFront: null, idCardBack: null, reportFiles: [],
     });
 
-    App.toast('下单成功！订单号：' + req.id);
+    App.toast('预约已提交，等待管理员审核并匹配陪诊师');
     setTimeout(() => App.switchTab(2), 800);
   },
 
   // ===== 订单页 =====
   renderOrders(el) {
     const tabs = ['全部', '待付款', '待接单', '待服务', '进行中', '已完成'];
-    const statusMap = { '全部': null, '待付款': '待处理', '待接单': '已分配', '待服务': '已对接', '进行中': '服务中', '已完成': '已完成' };
+    const statusMap = { '全部': null, '待付款': '待处理', '待接单': '已分配', '进行中': '服务中', '已完成': '已完成' };
     const user = MockData.patient.user;
     let needs = NeedPool.list.filter(n => n.patientName === user.name);
 
@@ -1439,8 +1462,8 @@ const Patient = {
   },
 
   _renderOrderCard(n) {
-    const statusClass = n.status === '待处理' ? 'pending' : n.status === '已分配' || n.status === '已对接' ? 'accepted' : n.status === '服务中' ? 'serving' : 'done';
-    const statusLabel = n.status === '待处理' ? '待接单' : n.status === '已分配' ? '待服务' : n.status === '已对接' ? '进行中' : n.status;
+    const statusClass = n.status === '待处理' ? 'pending' : n.status === '已分配' ? 'accepted' : n.status === '服务中' ? 'serving' : 'done';
+    const statusLabel = n.status === '待处理' ? '待审核' : n.status === '已分配' ? '待服务' : n.status === '服务中' ? '进行中' : n.status;
     return `
       <div class="order-card" onclick="Patient._openOrderDetail('${n.id}')">
         <div class="order-head">
@@ -1452,7 +1475,7 @@ const Patient = {
         ${n.escortName ? `
           <div style="margin-top:8px; padding:8px 10px; background:var(--accent-bg); border-radius:6px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
             <span>陪诊师：<strong style="color:var(--accent);">${n.escortName}</strong></span>
-            <span style="color:var(--text-muted); font-size:11px;">已对接</span>
+            <span style="color:var(--text-muted); font-size:11px;">待服务</span>
           </div>
         ` : ''}
         ${n.note ? `
@@ -1475,7 +1498,7 @@ const Patient = {
     const screen = document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
 
-    const statusClass = n.status === '待处理' ? 'pending' : n.status === '已分配' || n.status === '已对接' ? 'accepted' : n.status === '服务中' ? 'serving' : 'done';
+    const statusClass = n.status === '待处理' ? 'pending' : n.status === '已分配' ? 'accepted' : n.status === '服务中' ? 'serving' : 'done';
     const timelineItems = [
       { label: '订单创建', time: n.createTime, done: true },
       { label: '陪诊师对接', time: n.escortName ? n.updatedAt : null, done: !!n.escortName },
@@ -1537,7 +1560,15 @@ const Patient = {
             ${n.escortPhone ? `<div class="ed-info-row"><span class="ed-info-label">联系电话</span><span class="ed-info-value">${n.escortPhone}</span></div>` : ''}
           </div>
         </div>
-        ` : ''}
+        ` : `
+        <!-- 未匹配提示 -->
+        <div class="svd-section">
+          <div class="svd-section-title">陪诊师信息</div>
+          <div style="padding:16px; background:var(--accent-bg); border-radius:var(--radius); text-align:center; font-size:13px; color:var(--text-secondary);">
+            陪诊师匹配中，平台将根据您的需求尽快安排合适的陪诊师
+          </div>
+        </div>
+        `}
 
         <!-- 订单进度 -->
         <div class="svd-section">
@@ -1593,7 +1624,7 @@ const Patient = {
     const u = MockData.patient.user;
     const myNeeds = NeedPool.list.filter(n => n.patientName === u.name);
     const doneCount = myNeeds.filter(n => n.status === '已完成').length;
-    const activeCount = myNeeds.filter(n => ['待处理','已分配','已对接','服务中'].includes(n.status)).length;
+    const activeCount = myNeeds.filter(n => ['待处理','已分配','服务中'].includes(n.status)).length;
 
     el.innerHTML = `
       <!-- 用户信息头 -->
@@ -1675,6 +1706,10 @@ const Patient = {
     } else {
       App.toast('功能演示中');
     }
+  },
+
+  _openAddressManager() {
+    App.toast('地址管理功能开发中');
   },
 
   // ===== 就诊人管理 =====

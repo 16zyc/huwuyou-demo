@@ -404,7 +404,6 @@ const Admin = {
         <button class="filter-btn active" data-f="all">全部（${NeedPool.list.length}）</button>
         <button class="filter-btn" data-f="待处理">待处理（${NeedPool.list.filter(n=>n.status==='待处理').length}）</button>
         <button class="filter-btn" data-f="已分配">已分配</button>
-        <button class="filter-btn" data-f="已对接">已对接</button>
         <button class="filter-btn" data-f="服务中">服务中</button>
         <button class="filter-btn" data-f="已完成">已完成</button>
       </div>
@@ -436,7 +435,7 @@ const Admin = {
                 <td><div class="cp-sub">${n.createTime}</div><div class="cp-sub">${n.id}</div></td>
                 <td><div class="cell-tags">${n.history?`<span class="tag tag-gray">${n.history.slice(0,8)}</span>`:''}${n.mobility?`<span class="tag tag-gray">${n.mobility}</span>`:''}${n.allergy&&n.allergy!=='无'?`<span class="tag tag-red">${n.allergy}</span>`:''}</div></td>
                 <td>${n.escortName || '<span class="cp-sub">待派单</span>'}</td>
-                <td><span class="status-badge ${n.status==='待处理'?'pending':n.status==='服务中'?'serving':(n.status==='已分配'||n.status==='已对接')?'accepted':n.status==='已取消'?'cancelled':'done'}">${n.status}</span></td>
+                <td><span class="status-badge ${n.status==='待处理'?'pending':n.status==='服务中'?'serving':(n.status==='已分配')?'accepted':n.status==='已取消'?'cancelled':'done'}">${n.status}</span></td>
                 <td><button class="btn-link" onclick="Admin.openNeed('${n.id}')">处理</button></td>
               </tr>
             `).join('')}
@@ -514,7 +513,7 @@ const Admin = {
         </div>
       ` : ''}
 
-      ${n.status === '待处理' || (n.status === '已分配' && !n.hospitalContact) || (n.status === '已对接' && !n.escortName) ? `
+      ${n.status === '待处理' || (n.status === '已分配' && !n.hospitalContact) ? `
         ${!n.escortName ? `
         <div class="modal-card">
           <div class="card-title">${ICON.cpu} AI 推荐陪诊师</div>
@@ -555,7 +554,7 @@ const Admin = {
         </div>
         ` : `
         <div class="modal-card">
-          <div class="card-title">${ICON.hospitals} 已对接医院</div>
+          <div class="card-title">${ICON.hospitals} 已分配医院</div>
           <div class="pb-row"><span class="pb-label">对接人</span><span class="pb-value">${n.hospitalContact}</span></div>
         </div>
         `}
@@ -588,7 +587,7 @@ const Admin = {
     const patch = { escortName: e.name, escortPhone: e.phone };
     // 只在还在"待处理"时推进状态
     if (n.status === '待处理') patch.status = '已分配';
-    else if (n.status === '已对接') patch.status = '已对接'; // 保持，两步都完成
+    else if (n.status === '已分配') patch.status = '已分配'; // 保持，两步都完成
     NeedPool.update(needId, patch);
     e.status = '服务中';
     this.toast(`已分配陪诊师：${e.name}（患者端已同步）`);
@@ -599,7 +598,7 @@ const Admin = {
   reassignEscort(needId) {
     NeedPool.update(needId, { escortName: null, escortPhone: null });
     if (NeedPool.getById(needId).hospitalContact) {
-      NeedPool.update(needId, { status: '已对接' });
+      NeedPool.update(needId, { status: '已分配' });
     } else {
       NeedPool.update(needId, { status: '待处理' });
     }
@@ -609,10 +608,10 @@ const Admin = {
   contactHospital(needId, contact) {
     const n = NeedPool.getById(needId);
     const patch = { hospitalContact: contact };
-    if (n.status === '待处理') patch.status = '已对接';
+    if (n.status === '待处理') patch.status = '已分配';
     else if (n.status === '已分配') patch.status = '已分配'; // 保持，两步都完成
     NeedPool.update(needId, patch);
-    this.toast(`已对接医院（联系人：${contact}）`);
+    this.toast(`已分配医院（联系人：${contact}）`);
     this.closeModal();
     setTimeout(() => this.openNeed(needId), 300);
   },
@@ -877,11 +876,11 @@ const Admin = {
 
   // ===== 服务跟踪 =====
   renderTrack(el) {
-    const serving = NeedPool.list.filter(n => n.status === '服务中' || n.status === '已对接' || n.status === '已分配');
+    const serving = NeedPool.list.filter(n => n.status === '服务中'  || n.status === '已分配');
     const trackKpis = [
       { icon: ICON.track, num: NeedPool.list.filter(n=>n.status==='服务中').length, label: '服务中', cls: 'kpi-blue' },
       { icon: ICON.alert, num: NeedPool.list.filter(n=>n.status==='已分配').length, label: '待签到', cls: 'kpi-warn' },
-      { icon: ICON.calendar, num: NeedPool.list.filter(n=>n.status==='已对接').length, label: '待开始', cls: 'kpi-default' },
+      { icon: ICON.calendar, num: NeedPool.list.filter(n=>n.status==='已分配').length, label: '待开始', cls: 'kpi-default' },
       { icon: ICON.activity, num: NeedPool.list.filter(n=>n.status==='已完成').length, label: '已完成', cls: 'kpi-green' },
     ];
     el.innerHTML = `
@@ -903,7 +902,7 @@ const Admin = {
             <thead><tr><th>患者</th><th>医院/科室</th><th>陪诊师</th><th>状态</th><th>进度</th><th>操作</th></tr></thead>
             <tbody>
               ${serving.map(n => {
-                const flow = ['待处理','已分配','已对接','服务中','已完成'];
+                const flow = ['待处理','已分配','已分配','服务中','已完成'];
                 const idx = flow.indexOf(n.status);
                 return `
                 <tr>
