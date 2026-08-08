@@ -58,18 +58,21 @@ http://localhost:8000/
 ├── deploy/
 │   └── nginx-huwuyou-demo.conf        # `/huwuyou-demo/` 演示站配置片段
 └── docs/
-    ├── requirements/                  # 原始需求文档
+    ├── INDEX.md                       # 文档归档总索引（唯一入口）
+    ├── requirements/                  # 产品需求与需求分析
+    ├── architecture/                  # 架构设计与 UI 设计体系
+    ├── development/                   # 开发记录、完成报告与工作规范
+    ├── planning/                      # 实施路线图与开发计划
+    ├── reports/                       # 代码审查、流程审计与 UI 评估报告
+    ├── testing/                       # 冒烟测试清单
     ├── presentations/                 # HTML/PPTX 演示稿、演讲稿和渲染检查产物
     ├── screenshots/
     │   ├── product/                   # 产品页面截图
     │   └── references/                # 设计参考图
-    ├── planning/                      # 活跃设计方案（患者-AI 工作流设计）
-    ├── architecture/                  # 架构设计（规划中）
-    ├── development/                   # 开发记录（规划中）
-    ├── testing/                       # 测试报告（规划中）
-    ├── reports/                       # 审查报告（规划中）
-    └── archive/                       # 历史方案与已完成的设计说明
+    └── archive/                       # 历史分析、废弃设计与被替代规范
 ```
+
+> 全部项目文档已归档至 `docs/` 分类目录，总索引见 [docs/INDEX.md](docs/INDEX.md)。
 
 ## 代码加载顺序
 
@@ -185,12 +188,17 @@ sudo systemctl reload nginx
 
 ## 交接材料
 
+- 文档归档总索引：[docs/INDEX.md](docs/INDEX.md)
 - 原始需求：[docs/requirements/智陪护需求.docx](docs/requirements/智陪护需求.docx)
+- 需求正式化与差距分析：[docs/requirements/PRODUCT_REQUIREMENTS_ANALYSIS.md](docs/requirements/PRODUCT_REQUIREMENTS_ANALYSIS.md)
+- UI 设计体系与执行规范：[docs/architecture/UI_DESIGN_SYSTEM.md](docs/architecture/UI_DESIGN_SYSTEM.md)
+- 代码审查与最终验证报告：[docs/reports/FINAL_PROJECT_VALIDATION_AND_UI_REPORT.md](docs/reports/FINAL_PROJECT_VALIDATION_AND_UI_REPORT.md)
 - HTML 技术汇报：[docs/presentations/ppt.html](docs/presentations/ppt.html)
 - PowerPoint 技术汇报：[docs/presentations/护无忧-技术交接汇报.pptx](docs/presentations/护无忧-技术交接汇报.pptx)
 - 汇报演讲稿：[docs/presentations/护无忧-技术交接汇报-演讲稿.md](docs/presentations/护无忧-技术交接汇报-演讲稿.md)
 - 产品截图：[docs/screenshots/product/](docs/screenshots/product/)
-- 设计与实现记录：[docs/planning/](docs/planning/) 与 [docs/archive/](docs/archive/)
+- 开发计划与完成报告：[docs/planning/](docs/planning/) 与 [docs/development/](docs/development/)
+- 历史分析与旧方案：[docs/archive/](docs/archive/)
 
 `docs/presentations/rendered/` 和 `.inspect.ndjson` 是 PowerPoint 视觉检查产物，便于后续确认演示稿渲染是否变化。
 
