@@ -541,6 +541,13 @@ const Patient = {
         ${hotHospitals.map(h => this._renderHospitalCard(h)).join('')}
       </div>
 
+      ${(CareStore.state.announcements||[]).filter(a=>a.status==='published').slice(0,2).map(a => `
+      <div style="margin-top:12px; padding:12px 14px; background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius); font-size:12px; color:var(--accent);">
+        <strong>📢 ${a.title}</strong>
+        <div style="margin-top:4px; color:var(--text-secondary);">${a.content.slice(0,80)}${a.content.length>80?'…':''}</div>
+      </div>
+      `).join('')}
+
       ${isGuest ? `
       <div style="margin-top:16px; padding:14px; background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius); text-align:center; cursor:pointer;" onclick="App.state='patientLogin';App.render()">
         <div style="font-size:14px; font-weight:600; color:var(--accent); margin-bottom:4px;">登录后享受更多服务</div>

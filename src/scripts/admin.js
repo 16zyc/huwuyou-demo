@@ -245,16 +245,18 @@ const Admin = {
 
   // ===== 工作台（对齐科研2 StatCard 结构）=====
   renderDashboard(el) {
-    const k = MockData.kpi;
-    const pending = NeedPool.list.filter(n => n.status === '待处理');
-    const serving = NeedPool.list.filter(n => n.status === '服务中');
+    const needs = CareStore.state.needs;
+    const pending = needs.filter(n => n.status === '待处理');
+    const serving = needs.filter(n => n.status === '服务中');
+    const doneCount = needs.filter(n => n.status === '已完成').length;
+    const total = needs.length || 1;
     const kpis = [
-      { icon: ICON.dashboard, num: k.todayOrders, label: '今日订单', cls: 'kpi-blue', trend: '↑ 12%', trendType: 'up' },
-      { icon: ICON.needs, num: pending.length, label: '待处理需求', cls: 'kpi-warn', trend: '需关注', trendType: 'neutral' },
-      { icon: ICON.track, num: k.inService, label: '陪诊中', cls: 'kpi-blue', trend: '实时', trendType: 'neutral' },
-      { icon: ICON.activity, num: k.doneRate + '%', label: '完成率', cls: 'kpi-green', trend: '↑ 2%', trendType: 'up' },
-      { icon: ICON.reviews, num: k.satisfaction, label: '满意度', cls: 'kpi-green', trend: '稳定', trendType: 'neutral' },
-      { icon: ICON.alert, num: k.complaintRate + '%', label: '投诉率', cls: 'kpi-red', trend: '↓ 0.3%', trendType: 'down', trendPositive: true },
+      { icon: ICON.dashboard, num: total, label: '总订单', cls: 'kpi-blue' },
+      { icon: ICON.needs, num: pending.length, label: '待处理需求', cls: 'kpi-warn' },
+      { icon: ICON.track, num: serving.length, label: '陪诊中', cls: 'kpi-blue' },
+      { icon: ICON.activity, num: Math.round(doneCount/total*100)+'%', label: '完成率', cls: 'kpi-green' },
+      { icon: ICON.reviews, num: needs.filter(n=>n.feedback).length, label: '已评价', cls: 'kpi-green' },
+      { icon: ICON.escorts, num: MockData.escorts.length, label: '陪诊师', cls: 'kpi-default' },
     ];
     el.innerHTML = `
       <div class="page-head"><h2>运营工作台</h2><div>实时数据 · ${new Date().toLocaleDateString('zh-CN', { year:'numeric', month:'2-digit', day:'2-digit' })}</div></div>
@@ -266,7 +268,6 @@ const Admin = {
             <div class="kpi-body">
               <div class="kpi-num">${kp.num}</div>
               <div class="kpi-label">${kp.label}</div>
-              <div class="kpi-trend ${kp.trendType} ${kp.trendPositive ? 'up' : ''}">${kp.trendType === 'up' ? ICON.trendUp : kp.trendType === 'down' ? ICON.trendDown : ICON.dot}<span>${kp.trend}</span></div>
             </div>
           </div>
         `).join('')}

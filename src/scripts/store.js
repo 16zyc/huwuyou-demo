@@ -73,6 +73,9 @@ const CareStore = {
       })),
       escortReports: demoReport ? [demoReport] : [],
       featuredHospitals: this.clone(typeof FeaturedHospitals !== 'undefined' ? FeaturedHospitals : []),
+      announcements: [
+        { id:'AN-001', title:'平台服务说明', content:'护无忧智陪诊平台为您提供专业陪诊服务。提交需求后，管理员将根据您的实际情况匹配最合适的陪诊师。', status:'published', publishedAt:'07-15 10:00' },
+      ],
     };
   },
   init() {
@@ -102,6 +105,7 @@ const CareStore = {
       notifications: Array.isArray(loaded.notifications) ? loaded.notifications : base.notifications,
       escortReports: Array.isArray(loaded.escortReports) ? loaded.escortReports : base.escortReports,
       featuredHospitals: Array.isArray(loaded.featuredHospitals) ? loaded.featuredHospitals : base.featuredHospitals,
+      announcements: Array.isArray(loaded.announcements) ? loaded.announcements : base.announcements,
     };
   },
   bindLegacy() {
