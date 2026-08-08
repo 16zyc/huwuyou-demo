@@ -1615,6 +1615,24 @@ const Patient = {
           </div>
         </div>
 
+        ${n.status === '已完成' && n.escortReportId ? `
+        <!-- 陪诊报告 -->
+        <div class="svd-section">
+          <div class="svd-section-title">陪诊报告</div>
+          <div style="padding:14px; background:var(--bg-card); border-radius:var(--radius); text-align:center;">
+            <div style="font-size:13px; color:var(--status-covered); margin-bottom:8px;">陪诊报告已发布</div>
+            <button class="btn btn-outline" style="width:auto; padding:10px 24px;" onclick="Patient.openNeedDetail('${n.id}')">查看陪诊报告</button>
+          </div>
+        </div>
+        ` : (n.status === '已完成' ? `
+        <div class="svd-section">
+          <div class="svd-section-title">陪诊报告</div>
+          <div style="padding:14px; background:var(--bg-tertiary); border-radius:var(--radius); text-align:center; font-size:13px; color:var(--text-muted);">
+            服务已完成，工作人员正在整理报告
+          </div>
+        </div>
+        ` : '')}
+
         <!-- 操作按钮 -->
         <div class="svd-bottom-bar">
           ${n.status === '待处理' ? `<button class="btn btn-outline" onclick="Patient._cancelOrder('${n.id}')">取消订单</button>` : ''}
@@ -1633,7 +1651,74 @@ const Patient = {
   },
 
   _reviewOrder(id) {
-    App.toast('评价功能开发中');
+    const n = NeedPool.getById(id);
+    if (!n) return;
+    const existing = n.feedback || {};
+    const screen = document.getElementById('screen');
+    const tags = ['服务专业', '态度友好', '准时到达', '沟通顺畅', '有待改进'];
+    screen.innerHTML = `
+      <div class="order-page">
+        <div class="order-header">
+          <button class="icon-button" onclick="Patient._renderOrderDetailPage('${id}')" aria-label="返回">${P_ICON.chevronLeft}</button>
+          <h2>评价订单</h2>
+        </div>
+        <div class="bf-card" style="margin-bottom:12px;">
+          <div style="font-size:14px; font-weight:600;">${n.hospital} · ${n.dept}</div>
+          <div style="font-size:12px; color:var(--text-muted);">${n.serviceType} · ${n.date}</div>
+        </div>
+        <div class="bf-card" style="text-align:center;">
+          <div style="font-size:14px; font-weight:600; margin-bottom:12px;">服务评分</div>
+          <div class="star-picker" id="reviewStars">
+            ${[1,2,3,4,5].map(s => `<span class="star-item" data-star="${s}" style="font-size:32px; cursor:pointer; color:${s <= (existing.star||0) ? '#eab308' : 'var(--border-light)'};" onclick="Patient._setReviewStar(${s})">★</span>`).join('')}
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:6px;" id="reviewStarLabel">${existing.star ? existing.star + '分' : '点击评分'}</div>
+        </div>
+        <div class="bf-card">
+          <div style="font-size:14px; font-weight:600; margin-bottom:10px;">评价标签</div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;" id="reviewTags">
+            ${tags.map(t => `<span class="chip-review" data-tag="${t}" style="padding:6px 14px; border:1px solid var(--border-color); border-radius:16px; font-size:12px; cursor:pointer; ${(existing.tags||[]).includes(t) ? 'background:var(--accent); color:#fff; border-color:var(--accent);' : ''}" onclick="Patient._toggleReviewTag(this)">${t}</span>`).join('')}
+          </div>
+        </div>
+        <div class="bf-card">
+          <div style="font-size:14px; font-weight:600; margin-bottom:10px;">评价内容</div>
+          <textarea id="reviewText" placeholder="分享您的服务体验…" rows="4" style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:var(--radius); font-size:14px; resize:vertical;">${existing.text || ''}</textarea>
+        </div>
+        <button class="bf-submit-btn" onclick="Patient._submitReview('${id}')">提交评价</button>
+      </div>
+    `;
+    this._reviewStar = existing.star || 0;
+    this._reviewTags = existing.tags || [];
+  },
+
+  _setReviewStar(star) {
+    this._reviewStar = star;
+    document.querySelectorAll('#reviewStars .star-item').forEach(el => {
+      el.style.color = parseInt(el.dataset.star) <= star ? '#eab308' : 'var(--border-light)';
+    });
+    document.getElementById('reviewStarLabel').textContent = star + '分';
+  },
+
+  _toggleReviewTag(el) {
+    const tag = el.dataset.tag;
+    if (this._reviewTags.includes(tag)) {
+      this._reviewTags = this._reviewTags.filter(t => t !== tag);
+      el.style.background = '';
+      el.style.color = '';
+    } else {
+      this._reviewTags.push(tag);
+      el.style.background = 'var(--accent)';
+      el.style.color = '#fff';
+      el.style.borderColor = 'var(--accent)';
+    }
+  },
+
+  _submitReview(id) {
+    if (!this._reviewStar) { App.toast('请选择评分'); return; }
+    const text = document.getElementById('reviewText')?.value?.trim() || '';
+    const feedback = { star: this._reviewStar, tags: this._reviewTags, text, time: CareStore.now() };
+    CareStore.updateNeed(id, { feedback });
+    App.toast('评价已提交，感谢您的反馈！');
+    this._renderOrderDetailPage(id);
   },
 
   _contactEscortFromOrder(id) {

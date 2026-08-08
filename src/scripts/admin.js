@@ -1025,14 +1025,23 @@ const Admin = {
 
   // ===== 评价反馈 =====
   renderReviews(el) {
+    const reviews = CareStore.state.needs.filter(n => n.feedback).map(n => ({
+      patient: n.patientName, escort: n.escortName || '未分配',
+      star: n.feedback.star, text: n.feedback.text || '', tags: n.feedback.tags || [],
+      time: n.feedback.time || n.updatedAt, id: n.id, status: n.status
+    }));
+    const total = reviews.length;
+    const goodCount = reviews.filter(r => r.star >= 4).length;
+    const badCount = reviews.filter(r => r.star <= 3).length;
+    const avgStar = total > 0 ? (reviews.reduce((s,r) => s + r.star, 0) / total).toFixed(1) : '0';
     const rvKpis = [
-      { icon: ICON.reviews, num: MockData.kpi.satisfaction, label: '平均满意度', cls: 'kpi-green' },
-      { icon: ICON.clipboard, num: MockData.reviews.length, label: '总评价', cls: 'kpi-default' },
-      { icon: ICON.alert, num: MockData.reviews.filter(r=>r.star<=3).length, label: '差评待处理', cls: 'kpi-warn' },
-      { icon: ICON.reviews, num: MockData.reviews.filter(r=>r.star>=5).length, label: '好评数', cls: 'kpi-green' },
+      { icon: ICON.reviews, num: avgStar, label: '平均满意度', cls: 'kpi-green' },
+      { icon: ICON.clipboard, num: total, label: '总评价', cls: 'kpi-default' },
+      { icon: ICON.alert, num: badCount, label: '差评待处理', cls: 'kpi-warn' },
+      { icon: ICON.reviews, num: goodCount, label: '好评数', cls: 'kpi-green' },
     ];
     el.innerHTML = `
-      <div class="page-head"><h2>评价反馈</h2><div>差评自动触发回访工单</div></div>
+      <div class="page-head"><h2>评价反馈</h2><div>评价数据来自订单反馈</div></div>
       <div class="kpi-grid">
         ${rvKpis.map(kp => `
           <div class="kpi-card ${kp.cls}">
@@ -1045,17 +1054,17 @@ const Admin = {
         `).join('')}
       </div>
       <div class="reviews-list">
-        ${MockData.reviews.map(r => `
+        ${reviews.length === 0 ? '<div class="empty-inline">暂无评价数据</div>' : reviews.map(r => `
           <div class="review-card ${r.star<=3?'review-bad':''}">
             <div class="rv-head">
               <div class="rv-patient">${r.patient} → ${r.escort}</div>
               <div class="rv-star"><span class="star">${'★'.repeat(r.star)}</span><span style="color:#ddd">${'★'.repeat(5-r.star)}</span></div>
             </div>
-            <div class="rv-text">"${r.text}"</div>
+            ${r.text ? `<div class="rv-text">"${r.text}"</div>` : ''}
             <div class="rv-tags">${r.tags.map(t=>`<span class="tag tag-gray">${t}</span>`).join('')}</div>
             <div class="rv-foot">
               <span class="cp-sub">${r.time} · ${r.id}</span>
-              ${r.status === '差评待处理' ? `<button class="btn btn-outline btn-sm" onclick="Admin.toast('已创建回访工单')">创建回访工单</button>` : `<span class="tag tag-success">已处理</span>`}
+              ${r.star<=3 ? `<button class="btn btn-outline btn-sm" onclick="Admin.toast('已创建回访工单')">创建回访工单</button>` : `<span class="tag tag-success">好评</span>`}
             </div>
           </div>
         `).join('')}
