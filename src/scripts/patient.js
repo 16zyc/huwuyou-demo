@@ -492,7 +492,7 @@ const Patient = {
 
       <!-- 人工下单 + AI下单 双入口 -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
-        <div class="ai-order-banner" style="background:linear-gradient(135deg, var(--status-covered), #0d7a38); box-shadow:0 4px 16px rgba(22,163,74,0.25);" onclick="Patient.onServiceClick('consult')">
+        <div class="ai-order-banner" style="background:linear-gradient(135deg, var(--accent), var(--accent-deep)); box-shadow:0 4px 16px rgba(59,108,181,0.25);" onclick="Patient.onServiceClick('consult')">
           <div class="ai-order-icon">${P_ICON.clipboard}</div>
           <div class="ai-order-text">
             <div class="ai-order-title">人工下单</div>
@@ -986,7 +986,8 @@ const Patient = {
     const timeRange = document.querySelector('.bf-time-opt.active')?.dataset.range || '1-3天';
 
     if (!name) { App.toast('请填写患者姓名'); return; }
-    if (!age || age < 0) { App.toast('请填写有效年龄'); return; }
+    if (!age || age < 0 || age > 120) { App.toast('请填写有效年龄（0-120）'); return; }
+    if (!phone || !/^1\d{10}$/.test(phone.replace(/\s/g,''))) { App.toast('请填写有效的11位手机号'); return; }
     if (!dept) { App.toast('请填写就诊科室'); return; }
 
     if (!App.requireLogin('提交预约')) return;
@@ -1465,9 +1466,13 @@ const Patient = {
 
   // ===== 订单页 =====
   renderOrders(el) {
-    const tabs = ['全部', '待付款', '待接单', '待服务', '进行中', '已完成'];
+    const tabs = ['全部', '待审核', '待服务', '进行中', '已完成'];
     const statusMap = { '全部': null, '待审核': '待处理', '待服务': '已分配', '进行中': '服务中', '已完成': '已完成' };
     const user = MockData.patient.user;
+    if (App.isGuest) {
+      el.innerHTML = `<div class="order-empty"><div class="order-empty-icon">${P_ICON.inbox}</div><div>登录后查看您的订单记录</div></div>`;
+      return;
+    }
     let needs = NeedPool.list.filter(n => n.patientName === user.name);
 
     const filterTab = this._currentOrderTab;
@@ -1653,9 +1658,13 @@ const Patient = {
 
   _cancelOrder(id) {
     if (!confirm('确定要取消这个订单吗？')) return;
-    NeedPool.update(id, { status: '已取消', updatedAt: new Date().toLocaleString('zh-CN') });
-    App.toast('订单已取消');
-    setTimeout(() => App.switchTab(2), 500);
+    try {
+      CareStore.transitionNeed(id, '已取消');
+      App.toast('订单已取消');
+      setTimeout(() => App.switchTab(2), 500);
+    } catch(e) {
+      App.toast(e.message);
+    }
   },
 
   _reviewOrder(id) {

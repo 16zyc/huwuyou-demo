@@ -28,8 +28,6 @@
   --status-notfound: #dc2626;
   --status-pending: #94a3b8;
   --status-qualified: #ea580c;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.03);
-  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
   --radius: 8px;
   --radius-lg: 12px;
   --tabbar-h: 56px;
@@ -561,7 +559,8 @@ body.admin { background: var(--bg-primary); }
 
 /* 主区 */
 .admin-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.admin-topbar { height: 60px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; z-index: 20; }
+.admin-topbar { height: 60px; background: rgba(255,255,255,0.78); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; z-index: 20; }
+@supports not (backdrop-filter: blur(1px)) { .admin-topbar { background: #ffffff; } }
 .at-left { display: flex; align-items: center; gap: 8px; }
 .at-root { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 .at-sep { color: var(--text-muted); font-size: 12px; }
@@ -753,6 +752,28 @@ svg.icon-lg { width: 22px; height: 22px; }
 .tb-search-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59,108,181,0.1); }
 .tb-search-wrap .tb-search { flex: 1; min-width: 0; border: none; padding: 8px 0; background: none; box-shadow: none; }
 .tb-search-wrap .tb-search:focus { box-shadow: none; }
+
+/* AI 面板玻璃材质 */
+.ai-panel {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.3);
+  animation: aiSlideUp var(--dur-slow) var(--ease-out) both;
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .ai-panel { background: #ffffff; }
+}
+@keyframes aiSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* AI 思考脉冲 */
+.ai-thinking { display:flex; gap:6px; padding:8px 0; }
+.ai-thinking span { width:8px; height:8px; border-radius:50%; background:var(--accent); animation: aiPulse 0.8s ease-in-out infinite; }
+.ai-thinking span:nth-child(2) { animation-delay:0.15s; }
+.ai-thinking span:nth-child(3) { animation-delay:0.3s; }
+@keyframes aiPulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
 
 /* AI 聊天气泡 */
 .ai-msg.ai-user .chat-msg-bubble { background: var(--accent); color: #fff; border-radius: 16px 16px 4px 16px; }

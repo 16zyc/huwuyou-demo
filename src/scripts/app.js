@@ -348,7 +348,7 @@ const App = {
     body.scrollTop = body.scrollHeight;
     // 显示"正在思考..."
     const loadingId = 'loading_' + Date.now();
-    body.innerHTML += `<div class="ai-msg ai-bot" id="${loadingId}">正在思考...</div>`;
+    body.innerHTML += `<div class="ai-msg ai-bot" id="${loadingId}"><div class="ai-thinking"><span></span><span></span><span></span></div></div>`;
     body.scrollTop = body.scrollHeight;
     try {
       const reply = await this.aiReply(q);
