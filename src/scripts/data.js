@@ -409,6 +409,7 @@ const MockData = {
 MockData.initNeeds.forEach(n => NeedPool.add(n));
 
 // ========== 智能陪诊服务中心：服务分类数据 ==========
+// DEPRECATED: 以下 ServiceCategories/ServiceCatalog/FeaturedHospitals 为早期设计数据，当前版本未使用，保留备用
 const ServiceCategories = [
   {
     id: 'category_1',

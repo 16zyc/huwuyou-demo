@@ -655,16 +655,26 @@ const Admin = {
   },
 
   // ===== 陪诊师管理 =====
+  addEscort() {
+    const name = prompt('陪诊师姓名：'); if (!name || !name.trim()) return;
+    const phone = prompt('联系电话：'); if (phone === null) return;
+    const tags = prompt('专长标签（逗号分隔）：'); if (tags === null) return;
+    const escort = { id: 'E' + Date.now().toString(36), name: name.trim(), avatar: name.trim().charAt(0), phone: phone.trim(), tags: (tags||'').split(/[,，]/).map(t=>t.trim()).filter(Boolean), star: 5.0, orders: 0, status: '空闲', age: '', gender: '', region: '', joinDate: CareStore.now(), completionRate: '100%' };
+    CareStore.state.escorts.unshift(escort); CareStore.save();
+    this.toast('陪诊师已添加'); this.renderContent();
+  },
+
   renderEscorts(el) {
+    const escorts = CareStore.state.escorts || MockData.escorts;
     el.innerHTML = `
-      <div class="page-head"><h2>陪诊师管理</h2><div>${MockData.escorts.length} 名陪诊师</div></div>
+      <div class="page-head"><h2>陪诊师管理</h2><div>${escorts.length} 名陪诊师</div></div>
       <div class="toolbar">
         <div class="tb-search-wrap">
           ${ICON.search}
           <input class="tb-search" placeholder="搜索姓名/专长" />
         </div>
         <select class="tb-select"><option>全部状态</option><option>空闲</option><option>服务中</option></select>
-        <button class="btn btn-sm">+ 新增陪诊师</button>
+        <button class="btn btn-sm" onclick="Admin.addEscort()">+ 新增陪诊师</button>
       </div>
       <div class="escort-grid">
         ${MockData.escorts.map(e => `
@@ -923,6 +933,7 @@ const Admin = {
   },
 
   // ===== 服务收费（价格管理）=====
+  /* DEPRECATED: 已被 workflow.js renderPricing 替代 — 保留备用 */
   renderFinance(el) {
     const items = PriceTable.items;
     const monthOrders = MockData.finance.bills.length;

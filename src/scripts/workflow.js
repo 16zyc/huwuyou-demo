@@ -200,7 +200,7 @@ Admin.renderSystem=function(el){const announcements=CareStore.state.announcement
 Admin.addAnnouncement=function(){const title=prompt('公告标题：');if(!title||!title.trim())return;const content=prompt('公告内容：');if(content===null)return;const item={id:CareStore.uid('AN'),title:title.trim(),content:(content||'').trim(),status:'draft',publishedAt:''};CareStore.state.announcements.unshift(item);CareStore.save();this.toast('公告草稿已保存');this.renderSystem(document.getElementById('adminContent'));};
 Admin.publishAnnouncement=function(id){const a=CareStore.state.announcements.find(x=>x.id===id);if(!a)return;a.status='published';a.publishedAt=CareStore.now();CareStore.save();this.toast('公告已发布，患者端可见');this.renderSystem(document.getElementById('adminContent'));};
 Admin.unpublishAnnouncement=function(id){const a=CareStore.state.announcements.find(x=>x.id===id);if(!a)return;a.status='draft';a.publishedAt='';CareStore.save();this.toast('公告已下线');this.renderSystem(document.getElementById('adminContent'));};
-Admin.resetDemoData=function(){if(!confirm('确认清空当前浏览器的演示数据并重新加载？'))return;localStorage.removeItem(CareStore.key);location.reload();};
+Admin.resetDemoData=function(){if(!confirm('确认清空当前浏览器的演示数据并重新加载？'))return;localStorage.removeItem(CareStore.key);localStorage.removeItem('huwuyou_patients');location.reload();};
 
 // 兼容后台既有列表中的按钮调用，统一转到新状态机。
 Admin.assignEscort=Admin.assignEscortV2; Admin.startService=Admin.startServiceV2; Admin.finishService=Admin.finishServiceV2; Admin.cancelNeed=Admin.cancelNeedV2;

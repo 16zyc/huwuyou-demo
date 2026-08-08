@@ -759,6 +759,12 @@ svg.icon-lg { width: 22px; height: 22px; }
 .ai-msg.ai-bot .chat-msg-bubble { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 16px 16px 16px 4px; }
 
 /* 响应式 */
+/* 平板（768-1024px）：后台侧栏折叠、表格横向滚动 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .admin-sidebar { width: 64px; }
+  .data-table { min-width: 600px; overflow-x: auto; }
+}
+
 @media (max-width: 768px) {
   .admin-sidebar { position: fixed; z-index: 100; transform: translateX(-100%); transition: transform .2s; }
   .admin-sidebar:not(.collapsed) { transform: translateX(0); }

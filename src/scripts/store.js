@@ -76,6 +76,7 @@ const CareStore = {
       announcements: [
         { id:'AN-001', title:'平台服务说明', content:'护无忧智陪诊平台为您提供专业陪诊服务。提交需求后，管理员将根据您的实际情况匹配最合适的陪诊师。', status:'published', publishedAt:'07-15 10:00' },
       ],
+      escorts: this.clone(MockData.escorts).map(e => ({ ...e, active: true })),
     };
   },
   init() {
@@ -106,6 +107,7 @@ const CareStore = {
       escortReports: Array.isArray(loaded.escortReports) ? loaded.escortReports : base.escortReports,
       featuredHospitals: Array.isArray(loaded.featuredHospitals) ? loaded.featuredHospitals : base.featuredHospitals,
       announcements: Array.isArray(loaded.announcements) ? loaded.announcements : base.announcements,
+      escorts: Array.isArray(loaded.escorts) ? loaded.escorts : base.escorts,
     };
   },
   bindLegacy() {
