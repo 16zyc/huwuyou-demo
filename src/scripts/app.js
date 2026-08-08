@@ -327,6 +327,7 @@ const App = {
   // 外部切换 Tab
   switchTab(tab) {
     this.patientTab = tab;
+    if (typeof Patient !== 'undefined') Patient._pageStack = [];
     this.renderPatientTabbar();
     this.renderPatientScreen();
   },

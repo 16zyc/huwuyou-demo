@@ -94,7 +94,11 @@ App.aiAction = function(action) {
   if(action==='skip-identity'){CareStore.state.ai.stage='upload_reports';CareStore.save();this.renderAiConversation();return;}
   if(action==='skip-reports'){CareStore.state.ai.stage='final_confirm';CareStore.save();this.renderAiConversation();return;}
   if(action==='goto-identity'||action==='goto-reports'||action==='edit-form'){
-    this.closeAI(); this.switchTab(1); setTimeout(()=>document.getElementById(action==='goto-reports'?'report_section':action==='goto-identity'?'identity_section':'need_form')?.scrollIntoView({behavior:'smooth'}),100); return;
+    this.closeAI();
+    Patient.navigateTo(el => Patient.renderNeed(el), '我的需求');
+    const targetId = action==='goto-reports'?'report_section':action==='goto-identity'?'identity_section':'need_form';
+    setTimeout(()=>document.getElementById(targetId)?.scrollIntoView({behavior:'smooth'}), 200);
+    return;
   }
   if(action==='submit'){
     try { const need=CareStore.createNeedFromDraft(); CareStore.state.ai.stage='submitted'; CareStore.save(); this.aiAdd('bot',`需求已提交成功，编号 <strong>${WUtil.escape(need.id)}</strong>。后台已收到提醒，您可在“陪诊进度”查看。`); }

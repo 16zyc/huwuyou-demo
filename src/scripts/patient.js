@@ -423,6 +423,29 @@ const Patient = {
   _searchKeyword: '',
   _searchFilter: { category: '', city: '', sort: '' },
   _currentHospitalDetail: null,
+  _pageStack: [],
+
+  // 页面栈导航
+  navigateTo(renderFn, title) {
+    this._pageStack.push({ renderFn, title });
+    const screen = document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth;
+    screen.classList.add('screen-push-enter');
+    renderFn(screen);
+  },
+  goBack() {
+    if (this._pageStack.length > 1) {
+      this._pageStack.pop();
+      const prev = this._pageStack[this._pageStack.length - 1];
+      const screen = document.getElementById('screen');
+      screen.classList.remove('fade-in'); void screen.offsetWidth;
+      screen.classList.add('screen-pop-enter');
+      prev.renderFn(screen);
+    } else {
+      this._pageStack = [];
+      App.switchTab(0);
+    }
+  },
 
   render(tab, el) {
     if (tab === 0) this.renderHome(el);
@@ -624,7 +647,7 @@ const Patient = {
     screen.innerHTML = `
       <div class="sub-page">
         <div class="svd-header">
-          <div class="svd-back" onclick="App.switchTab(0)">${P_ICON.chevronLeft}</div>
+          <div class="svd-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
           <h2>${cfg.title}</h2>
         </div>
         <div class="svd-hero">
@@ -730,7 +753,7 @@ const Patient = {
     screen.innerHTML = `
       <div class="sub-page">
         <div class="svd-header">
-          <div class="svd-back" onclick="history.back()">${P_ICON.chevronLeft}</div>
+          <div class="svd-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
           <h2>${cfg.title} · 操作流程</h2>
         </div>
         <div class="svd-section">
@@ -771,7 +794,7 @@ const Patient = {
     screen.innerHTML = `
       <div class="booking-form">
         <div class="svd-header">
-          <div class="svd-back" onclick="App.switchTab(0)">${P_ICON.chevronLeft}</div>
+          <div class="svd-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
           <h2>AI智能下单</h2>
         </div>
         <div class="svd-section">
@@ -824,7 +847,7 @@ const Patient = {
     screen.innerHTML = `
       <div class="booking-form">
         <div class="svd-header">
-          <div class="svd-back" onclick="App.switchTab(0)">${P_ICON.chevronLeft}</div>
+          <div class="svd-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
           <h2>填写预约信息</h2>
         </div>
 
@@ -1064,6 +1087,12 @@ const Patient = {
             </div>
           ` : list.map(h => this._renderHospitalCard(h)).join('')}
         </div>
+        <!-- 申请新医院 -->
+        <div style="margin-top:16px; text-align:center;">
+          <button class="btn btn-outline" style="width:auto; padding:12px 24px;" onclick="Patient.navigateTo(el => Patient.renderHospitals(el), '医院介绍')">
+            列表里没有？申请新医院
+          </button>
+        </div>
       </div>
     `;
     const kwInput = document.getElementById('hsKeyword');
@@ -1096,7 +1125,7 @@ const Patient = {
       <div class="order-page">
         <div class="hd-hero">
           <img src="${h.image}" alt="${h.name}" onerror="this.style.display='none'">
-          <div class="hd-hero-back" onclick="history.length > 1 ? history.back() : Patient._backFromDetail()">${P_ICON.chevronLeft}</div>
+          <div class="hd-hero-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
         </div>
         <div class="hd-info">
           <div class="hd-name">${h.name}</div>
@@ -1509,7 +1538,7 @@ const Patient = {
     screen.innerHTML = `
       <div class="svc-detail">
         <div class="svd-header">
-          <div class="svd-back" onclick="App.switchTab(2)">${P_ICON.chevronLeft}</div>
+          <div class="svd-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
           <h2>订单详情</h2>
         </div>
 
@@ -1671,6 +1700,23 @@ const Patient = {
           <div class="me-service-name">我的评价</div>
         </div>
       </div>
+
+      <!-- 订单中心 -->
+      ${!isGuest ? `
+      <div class="me-section-title">订单中心</div>
+      <div class="me-menu">
+        <div class="me-menu-item" onclick="Patient.navigateTo(el => Patient.renderNeed(el), '我的需求')">
+          <div class="me-menu-icon" style="background:rgba(59,108,181,0.1); color:var(--accent);">${P_ICON.edit}</div>
+          <div class="me-menu-text">我的需求（草稿表单）</div>
+          <div class="me-menu-arrow">${P_ICON.chevronRight}</div>
+        </div>
+        <div class="me-menu-item" onclick="Patient.navigateTo(el => Patient.renderProgress(el), '陪诊进度')">
+          <div class="me-menu-icon" style="background:rgba(22,163,74,0.1); color:var(--status-covered);">${P_ICON.inbox}</div>
+          <div class="me-menu-text">陪诊进度</div>
+          <div class="me-menu-arrow">${P_ICON.chevronRight}</div>
+        </div>
+      </div>
+      ` : ''}
 
       <!-- 功能菜单 -->
       <div class="me-section-title">其他功能</div>
