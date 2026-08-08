@@ -73,7 +73,7 @@ const MockData = {
   patient: {
     user: {
       name: '王秀兰', avatar: '王', gender: '女', age: 68,
-      phone: '138****8866', idMasked: '110***********4825',
+      phone: '138 8866 8866', idMasked: '110***********4825',
       emergencyName: '王明', emergencyRel: '儿子', emergencyPhone: '139****2233',
     },
     medical: {

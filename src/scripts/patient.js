@@ -55,9 +55,9 @@ const P_ICON = {
     .ph-svc-icon svg { width:24px; height:24px; stroke-width:2; }
     .ph-svc-name { font-size:12px; font-weight:500; color:var(--text-primary); }
     .ph-svc-icon-c1 { background:rgba(59,108,181,0.1); color:var(--accent); }
-    .ph-svc-icon-c2 { background:rgba(22,163,74,0.1); color:var(--status-covered); }
-    .ph-svc-icon-c3 { background:rgba(234,88,12,0.1); color:#ea580c; }
-    .ph-svc-icon-c4 { background:rgba(202,138,4,0.1); color:#ca8a04; }
+    .ph-svc-icon-c2 { background:rgba(59,108,181,0.08); color:var(--accent); }
+    .ph-svc-icon-c3 { background:rgba(59,108,181,0.1); color:var(--accent); }
+    .ph-svc-icon-c4 { background:rgba(59,108,181,0.08); color:var(--accent); }
     .ph-hosp-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); overflow:hidden; margin-bottom:12px; cursor:pointer; transition:all .15s; }
     .ph-hosp-card:active { background:var(--bg-hover); }
     .ph-hosp-img { width:100%; height:120px; position:relative; background:linear-gradient(135deg, var(--accent-bg), #e8edf4); }
@@ -317,7 +317,7 @@ const P_ICON = {
 
     /* 首页服务2x2网格 */
     .ph-grid-2x2 { display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-bottom:14px; }
-    .ph-svc-tile { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius); padding:14px 12px; cursor:pointer; transition:all .15s; position:relative; overflow:hidden; }
+    .ph-svc-tile { background:var(--bg-card); border:none; border-radius:var(--radius); padding:14px 12px; cursor:pointer; box-shadow:var(--shadow-sm); transition:background-color .15s, box-shadow .15s, transform .15s; position:relative; overflow:hidden; }
     .ph-svc-tile:active { transform:scale(0.97); }
     .ph-svc-tile .ph-st-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
     .ph-svc-tile .ph-st-icon svg { width:22px; height:22px; stroke-width:2; }
@@ -499,7 +499,7 @@ const Patient = {
             <div class="ai-order-desc">填写就诊需求，平台为您匹配陪诊师</div>
           </div>
         </div>
-        <div class="ai-order-banner" onclick="Patient._openAIOrder()">
+        <div class="ai-order-banner" style="background:linear-gradient(135deg, var(--accent-amber), #d4a843); box-shadow:0 4px 16px rgba(196,146,46,0.25);" onclick="Patient._openAIOrder()">
           <div class="ai-order-icon">${P_ICON.service_consult}</div>
           <div class="ai-order-text">
             <div class="ai-order-title">AI智能下单 <span class="ai-order-badge">推荐</span></div>
