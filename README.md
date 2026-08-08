@@ -63,7 +63,12 @@ http://localhost:8000/
     ├── screenshots/
     │   ├── product/                   # 产品页面截图
     │   └── references/                # 设计参考图
-    └── superpowers/specs/             # 已确认的设计说明
+    ├── planning/                      # 活跃设计方案（患者-AI 工作流设计）
+    ├── architecture/                  # 架构设计（规划中）
+    ├── development/                   # 开发记录（规划中）
+    ├── testing/                       # 测试报告（规划中）
+    ├── reports/                       # 审查报告（规划中）
+    └── archive/                       # 历史方案与已完成的设计说明
 ```
 
 ## 代码加载顺序
@@ -170,7 +175,7 @@ sudo systemctl reload nginx
 - PowerPoint 技术汇报：[docs/presentations/护无忧-技术交接汇报.pptx](docs/presentations/护无忧-技术交接汇报.pptx)
 - 汇报演讲稿：[docs/presentations/护无忧-技术交接汇报-演讲稿.md](docs/presentations/护无忧-技术交接汇报-演讲稿.md)
 - 产品截图：[docs/screenshots/product/](docs/screenshots/product/)
-- 设计与实现记录：[docs/superpowers/specs/](docs/superpowers/specs/)
+- 设计与实现记录：[docs/planning/](docs/planning/) 与 [docs/archive/](docs/archive/)
 
 `docs/presentations/rendered/` 和 `.inspect.ndjson` 是 PowerPoint 视觉检查产物，便于后续确认演示稿渲染是否变化。
 
