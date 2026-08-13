@@ -175,7 +175,7 @@ const HospitalData = [
       { name: '总院', address: '徐汇区东安路270号' },
       { name: '闵行分院', address: '闵行区放鹤路1087号' },
     ],
-    orders: 520, hot: false,
+    orders: 520, hot: true,
     image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属肿瘤医院建筑外观，三甲肿瘤专科医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
     imageFallback: '',
   },
@@ -188,7 +188,6 @@ const HospitalData = [
     keyDepts: ['心胸外科', '心内科', '呼吸内科', '肿瘤科', '纵隔外科'],
     branches: [
       { name: '总院', address: '徐汇区淮海西路241号' },
-      { name: '松江南院', address: '松江区广富林路758号' },
     ],
     orders: 380, hot: false,
     image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市胸科医院建筑外观，三甲胸科专科医院，现代医院大楼，高清摄影&image_size=landscape_16_9',
@@ -203,7 +202,8 @@ const HospitalData = [
     keyDepts: ['呼吸内科', '胸外科', '结核病科', '肿瘤科', '职业病科'],
     branches: [
       { name: '总院', address: '杨浦区政民路507号' },
-      { name: '宝山分院', address: '宝山区盘河路2188号' },
+      { name: '松江南院', address: '松江区广富林路758号' },
+      { name: '宝山分院', address: '宝山区盘古路2188号' },
     ],
     orders: 320, hot: false,
     image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市肺科医院建筑外观，三甲肺科专科医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
