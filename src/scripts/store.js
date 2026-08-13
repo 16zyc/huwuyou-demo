@@ -1,4 +1,28 @@
 // ========== 护无忧统一数据层与服务适配器 ==========
+// ---- 医院分支地址派生函数（与 scripts/validate-hospitals.js 双份同源，修改时保持同步）----
+function deriveAddress(branches) {
+  if (!Array.isArray(branches)) return '';
+  return branches.map((b, i) => {
+    const name = String(b.name || '').trim();
+    const addr = String(b.address || '').trim();
+    if (i === 0) {
+      const suffix = name.startsWith('总院（') && name.endsWith('）') ? name.slice(3, -1) : '';
+      return '总院：' + addr + (suffix ? '（' + suffix + '）' : '');
+    }
+    return '分院：' + addr + (name ? '（' + name + '）' : '');
+  }).join('；');
+}
+function parseAddress(str) {
+  return String(str || '').split(/[;；]/).map(s => s.trim()).filter(Boolean).map((seg) => {
+    const m = seg.match(/^(总院|分院)：(.+)$/);
+    if (!m) return null;
+    let address = m[2].trim();
+    let name = m[1];
+    const pm = address.match(/^(.+?)（(.+)）$/);
+    if (pm) { address = pm[1].trim(); name = name === '总院' ? '总院（' + pm[2] + '）' : pm[2]; }
+    return { name, address };
+  }).filter(Boolean);
+}
 const CareStore = {
   key: 'huwuyou_store_v1',
   backupKey: 'huwuyou_store_corrupt_backup',
@@ -66,15 +90,19 @@ const CareStore = {
       needs,
       prices: this.clone(PriceTable.items).map(i => ({ ...i, active:true })),
       priceChanges: [],
-      hospitals: this.clone(MockData.hospitals).map(h => ({
-        id:h.id, name:h.name, shortName:h.shortName || '', level:h.level || '三甲',
-        category:h.category || '综合医院', city:h.city || '', address:h.address || '',
-        intro:h.intro || '', phone:h.phone || '', keyDepts:h.keyDepts || [],
-        orders:h.orders || 0, hot:h.hot || false, image:h.image || '',
-        specialties:h.dept || h.keyDepts?.join('、') || '综合',
-        advantage:h.advantage || '',
-        active:true,
-      })),
+      hospitals: this.clone(MockData.hospitals).map(h => {
+        const branches = h.branches || parseAddress(h.address) || [{ name:'总院', address:h.address || '' }];
+        return {
+          id:h.id, name:h.name, shortName:h.shortName || '', level:h.level || '三甲',
+          category:h.category || '综合医院', city:h.city || '', address:h.address || deriveAddress(branches),
+          intro:h.intro || '', phone:h.phone || '', keyDepts:h.keyDepts || [],
+          orders:h.orders || 0, hot:h.hot || false, image:h.image || '',
+          specialties:h.dept || h.keyDepts?.join('、') || '综合',
+          advantage:h.advantage || '',
+          branches, source:h.source || { info:'', ranking:'', updated:'' }, imageFallback:h.imageFallback || '',
+          active:true,
+        };
+      }),
       hospitalApplications: this.clone(HospitalApplyPool.list).map(a => ({
         ...a, patientName:a.patient, status:a.status || '待审批', rejectReason:a.rejectReason || '',
       })),
@@ -82,7 +110,6 @@ const CareStore = {
         ...n, title:n.text, recipientRole:'admin', targetType:n.type === 'hospital_apply' ? 'hospitalApplication' : 'need', targetId:n.targetId || '',
       })),
       escortReports: demoReport ? [demoReport] : [],
-      featuredHospitals: this.clone(typeof FeaturedHospitals !== 'undefined' ? FeaturedHospitals : []),
       announcements: [
         { id:'AN-001', title:'平台服务说明', content:'护无忧智陪诊平台为您提供专业陪诊服务。提交需求后，管理员将根据您的实际情况匹配最合适的陪诊师。', status:'published', publishedAt:'07-15 10:00' },
       ],
@@ -111,11 +138,19 @@ const CareStore = {
       needs: Array.isArray(loaded.needs) ? loaded.needs : base.needs,
       prices: Array.isArray(loaded.prices) ? loaded.prices : base.prices,
       priceChanges: Array.isArray(loaded.priceChanges) ? loaded.priceChanges : [],
-      hospitals: Array.isArray(loaded.hospitals) ? loaded.hospitals.map(h => ({ ...h, advantage: h.advantage || base.hospitals.find(b => b.id === h.id)?.advantage || '' })) : base.hospitals,
+      hospitals: Array.isArray(loaded.hospitals) ? loaded.hospitals.map(h => {
+        const baseH = base.hospitals.find(b => b.id === h.id);
+        return {
+          ...h,
+          branches: h.branches || baseH?.branches || parseAddress(h.address) || [{ name:'总院', address:h.address || '' }],
+          source: h.source || baseH?.source || { info:'', ranking:'', updated:'' },
+          advantage: h.advantage || baseH?.advantage || '',
+          imageFallback: h.imageFallback || baseH?.imageFallback || '',
+        };
+      }) : base.hospitals,
       hospitalApplications: Array.isArray(loaded.hospitalApplications) ? loaded.hospitalApplications : base.hospitalApplications,
       notifications: Array.isArray(loaded.notifications) ? loaded.notifications : base.notifications,
       escortReports: Array.isArray(loaded.escortReports) ? loaded.escortReports : base.escortReports,
-      featuredHospitals: Array.isArray(loaded.featuredHospitals) ? loaded.featuredHospitals : base.featuredHospitals,
       announcements: Array.isArray(loaded.announcements) ? loaded.announcements : base.announcements,
       escorts: Array.isArray(loaded.escorts) ? loaded.escorts : base.escorts,
     };
@@ -256,7 +291,7 @@ const CareStore = {
     if (!a || a.status !== '待审批') throw new Error('申请已处理或不存在');
     let hospital = this.state.hospitals.find(h => h.name === a.hospital);
     if (!hospital) {
-      hospital = { id:this.uid('H'), name:a.hospital, level:'待完善', address:'', specialties:a.dept || '综合', intro:'医院资料正在完善中', advantage:'', phone:'', active:true };
+      hospital = { id:this.uid('H'), name:a.hospital, level:'待完善', address:'', branches:[{ name:'总院', address:'' }], specialties:a.dept || '综合', intro:'医院资料正在完善中', advantage:'', source:{ info:'', ranking:'', updated:'' }, imageFallback:'', phone:'', active:true };
       this.state.hospitals.push(hospital);
     }
     Object.assign(a, { status:'已通过', handledAt:this.now(), hospitalId:hospital.id });
