@@ -1,14 +1,16 @@
 // ========== 护无忧医院数据（23 家上海三级甲等医院）==========
-// 数据来源：上海市卫健委官网、各医院官网、复旦版医院排行榜（2023年度）
+// 数据来源：复旦版医院排行榜（2024年度）、国家临床重点专科名录、各医院官网、上海市卫健委官网
+//   详细调研台账见 docs/architecture/HOSPITAL_DATA_SOURCES.md
 // 地址录入依据：用户权威地址清单（2026-08 核对）；branches[0] 必须为"总院"
 //   （带院区后缀时记作"总院（东院）"等；其余分支为具体院区名）
-// 图片约定：image 支持本地路径 images/hospitals/H{id}-{shortName}.jpg（优先）
-//   与远程 URL（当前为 AI 生成占位图）；本地缺文件时自动降级 imageFallback
-// 结构说明：intro（医院简介）与 advantage（核心优势）分开存储，禁止合并；
+// 图片约定：image = 本地路径 images/hospitals/H{id}.jpg（H01.jpg~H23.jpg，实景图优先）；
+//   实景图由人工按 images/hospitals/图片下载清单.txt 放入本目录即自动生效（无需改代码），
+//   缺文件时自动降级 imageFallback（AI 占位图外链），再失效则显示渐变占位
+// 结构说明：intro（医院简介，≤100 字）与 advantage（核心优势）分开存储，禁止合并；
 //   source.updated 用于详情页脚注"更新于"展示
 // 派生字段：address/specialties/active 由 store.js 的 CareStore.defaults() 生成，
 //   本文件不录入，避免双份数据漂移
-// 维护入口：node scripts/validate-hospitals.js（字段/分类/hot/地址清单校验）
+// 维护入口：node scripts/validate-hospitals.js（字段/分类/hot/地址清单/字数/复核统计校验）
 
 const HospitalData = [
   // ========== 一、综合类三甲医院（10 家）==========
@@ -24,8 +26,8 @@ const HospitalData = [
       { name: '闵行分院', address: '闵行区春申路2768号' },
     ],
     orders: 1280, hot: true,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属中山医院建筑外观，上海三甲综合医院，现代医疗大楼，蓝天背景，专业医疗环境，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H01.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属中山医院建筑外观，上海三甲综合医院，现代医疗大楼，蓝天背景，专业医疗环境，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H02', name: '上海交通大学医学院附属瑞金医院', shortName: '瑞金医院',
@@ -39,8 +41,8 @@ const HospitalData = [
       { name: '卢湾分院', address: '黄浦区徐家汇路573号' },
     ],
     orders: 960, hot: true,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海瑞金医院建筑外观，交通大学附属三甲医院，法式古典建筑与现代医疗结合，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H02.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海瑞金医院建筑外观，交通大学附属三甲医院，法式古典建筑与现代医疗结合，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H03', name: '复旦大学附属华山医院', shortName: '华山医院',
@@ -55,8 +57,8 @@ const HospitalData = [
       { name: '北院', address: '宝山区陆翔路108号' },
     ],
     orders: 890, hot: true,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海华山医院红会老楼建筑外观，复旦大学附属三甲医院，百年红砖古典建筑，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H03.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海华山医院红会老楼建筑外观，复旦大学附属三甲医院，百年红砖古典建筑，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H04', name: '上海交通大学医学院附属仁济医院', shortName: '仁济医院',
@@ -70,8 +72,8 @@ const HospitalData = [
       { name: '西院', address: '黄浦区山东中路145号' },
     ],
     orders: 720, hot: true,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海仁济医院建筑外观，百年历史三甲医院，浦东现代医疗大楼，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H04.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海仁济医院建筑外观，百年历史三甲医院，浦东现代医疗大楼，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H05', name: '上海交通大学医学院附属第九人民医院', shortName: '九院',
@@ -85,8 +87,8 @@ const HospitalData = [
       { name: '浦东分院', address: '浦东新区严桥路350号' },
     ],
     orders: 680, hot: true,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海第九人民医院建筑外观，交大附属三甲医院，现代医疗综合体，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H05.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海第九人民医院建筑外观，交大附属三甲医院，现代医疗综合体，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H06', name: '上海市第一人民医院', shortName: '一院',
@@ -100,8 +102,8 @@ const HospitalData = [
       { name: '南院', address: '松江区新松江路650号' },
     ],
     orders: 580, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第一人民医院建筑外观，三甲综合医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H06.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第一人民医院建筑外观，三甲综合医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H07', name: '上海市第六人民医院', shortName: '六院',
@@ -115,8 +117,8 @@ const HospitalData = [
       { name: '东院', address: '浦东新区南汇新城环湖西三路222号' },
     ],
     orders: 650, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第六人民医院建筑外观，三甲综合医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H07.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第六人民医院建筑外观，三甲综合医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H08', name: '上海市第十人民医院', shortName: '十院',
@@ -129,8 +131,8 @@ const HospitalData = [
       { name: '总院', address: '静安区延长中路301号' },
     ],
     orders: 520, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第十人民医院建筑外观，同济大学附属三甲医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H08.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第十人民医院建筑外观，同济大学附属三甲医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H09', name: '上海交通大学医学院附属新华医院', shortName: '新华医院',
@@ -144,8 +146,8 @@ const HospitalData = [
       { name: '崇明分院', address: '崇明区城桥镇南门路25号' },
     ],
     orders: 480, hot: true,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海新华医院建筑外观，交大附属三甲医院，儿科特色综合医院，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H09.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海新华医院建筑外观，交大附属三甲医院，儿科特色综合医院，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H10', name: '上海市同济医院', shortName: '同济医院',
@@ -159,8 +161,8 @@ const HospitalData = [
       { name: '大华门诊部', address: '普陀区真南路528号' },
     ],
     orders: 380, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市同济医院建筑外观，同济大学附属三甲医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H10.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市同济医院建筑外观，同济大学附属三甲医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
   },
 
   // ========== 二、专科类三甲医院（9 家）==========
@@ -176,8 +178,8 @@ const HospitalData = [
       { name: '闵行分院', address: '闵行区放鹤路1087号' },
     ],
     orders: 520, hot: true,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属肿瘤医院建筑外观，三甲肿瘤专科医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H11.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属肿瘤医院建筑外观，三甲肿瘤专科医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H12', name: '上海市胸科医院', shortName: '胸科医院',
@@ -190,8 +192,8 @@ const HospitalData = [
       { name: '总院', address: '徐汇区淮海西路241号' },
     ],
     orders: 380, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市胸科医院建筑外观，三甲胸科专科医院，现代医院大楼，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H12.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市胸科医院建筑外观，三甲胸科专科医院，现代医院大楼，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H13', name: '上海市肺科医院', shortName: '肺科医院',
@@ -206,8 +208,8 @@ const HospitalData = [
       { name: '宝山分院', address: '宝山区盘古路2188号' },
     ],
     orders: 320, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市肺科医院建筑外观，三甲肺科专科医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H13.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市肺科医院建筑外观，三甲肺科专科医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H14', name: '上海市精神卫生中心', shortName: '精神卫生中心',
@@ -221,8 +223,8 @@ const HospitalData = [
       { name: '闵行分院', address: '闵行区沪闵路3210号' },
     ],
     orders: 280, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市精神卫生中心建筑外观，三甲精神专科医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H14.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市精神卫生中心建筑外观，三甲精神专科医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H15', name: '上海市第一妇婴保健院', shortName: '一妇婴',
@@ -236,8 +238,8 @@ const HospitalData = [
       { name: '西院', address: '静安区长乐路536号' },
     ],
     orders: 360, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第一妇婴保健院建筑外观，三甲妇产科专科医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H15.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第一妇婴保健院建筑外观，三甲妇产科专科医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H16', name: '中国福利会国际和平妇幼保健院', shortName: '国妇婴',
@@ -251,8 +253,8 @@ const HospitalData = [
       { name: '闵行分院', address: '闵行区沪闵路3391号' },
     ],
     orders: 340, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=中国福利会国际和平妇幼保健院建筑外观，三甲妇产科医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H16.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=中国福利会国际和平妇幼保健院建筑外观，三甲妇产科医院，现代医疗建筑，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H17', name: '上海市儿童医院', shortName: '儿童医院',
@@ -266,8 +268,8 @@ const HospitalData = [
       { name: '泸定路院区', address: '普陀区泸定路355号' },
     ],
     orders: 420, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市儿童医院建筑外观，三甲儿童医院，色彩活泼的现代医疗建筑，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H17.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市儿童医院建筑外观，三甲儿童医院，色彩活泼的现代医疗建筑，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H18', name: '复旦大学附属儿科医院', shortName: '复旦儿科',
@@ -281,8 +283,8 @@ const HospitalData = [
       { name: '枫林路门诊部', address: '徐汇区医学院路130号' },
     ],
     orders: 560, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属儿科医院建筑外观，国家儿童医学中心，现代儿童医院建筑，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H18.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属儿科医院建筑外观，国家儿童医学中心，现代儿童医院建筑，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H19', name: '复旦大学附属眼耳鼻喉科医院', shortName: '五官科医院',
@@ -296,8 +298,8 @@ const HospitalData = [
       { name: '浦江分院', address: '闵行区江月路2600号' },
     ],
     orders: 320, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属眼耳鼻喉科医院建筑外观，三甲五官科专科医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H19.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属眼耳鼻喉科医院建筑外观，三甲五官科专科医院，现代医疗大楼，高清摄影&image_size=landscape_16_9',
   },
 
   // ========== 三、中医类三甲医院（4 家）==========
@@ -313,8 +315,8 @@ const HospitalData = [
       { name: '浦东分院', address: '上南路1000弄上钢二村45号' },
     ],
     orders: 340, hot: true,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海龙华医院建筑外观，中医三甲医院，传统与现代结合建筑风格，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H20.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海龙华医院建筑外观，中医三甲医院，传统与现代结合建筑风格，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H21', name: '上海中医药大学附属曙光医院', shortName: '曙光医院',
@@ -328,8 +330,8 @@ const HospitalData = [
       { name: '西院', address: '黄浦区普安路185号' },
     ],
     orders: 280, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海曙光医院建筑外观，中医三甲医院，传统风格与现代建筑结合，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H21.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海曙光医院建筑外观，中医三甲医院，传统风格与现代建筑结合，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H22', name: '上海中医药大学附属岳阳中西医结合医院', shortName: '岳阳医院',
@@ -343,8 +345,8 @@ const HospitalData = [
       { name: '东院', address: '杨浦区营口路588号' },
     ],
     orders: 260, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海岳阳中西医结合医院建筑外观，三甲中西医结合医院，花园式医疗环境，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H22.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海岳阳中西医结合医院建筑外观，三甲中西医结合医院，花园式医疗环境，高清摄影&image_size=landscape_16_9',
   },
   {
     id: 'H23', name: '上海市中医医院', shortName: '市中医',
@@ -358,8 +360,8 @@ const HospitalData = [
       { name: '石门一路门诊部', address: '静安区石门一路67弄1号' },
     ],
     orders: 220, hot: false,
-    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市中医医院建筑外观，三甲中医医院，传统中式建筑风格，高清摄影&image_size=landscape_16_9',
-    imageFallback: '',
+    image: 'images/hospitals/H23.jpg',
+    imageFallback: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市中医医院建筑外观，三甲中医医院，传统中式建筑风格，高清摄影&image_size=landscape_16_9',
   },
 ];
 

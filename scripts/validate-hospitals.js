@@ -31,6 +31,7 @@ function parseAddress(str) {
 
 // ---- 断言收集 ----
 const errors = [];
+const warnings = [];
 let checks = 0;
 function check(group, cond, msg) {
   checks += 1;
@@ -62,6 +63,9 @@ HospitalData.forEach(h => {
     check(`4-字段完整性:${h.id}`, h[k] !== undefined && h[k] !== null, `缺少字段 ${k}`);
   });
   check(`4-字段完整性:${h.id}`, String(h.intro || '').trim().length > 0, 'intro 为空');
+  const introLen = String(h.intro || '').replace(/\s/g, '').length;
+  check(`4-字段完整性:${h.id}`, introLen <= 100, `intro 应 ≤100 字，实际 ${introLen}`);
+  if (introLen > 90) warnings.push(`${h.id} intro ${introLen} 字（接近上限）`);
   check(`4-字段完整性:${h.id}`, String(h.advantage || '').trim().length > 0, 'advantage 为空');
   check(`4-字段完整性:${h.id}`, /^021-\d{3,4}-\d{4}$/.test(h.phone || ''), `phone 格式异常：${h.phone}`);
   check(`4-字段完整性:${h.id}`, Number.isFinite(h.orders) && h.orders > 0, 'orders 非法');
@@ -94,14 +98,14 @@ HospitalData.forEach(h => {
   check(`7-数据来源:${h.id}`, /^\d{4}-\d{2}$/.test(h.source?.updated || ''), `source.updated 格式异常：${h.source?.updated}`);
 });
 
-// 8. 图片字段
+// 8. 图片字段（本地路径 images/hospitals/H{id}.jpg + fallback 外链）
 HospitalData.forEach(h => {
   const img = String(h.image || '').trim();
-  const isUrl = /^https?:\/\//.test(img);
-  const isLocal = /^images\/hospitals\/H\d{2}-.+\.jpg$/.test(img);
-  check(`8-图片:${h.id}`, isUrl || isLocal, `image 格式异常：${img}`);
+  const isLocal = /^images\/hospitals\/H\d{2}\.jpg$/.test(img);
+  check(`8-图片:${h.id}`, isLocal, `image 应为 images/hospitals/H{id}.jpg 本地路径，实际：${img}`);
   if (isLocal) {
     check(`8-图片:${h.id}`, /^https?:\/\//.test(String(h.imageFallback || '').trim()), '本地路径必须有 imageFallback URL');
+    check(`8-图片:${h.id}`, img === `images/hospitals/${h.id}.jpg`, `image 路径与 id 不一致：${img}`);
   }
 });
 
@@ -146,6 +150,19 @@ HospitalData.forEach(h => (h.branches || []).forEach(b => {
   else seen[key] = h.shortName;
 }));
 
+// ---- 14. 复核统计报告（读取数据源文件中的"待人工复核/待补充"注释，零依赖）----
+const fs = require('fs');
+const path = require('path');
+const srcText = fs.readFileSync(path.join(__dirname, '../src/scripts/data-hospitals.js'), 'utf8');
+const marks = [];
+const markRe = /\/\/\s*(待人工复核|待补充)[：:]([^\n]*)/g;
+let mm;
+while ((mm = markRe.exec(srcText)) !== null) {
+  const before = srcText.slice(0, mm.index);
+  const ids = [...before.matchAll(/id: '(H\d{2})'/g)];
+  marks.push({ id: ids.length ? ids[ids.length - 1][1] : '?', type: mm[1], note: mm[2].trim() });
+}
+
 // ---- 汇总 ----
 console.log(`校验完成：${checks} 项断言，${errors.length} 项失败`);
 if (errors.length) {
@@ -154,3 +171,6 @@ if (errors.length) {
 } else {
   console.log('  ✓ 全部通过');
 }
+if (warnings.length) warnings.forEach(w => console.log('  ⚠ ' + w));
+console.log(`复核标记 ${marks.length} 处：`);
+marks.forEach(x => console.log(`  · ${x.id} [${x.type}] ${x.note}`));

@@ -91,7 +91,7 @@ http://localhost:8000/
 7. `admin.js` 创建 `Admin` 和管理后台页面。
 8. `workflow.js` 基于前述对象追加统一工作流，并覆盖部分旧渲染方法。
 
-医院数据维护：23 家医院数据集中在 `src/scripts/data-hospitals.js`，字段含 `intro`（医院简介）、`advantage`（核心优势）、`keyDepts`（重点科室）、`branches`（总院/分院结构化地址）、`source`（数据来源与更新时间）；`address` 字符串由 store.js 派生兼容旧渲染点。修改数据后运行 `node scripts/validate-hospitals.js` 校验完整性（796 项断言）。
+医院数据维护：23 家医院数据集中在 `src/scripts/data-hospitals.js`，字段含 `intro`（医院简介，≤100 字）、`advantage`（核心优势）、`keyDepts`（重点科室）、`branches`（总院/分院结构化地址）、`source`（数据来源与更新时间）；`address` 字符串由 store.js 派生兼容旧渲染点。实景图按 `images/hospitals/H{id}.jpg` 命名放入 `images/hospitals/` 目录即自动生效（缺文件时自动降级占位图），下载清单见该目录下《图片下载清单.txt》。修改数据后运行 `node scripts/validate-hospitals.js` 校验完整性（865 项断言），调研来源台账见 `docs/architecture/HOSPITAL_DATA_SOURCES.md`。
 
 若准备改造成模块化工程，建议先为这些全局对象建立明确的导入导出边界和自动化回归测试，再逐步拆分。
 
