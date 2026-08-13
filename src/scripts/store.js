@@ -145,6 +145,7 @@ const CareStore = {
           branches: h.branches || baseH?.branches || parseAddress(h.address) || [{ name:'总院', address:h.address || '' }],
           source: h.source || baseH?.source || { info:'', ranking:'', updated:'' },
           advantage: h.advantage || baseH?.advantage || '',
+          image: /trae-api-cn\.mchost\.guru/.test(h.image || '') ? (baseH?.image || h.image) : h.image,
           imageFallback: h.imageFallback || baseH?.imageFallback || '',
         };
       }) : base.hospitals,
