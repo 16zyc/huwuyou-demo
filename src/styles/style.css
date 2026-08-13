@@ -458,6 +458,18 @@ body.patient { background: var(--bg-tertiary); display: flex; justify-content: c
 .steps-phase-head { display: flex; align-items: center; margin: 0 0 6px; }
 .steps-phase-badge { background: var(--accent-bg); color: var(--accent); border-radius: 6px; font-size: 12px; font-weight: 600; padding: 2px 10px; }
 
+/* ========== 订单接单状态 ========== */
+.order-status.cancelled { background: rgba(220,38,38,0.08); color: var(--status-notfound); }
+.order-escort-row { margin-top: 8px; padding: 8px 10px; background: var(--accent-bg); border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.order-escort-row strong { color: var(--accent); }
+.order-escort-right { display: flex; align-items: center; gap: 8px; }
+.order-escort-call { display: inline-flex; align-items: center; gap: 4px; color: var(--accent); font-weight: 600; text-decoration: none; min-height: 24px; }
+.order-escort-call svg { width: 14px; height: 14px; stroke: var(--accent); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.order-escort-stage { color: var(--text-muted); font-size: 11px; white-space: nowrap; }
+.order-escort-pending { margin-top: 8px; padding: 8px 10px; background: var(--bg-hover); border-radius: 6px; font-size: 12px; color: var(--text-muted); }
+.progress-escort-line { display: block; margin-top: 8px; color: var(--accent); font-size: 12px; font-weight: 600; }
+.progress-escort-line.pending { color: var(--text-muted); font-weight: 400; }
+
 /* ========== 预约表单 ========== */
 .booking-form { padding-bottom: 70px; }
 .bf-section-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 16px 0 10px; display: flex; align-items: center; gap: 6px; }

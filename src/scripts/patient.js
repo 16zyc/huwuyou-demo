@@ -1263,24 +1263,27 @@ const Patient = {
   },
 
   _renderOrderCard(n) {
-    const statusClass = n.status === '待处理' ? 'pending' : n.status === '已分配' ? 'accepted' : n.status === '服务中' ? 'serving' : 'done';
+    const statusClass = WUtil.statusClass(n.status);
     const statusLabel = n.status === '待处理' ? '待审核' : n.status === '已分配' ? '待服务' : n.status === '服务中' ? '进行中' : n.status;
+    const escortStage = n.status === '服务中' ? '服务中' : n.status === '已完成' ? '已完成' : '待服务';
     return `
       <div class="order-card" onclick="Patient._openOrderDetail('${n.id}')">
         <div class="order-head">
           <span class="order-status ${statusClass}">${statusLabel}</span>
           <span style="font-size:11px; color:var(--text-muted);">${n.id}</span>
         </div>
-        <div class="order-title">${n.hospital} · ${n.dept}</div>
-        <div class="order-sub">${n.date} · ${n.serviceType} · ¥${n.amount}</div>
+        <div class="order-title">${WUtil.escape(n.hospital)} · ${WUtil.escape(n.dept)}</div>
+        <div class="order-sub">${WUtil.escape(n.date)} · ${WUtil.escape(n.serviceType)} · ¥${n.amount}</div>
         ${n.escortName ? `
-          <div style="margin-top:8px; padding:8px 10px; background:var(--accent-bg); border-radius:6px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
-            <span>陪诊师：<strong style="color:var(--accent);">${n.escortName}</strong></span>
-            <span style="color:var(--text-muted); font-size:11px;">待服务</span>
+          <div class="order-escort-row">
+            <span>陪诊师：<strong>${WUtil.escape(n.escortName)}</strong></span>
+            <span class="order-escort-right">${n.escortPhone ? `<a class="order-escort-call" href="tel:${WUtil.escape(n.escortPhone)}" onclick="event.stopPropagation()">${P_ICON.phone} ${WUtil.escape(n.escortPhone)}</a>` : ''}<span class="order-escort-stage">${escortStage}</span></span>
           </div>
-        ` : ''}
+        ` : `
+          <div class="order-escort-pending">未接单 · 等待平台匹配陪诊师</div>
+        `}
         ${n.note ? `
-          <div style="margin-top:6px; font-size:11px; color:var(--text-muted); line-height:1.4; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">备注：${n.note}</div>
+          <div style="margin-top:6px; font-size:11px; color:var(--text-muted); line-height:1.4; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden;">备注：${WUtil.escape(n.note)}</div>
         ` : ''}
       </div>
     `;
@@ -1299,7 +1302,7 @@ const Patient = {
     const screen = document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
 
-    const statusClass = n.status === '待处理' ? 'pending' : n.status === '已分配' ? 'accepted' : n.status === '服务中' ? 'serving' : 'done';
+    const statusClass = WUtil.statusClass(n.status);
     const timelineItems = [
       { label: '订单创建', time: n.createTime, done: true },
       { label: '陪诊师对接', time: n.escortName ? n.updatedAt : null, done: !!n.escortName },
@@ -1358,7 +1361,7 @@ const Patient = {
           <div class="svd-section-title">陪诊师信息</div>
           <div class="ed-info-list">
             <div class="ed-info-row"><span class="ed-info-label">陪诊师</span><span class="ed-info-value" style="color:var(--accent);">${n.escortName}</span></div>
-            ${n.escortPhone ? `<div class="ed-info-row"><span class="ed-info-label">联系电话</span><span class="ed-info-value">${n.escortPhone}</span></div>` : ''}
+            ${n.escortPhone ? `<div class="ed-info-row"><span class="ed-info-label">联系电话</span><span class="ed-info-value"><a href="tel:${WUtil.escape(n.escortPhone)}" style="color:var(--accent); text-decoration:none;">${WUtil.escape(n.escortPhone)}</a></span></div>` : ''}
           </div>
         </div>
         ` : `
