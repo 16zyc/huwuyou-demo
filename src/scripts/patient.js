@@ -417,7 +417,6 @@ const Patient = {
   ],
 
   _currentOrderTab: '全部',
-  _currentHospitals: [],
   _searchKeyword: '',
   _searchFilter: { category: '', city: '', sort: '' },
   _currentHospitalDetail: null,
@@ -441,7 +440,7 @@ const Patient = {
       prev.renderFn(screen);
     } else {
       this._pageStack = [];
-      App.switchTab(0);
+      App.switchTab(App.patientTab);
     }
   },
 
@@ -452,24 +451,42 @@ const Patient = {
     else this.renderProfile(el);
   },
 
-  // ===== 特色医院页 =====
+  // ===== 特色医院页（完整医院目录：搜索/分类/城市/排序 + 实景图卡）=====
   renderFeaturedHospitals(el) {
-    const hospitals = (MockData.hospitals || []).filter(h => h.hot);
-    el.innerHTML = `
-      <div class="page-head" style="margin-bottom:12px;">
-        <h2 style="font-size:18px; font-weight:700;">特色医院</h2>
-        <div>查看热门推荐医院及专科介绍</div>
-      </div>
-      <div class="ph-hosp-list">
-        ${hospitals.map(h => HospitalUI.renderFeaturedCard(h)).join('')}
-      </div>
-    `;
+    const hospitals = MockData.hospitals || [];
+    const kw = this._searchKeyword.toLowerCase();
+    let list = hospitals.filter(h => {
+      if (kw && !h.name.toLowerCase().includes(kw) && !h.shortName.toLowerCase().includes(kw) && !h.intro.toLowerCase().includes(kw)) return false;
+      if (this._searchFilter.category && h.category !== this._searchFilter.category) return false;
+      if (this._searchFilter.city && h.city !== this._searchFilter.city) return false;
+      return true;
+    });
+    if (this._searchFilter.sort === 'orders') {
+      list.sort((a, b) => b.orders - a.orders);
+    }
+    const cats = ['综合医院', '专科医院', '中医医院'];
+    const cities = [...new Set(hospitals.map(h => h.city).filter(Boolean))];
+
+    const screen = el || document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+    screen.innerHTML = HospitalUI.renderListPage({
+      list, kw: this._searchKeyword, filter: this._searchFilter, cats, cities, sorts: ['', 'orders'],
+      embedded: true, title: '特色医院', sub: '查看热门推荐医院及专科介绍',
+    });
+    const kwInput = document.getElementById('hsKeyword');
+    if (kwInput) kwInput.addEventListener('keydown', e => { if (e.key === 'Enter') this._doSearch(); });
+  },
+
+  // 首页热门医院入口：重置筛选并跳转特色 Tab（保证默认展示完整列表）
+  goFeaturedHospitals() {
+    this._searchKeyword = '';
+    this._searchFilter = { category: '', city: '', sort: '' };
+    App.switchTab(1);
   },
 
   // ===== 首页 =====
   renderHome(el) {
     const isGuest = App.isGuest;
-    const hotHospitals = (MockData.hospitals || []).filter(h => h.hot);
     el.innerHTML = `
       <!-- Banner -->
       <div class="ph-banner-placeholder">
@@ -519,13 +536,14 @@ const Patient = {
         </div>
       </div>
 
-      <!-- 热门医院 -->
-      <div class="ph-section-title">
-        <h3>${P_ICON.building} 热门医院</h3>
-        <span class="ph-section-more" onclick="Patient.goHospitalList()">查看更多 ${P_ICON.chevronRight}</span>
-      </div>
-      <div class="ph-hosp-list">
-        ${hotHospitals.map(h => this._renderHospitalCard(h)).join('')}
+      <!-- 热门医院入口（点击跳转特色 Tab 查看完整医院目录）-->
+      <div class="ph-hosp-entry" onclick="Patient.goFeaturedHospitals()">
+        <div class="ph-he-icon">${P_ICON.building}</div>
+        <div class="ph-he-text">
+          <div class="ph-he-title">热门医院</div>
+          <div class="ph-he-desc">上海 ${(MockData.hospitals || []).length} 家三甲医院 · 支持搜索与分类筛选</div>
+        </div>
+        <div class="ph-he-cta">去查看 ${P_ICON.chevronRight}</div>
       </div>
 
       ${(CareStore.state.announcements||[]).filter(a=>a.status==='published').slice(0,2).map(a => `
@@ -567,10 +585,6 @@ const Patient = {
         </div>
       </div>
     `;
-  },
-
-  _renderHospitalCard(h) {
-    return HospitalUI.renderCard(h);
   },
 
   // ===== 服务点击 → 压栈进入二级目录页 =====
@@ -768,42 +782,11 @@ const Patient = {
     App.toast('正在为您对接' + name + '顾问');
   },
 
-  // ===== 医院列表页 =====
-  goHospitalList() {
-    this._searchKeyword = '';
-    this._searchFilter = { category: '', city: '', sort: '' };
-    this.navigateTo(el => this._renderHospitalListPage(el), '医院列表');
-  },
-
-  _renderHospitalListPage(el) {
-    const hospitals = MockData.hospitals || [];
-    const kw = this._searchKeyword.toLowerCase();
-    let list = hospitals.filter(h => {
-      if (kw && !h.name.toLowerCase().includes(kw) && !h.shortName.toLowerCase().includes(kw) && !h.intro.toLowerCase().includes(kw)) return false;
-      if (this._searchFilter.category && h.category !== this._searchFilter.category) return false;
-      if (this._searchFilter.city && h.city !== this._searchFilter.city) return false;
-      return true;
-    });
-    if (this._searchFilter.sort === 'orders') {
-      list.sort((a, b) => b.orders - a.orders);
-    }
-    const cats = ['综合医院', '专科医院', '中医医院'];
-    const cities = [...new Set(hospitals.map(h => h.city).filter(Boolean))];
-    const sorts = ['', 'orders'];
-
-    const screen = el || document.getElementById('screen');
-    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
-    screen.innerHTML = HospitalUI.renderListPage({
-      list, kw: this._searchKeyword, filter: this._searchFilter, cats, cities, sorts,
-    });
-    const kwInput = document.getElementById('hsKeyword');
-    if (kwInput) kwInput.addEventListener('keydown', e => { if (e.key === 'Enter') this._doSearch(); });
-  },
-
+  // ===== 特色 Tab 目录筛选（搜索/分类/城市/排序，重渲染特色页）=====
   _doSearch() {
     const kw = document.getElementById('hsKeyword').value.trim();
     this._searchKeyword = kw;
-    this._renderHospitalListPage();
+    this.renderFeaturedHospitals(document.getElementById('screen'));
   },
 
   _setFilter(key, val) {
@@ -812,7 +795,7 @@ const Patient = {
     } else {
       this._searchFilter[key] = this._searchFilter[key] === val ? '' : val;
     }
-    this._renderHospitalListPage();
+    this.renderFeaturedHospitals(document.getElementById('screen'));
   },
 
   // ===== 医院详情页 =====

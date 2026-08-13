@@ -362,10 +362,10 @@ const App = {
           e.preventDefault();
           const action = a.dataset.action;
           if (action === 'goto-upload') {
-            // 关闭 AI 面板，跳到"我的需求"Tab
+            // 关闭 AI 面板，跳转统一需求表单（遗留代码：App.aiSend 已被 workflow.js 覆盖，此处仅作语义对齐）
             document.getElementById('aiPanel').hidden = true;
             document.getElementById('aiFloat').hidden = false;
-            App.switchTab(1);
+            Patient.navigateTo(el => Patient.renderNeed(el), '我的需求');
           }
         });
       });

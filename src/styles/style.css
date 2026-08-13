@@ -430,6 +430,17 @@ body.patient { background: var(--bg-tertiary); display: flex; justify-content: c
 .ph-hosp-addr svg { width: 11px; height: 11px; stroke: var(--text-muted); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; vertical-align: -1px; flex-shrink: 0; }
 .ph-hosp-order { font-size: 10px; color: var(--accent); background: var(--accent-bg); padding: 2px 8px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
 
+/* ========== 首页热门医院入口卡 ========== */
+.ph-hosp-entry { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); cursor: pointer; margin-bottom: 14px; }
+.ph-hosp-entry:active { background: var(--bg-hover); transform: scale(0.98); }
+.ph-he-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ph-he-icon svg { width: 24px; height: 24px; stroke: var(--accent); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ph-he-text { flex: 1; min-width: 0; }
+.ph-he-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.ph-he-desc { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.ph-he-cta { color: var(--accent); font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.ph-he-cta svg { width: 14px; height: 14px; stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
 /* 首页快捷服务入口（特色介绍等大卡片） */
 .ph-svc-big-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; cursor: pointer; }
 

@@ -40,7 +40,7 @@ const HospitalUI = {
     return `<img src="${this.esc(src)}" alt="${alt}"${className ? ` class="${className}"` : ''} loading="lazy" onerror="${onerror}">`;
   },
 
-  // 热门/列表通用医院卡（原 Patient._renderHospitalCard 迁移）
+  // 医院通用卡（特色 Tab 目录 / 独立列表页共用）
   renderCard(h) {
     const shortAddr = this.shortAddress(h);
     return `
@@ -65,33 +65,22 @@ const HospitalUI = {
     `;
   },
 
-  // 特色页卡片（首字占位图 + 优势摘要）
-  renderFeaturedCard(h) {
-    const summary = h.advantage || h.intro || '';
-    return `
-      <div class="ph-hosp-card" onclick="Patient.navigateTo(el => Patient.goHospitalDetail('${h.id}', el), '医院详情')">
-        <div class="ph-hosp-img">${this.esc((h.shortName || h.name || '').charAt(0))}</div>
-        <div class="ph-hosp-info">
-          <div class="ph-hosp-name">${this.esc(h.name)}</div>
-          <div class="ph-hosp-sub">${this.esc(h.category || '综合医院')} · ${this.esc(h.city || '')}</div>
-          <div class="ph-hosp-intro">${this.esc(summary.slice(0, 40))}${summary.length > 40 ? '…' : ''}</div>
-          <div class="ph-hosp-tags">
-            ${(h.keyDepts || []).slice(0, 3).map(d => `<span class="ph-hosp-tag">${this.esc(d)}</span>`).join('')}
-          </div>
-        </div>
-      </div>
-    `;
-  },
-
-  // 医院列表页骨架（筛选状态与逻辑留在 patient.js）
+  // 医院目录骨架（embedded=true 用于 Tab 内嵌：page-head 无返回钮；false 为独立页：order-header 带返回钮）
+  // 筛选状态与逻辑留在 patient.js（_doSearch/_setFilter）
   renderListPage(opts) {
-    const { list = [], kw = '', filter = {}, cats = [], cities = [], sorts = [] } = opts;
+    const { list = [], kw = '', filter = {}, cats = [], cities = [], sorts = [], embedded = false, title = '医院列表', sub = '' } = opts;
+    const head = embedded
+      ? `<div class="page-head" style="margin-bottom:12px;">
+          <h2 style="font-size:18px; font-weight:700;">${this.esc(title)}</h2>
+          ${sub ? `<div>${this.esc(sub)}</div>` : ''}
+        </div>`
+      : `<div class="order-header">
+          <div class="oh-back" onclick="Patient.goBack()">${this.icon('chevronLeft')}</div>
+          <h2>${this.esc(title)}</h2>
+        </div>`;
     return `
       <div class="order-page">
-        <div class="order-header">
-          <div class="oh-back" onclick="Patient.goBack()">${this.icon('chevronLeft')}</div>
-          <h2>医院列表</h2>
-        </div>
+        ${head}
         <!-- 搜索框 -->
         <div class="hs-search-bar">
           <div class="hs-search-input">

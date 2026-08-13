@@ -264,8 +264,8 @@ CareStore（唯一事实源，所有状态变更必须经过它）
 
 | Tab | 页面 | 渲染函数 | 文件:行 |
 | --- | --- | --- | --- |
-| 首页 | 首页（Banner + 2×2 服务 + 人工/AI双入口横幅 + 热门医院） | `Patient.renderHome` | patient.js:483 |
-| 特色 | 特色医院列表/详情 | `Patient.renderFeaturedHospitals` / `goHospitalDetail` | patient.js:435/1065 |
+| 首页 | 首页（Banner + 2×2 服务 + 人工/AI双入口横幅 + 热门医院入口卡→跳特色Tab） | `Patient.renderHome` | patient.js |
+| 特色 | 完整医院目录（搜索/分类/城市/排序筛选 + 实景图卡）→ 医院详情 | `Patient.renderFeaturedHospitals` / `goHospitalDetail` | patient.js |
 | 订单 | 订单列表（状态筛选）+ 详情时间线 | `Patient.renderOrders` / `_renderOrderDetailPage` | patient.js:1407/1472 |
 | 我的 | 个人信息/统计/就诊人管理/设置 | `Patient.renderProfile` | patient.js:1591 |
 
@@ -274,7 +274,7 @@ CareStore（唯一事实源，所有状态变更必须经过它）
 - 流程步骤页：`_openServiceSteps`（patient.js:645）
 - 统一需求表单（人工下单/我的需求共用，draft 驱动）：`Patient.renderNeed` + 唯一入口 `Patient.openNeedForm`（workflow.js）
 - AI智能下单页：`_openAIOrder`（patient.js:758）
-- 医院列表（搜索/筛选）：`_renderHospitalListPage`（patient.js:988）
+- 医院目录（特色 Tab 内嵌，搜索/筛选）：`Patient.renderFeaturedHospitals`（patient.js）；骨架由 `HospitalUI.renderListPage({embedded:true})` 渲染；筛选状态 `_searchKeyword/_searchFilter` 挂在 Patient 上跨 Tab 保留，首页入口经 `Patient.goFeaturedHospitals()` 重置后跳转
 - 订单详情：`_renderOrderDetailPage`（patient.js:1472）
 - 就诊人管理：`openPatientManager`（patient.js:1681）
 
