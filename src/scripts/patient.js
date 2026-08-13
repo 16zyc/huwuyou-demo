@@ -464,7 +464,7 @@ const Patient = {
       </div>
       <div class="ph-hosp-list">
         ${hospitals.map(h => `
-          <div class="ph-hosp-card" onclick="Patient._openHospitalDetail('${h.name}')">
+          <div class="ph-hosp-card" onclick="Patient.navigateTo(el => Patient.goHospitalDetail('${h.id}', el), '医院详情')">
             <div class="ph-hosp-img">${h.shortName?.charAt(0) || h.name.charAt(0)}</div>
             <div class="ph-hosp-info">
               <div class="ph-hosp-name">${h.name}</div>
@@ -490,24 +490,6 @@ const Patient = {
         <div class="bp-sub">陪诊咨询 · 代办服务 · 特需服务</div>
       </div>
 
-      <!-- 人工下单 + AI下单 双入口 -->
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
-        <div class="ai-order-banner" style="background:linear-gradient(135deg, var(--accent), var(--accent-deep)); box-shadow:0 4px 16px rgba(59,108,181,0.25);" onclick="Patient.onServiceClick('consult')">
-          <div class="ai-order-icon">${P_ICON.clipboard}</div>
-          <div class="ai-order-text">
-            <div class="ai-order-title">人工下单</div>
-            <div class="ai-order-desc">填写就诊需求，平台为您匹配陪诊师</div>
-          </div>
-        </div>
-        <div class="ai-order-banner" style="background:linear-gradient(135deg, var(--accent-amber), #d4a843); box-shadow:0 4px 16px rgba(196,146,46,0.25);" onclick="Patient._openAIOrder()">
-          <div class="ai-order-icon">${P_ICON.service_consult}</div>
-          <div class="ai-order-text">
-            <div class="ai-order-title">AI智能下单 <span class="ai-order-badge">推荐</span></div>
-            <div class="ai-order-desc">描述您的症状，AI智能推荐服务方案</div>
-          </div>
-        </div>
-      </div>
-
       <!-- 四大业务入口（2x2网格）-->
       <div class="ph-grid-2x2">
         <div class="ph-svc-tile c1" onclick="Patient.onServiceClick('consult')">
@@ -529,6 +511,24 @@ const Patient = {
           <div class="ph-st-icon">${P_ICON.service_featured}</div>
           <div class="ph-st-title">特色介绍</div>
           <div class="ph-st-desc">特色医院/特色专家</div>
+        </div>
+      </div>
+
+      <!-- 人工下单 + AI下单 双入口（位于四大核心业务下方）-->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px;">
+        <div class="ai-order-banner" style="background:linear-gradient(135deg, var(--accent), var(--accent-deep)); box-shadow:0 4px 16px rgba(59,108,181,0.25);" onclick="Patient.openNeedForm('consult_diagnosis')">
+          <div class="ai-order-icon">${P_ICON.clipboard}</div>
+          <div class="ai-order-text">
+            <div class="ai-order-title">人工下单</div>
+            <div class="ai-order-desc">填写就诊需求，平台为您匹配陪诊师</div>
+          </div>
+        </div>
+        <div class="ai-order-banner" style="background:linear-gradient(135deg, var(--accent-amber), #d4a843); box-shadow:0 4px 16px rgba(196,146,46,0.25);" onclick="Patient._openAIOrder()">
+          <div class="ai-order-icon">${P_ICON.service_consult}</div>
+          <div class="ai-order-text">
+            <div class="ai-order-title">AI智能下单 <span class="ai-order-badge">推荐</span></div>
+            <div class="ai-order-desc">描述您的症状，AI智能推荐服务方案</div>
+          </div>
         </div>
       </div>
 
@@ -586,7 +586,7 @@ const Patient = {
     // 提取总院地址（取分号或"；"前的部分），保持首页卡片简洁
     const shortAddr = (h.address || '').split(/[;；]/)[0].replace(/^总院：/, '');
     return `
-      <div class="ph-hosp-card" onclick="Patient.goHospitalDetail('${h.id}')">
+      <div class="ph-hosp-card" onclick="Patient.navigateTo(el => Patient.goHospitalDetail('${h.id}', el), '医院详情')">
         <div class="ph-hosp-img">
           <img src="${h.image}" alt="${h.name}" loading="lazy" onerror="this.style.display='none'">
           <span class="ph-hosp-badge">${h.level}</span>
@@ -607,14 +607,14 @@ const Patient = {
     `;
   },
 
-  // ===== 服务点击 → 跳转到二级目录页 =====
+  // ===== 服务点击 → 压栈进入二级目录页 =====
   onServiceClick(type) {
-    this._renderSubCategoryPage(type);
+    this.navigateTo(el => this._renderSubCategoryPage(type, el), '服务目录');
   },
 
   // ===== 二级目录页 =====
-  _renderSubCategoryPage(type) {
-    const screen = document.getElementById('screen');
+  _renderSubCategoryPage(type, el) {
+    const screen = el || document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
 
     const configs = {
@@ -666,7 +666,7 @@ const Patient = {
         </div>
         <div class="sub-list">
           ${cfg.items.map(item => `
-            <div class="sub-card" onclick="Patient._openServiceSteps('${item.key}')">
+            <div class="sub-card" onclick="Patient.navigateTo(el => Patient._openServiceSteps('${item.key}', el), '操作流程')">
               <div class="sub-card-head">
                 <div class="sub-card-icon" style="background:var(--accent-bg);color:var(--accent);">${item.icon}</div>
                 <div class="sub-card-title">${item.title}</div>
@@ -681,7 +681,7 @@ const Patient = {
   },
 
   // ===== 服务流程步骤页 =====
-  _openServiceSteps(key) {
+  _openServiceSteps(key, el) {
     const stepsMap = {
       consult_diagnosis: { title: '就诊咨询', steps: [
         { title: '提交订单', desc: '填写患者信息、就诊医院、科室等并提交预约' },
@@ -751,10 +751,8 @@ const Patient = {
 
     const cfg = stepsMap[key];
     if (!cfg) return;
-    this._currentServiceKey = key;
-    this._currentServiceTitle = cfg.title;
 
-    const screen = document.getElementById('screen');
+    const screen = el || document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
 
     screen.innerHTML = `
@@ -841,181 +839,14 @@ const Patient = {
     this._openBookingForm('ai_auto', 'AI智能推荐', dept, symptom, hospital);
   },
 
-  // ===== 统一预约表单 =====
+  // ===== 统一预约表单（兼容旧调用方）：重定向到共享草稿统一表单 =====
   _openBookingForm(serviceKey, serviceTitle, preDept, preSymptom, preHospital) {
-    if (!App.requireLogin('预约服务')) return;
-
-    const screen = document.getElementById('screen');
-    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
-
-    const u = MockData.patient.user;
-    const hospitals = (MockData.hospitals || []).filter(h => h.hot);
-
-    screen.innerHTML = `
-      <div class="booking-form">
-        <div class="svd-header">
-          <div class="svd-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
-          <h2>填写预约信息</h2>
-        </div>
-
-        ${serviceTitle ? `
-        <div style="background:var(--accent-bg); border-radius:var(--radius); padding:12px 14px; font-size:13px; color:var(--accent); margin-bottom:4px;">
-          服务类型：<strong>${serviceTitle}</strong>
-        </div>` : ''}
-
-        <!-- 患者信息 -->
-        <div class="bf-section-title">患者信息</div>
-        <div class="bf-card">
-          <div class="bf-item">
-            <label>姓名</label>
-            <input type="text" id="bfName" value="${u.name}" placeholder="请输入患者姓名" />
-          </div>
-          <div class="bf-item">
-            <label>性别</label>
-            <div style="display:flex; gap:10px;">
-              <label style="flex:1;"><input type="radio" name="bfGender" value="男" ${u.gender==='男'?'checked':''}/> 男</label>
-              <label style="flex:1;"><input type="radio" name="bfGender" value="女" ${u.gender==='女'?'checked':''}/> 女</label>
-            </div>
-          </div>
-          <div class="bf-item">
-            <label>年龄</label>
-            <input type="number" id="bfAge" value="${u.age}" placeholder="请输入年龄" min="0" max="150" />
-          </div>
-          <div class="bf-item">
-            <label>联系电话</label>
-            <input type="tel" id="bfPhone" value="${u.phone}" placeholder="请输入联系电话" />
-          </div>
-          <div class="bf-item">
-            <label>病史信息</label>
-            <textarea id="bfHistory" placeholder="如：高血压、糖尿病等" rows="2">${MockData.patient.medical?.history || ''}</textarea>
-          </div>
-          <div class="bf-item">
-            <label>过敏史</label>
-            <input type="text" id="bfAllergy" value="${MockData.patient.medical?.allergy || ''}" placeholder="如：青霉素过敏" />
-          </div>
-          <div class="bf-item">
-            <label>用药情况</label>
-            <input type="text" id="bfMedicine" value="${MockData.patient.medical?.medicine || ''}" placeholder="如：氨氯地平 5mg/日" />
-          </div>
-          <div class="bf-item">
-            <label>行动能力</label>
-            <select id="bfMobility">
-              <option value="可独立行走" ${MockData.patient.medical?.mobility==='可独立行走'?'selected':''}>可独立行走</option>
-              <option value="需拐杖" ${MockData.patient.medical?.mobility==='需拐杖'?'selected':''}>需拐杖</option>
-              <option value="需轮椅" ${MockData.patient.medical?.mobility==='需轮椅'?'selected':''}>需轮椅</option>
-              <option value="需搀扶" ${MockData.patient.medical?.mobility==='需搀扶'?'selected':''}>需搀扶</option>
-            </select>
-          </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="bf-item">
-              <label>紧急联系人</label>
-              <input type="text" id="bfEmergencyName" value="${u.emergencyName || ''}" placeholder="姓名" />
-            </div>
-            <div class="bf-item">
-              <label>联系人电话</label>
-              <input type="tel" id="bfEmergencyPhone" value="${u.emergencyPhone || ''}" placeholder="手机号" />
-            </div>
-          </div>
-        </div>
-
-        <!-- 就医信息 -->
-        <div class="bf-section-title">就医信息</div>
-        <div class="bf-card">
-          <div class="bf-item">
-            <label>就诊医院</label>
-            <select id="bfHospital">
-              ${hospitals.map(h => `<option value="${h.name}" ${preHospital===h.name?'selected':''}>${h.name}</option>`).join('')}
-            </select>
-          </div>
-          <div class="bf-item">
-            <label>就诊科室</label>
-            <input type="text" id="bfDept" value="${preDept || ''}" placeholder="如：心内科、神经内科" />
-          </div>
-          ${preSymptom ? `
-          <div class="bf-item">
-            <label>症状描述</label>
-            <div style="padding:10px 12px; background:var(--bg-tertiary); border-radius:var(--radius); font-size:13px; color:var(--text-secondary);">${preSymptom}</div>
-          </div>` : ''}
-        </div>
-
-        <!-- 就诊时间（范围选择）-->
-        <div class="bf-section-title">就诊时间</div>
-        <div class="bf-card">
-          <div class="bf-item">
-            <label>期望预约时间范围</label>
-            <div class="bf-time-group">
-              <div class="bf-time-opt active" data-range="1-3天" onclick="Patient._selectTimeRange(this)">1-3天内</div>
-              <div class="bf-time-opt" data-range="一周" onclick="Patient._selectTimeRange(this)">一周内</div>
-              <div class="bf-time-opt" data-range="尽快" onclick="Patient._selectTimeRange(this)">尽快</div>
-            </div>
-          </div>
-          <div class="bf-item">
-            <label>备注说明</label>
-            <textarea id="bfNote" placeholder="如有特殊需求请填写" rows="2"></textarea>
-          </div>
-        </div>
-
-        <div style="font-size:12px; color:var(--text-muted); text-align:center; padding:4px 0;">
-          * 提交后由管理员审核并为您匹配陪诊师
-        </div>
-
-        <button class="bf-submit-btn" onclick="Patient._submitBooking('${serviceKey}')">提交预约</button>
-      </div>
-    `;
-  },
-
-  _selectTimeRange(el) {
-    el.parentNode.querySelectorAll('.bf-time-opt').forEach(o => o.classList.remove('active'));
-    el.classList.add('active');
-  },
-
-  _submitBooking(serviceKey) {
-    const name = document.getElementById('bfName')?.value?.trim();
-    const gender = document.querySelector('input[name="bfGender"]:checked')?.value || '男';
-    const age = document.getElementById('bfAge')?.value;
-    const phone = document.getElementById('bfPhone')?.value?.trim();
-    const history = document.getElementById('bfHistory')?.value || '';
-    const allergy = document.getElementById('bfAllergy')?.value || '';
-    const medicine = document.getElementById('bfMedicine')?.value || '';
-    const mobility = document.getElementById('bfMobility')?.value || '可独立行走';
-    const emergencyName = document.getElementById('bfEmergencyName')?.value || '';
-    const emergencyPhone = document.getElementById('bfEmergencyPhone')?.value || '';
-    const hospital = document.getElementById('bfHospital')?.value || '未指定';
-    const dept = document.getElementById('bfDept')?.value?.trim() || '';
-    const note = document.getElementById('bfNote')?.value || '';
-    const timeRange = document.querySelector('.bf-time-opt.active')?.dataset.range || '1-3天';
-
-    if (!name) { App.toast('请填写患者姓名'); return; }
-    if (!age || age < 0 || age > 120) { App.toast('请填写有效年龄（0-120）'); return; }
-    if (!phone || !/^1\d{10}$/.test(phone.replace(/\s/g,''))) { App.toast('请填写有效的11位手机号'); return; }
-    if (!dept) { App.toast('请填写就诊科室'); return; }
-
-    if (!App.requireLogin('提交预约')) return;
-
-    // 从 PriceTable 获取价格（匹配服务名）
-    const serviceNameMap = {
-      consult_diagnosis: '半程陪诊', consult_agent: '全程陪诊',
-      agent_report: '代办跑腿', agent_diagnosis: '全程陪诊',
-      special_car: '全程陪诊', special_wheelchair: '全程陪诊',
-      featured_hospital: '陪同复诊', featured_expert: '全程陪诊',
-      ai_auto: '半程陪诊',
-    };
-    const priceName = serviceNameMap[serviceKey] || '半程陪诊';
-    const amount = PriceTable.getPrice(priceName);
-
-    const req = NeedPool.add({
-      patientName: name, gender, age: parseInt(age), phone,
-      emergencyName, emergencyPhone,
-      history, allergy, medicine, mobility, insurance: '',
-      hospital, dept, date: timeRange,
-      serviceType: priceName, amount,
-      note: note || `通过人工下单（${priceName}）`,
-      status: '待处理',
-      idCardFront: null, idCardBack: null, reportFiles: [],
-    });
-
-    App.toast('预约已提交，等待管理员审核并匹配陪诊师');
-    setTimeout(() => App.switchTab(2), 1000);
+    const patch = {};
+    if (SERVICE_KEY_TYPE_MAP[serviceKey]) patch.serviceType = SERVICE_KEY_TYPE_MAP[serviceKey];
+    if (preDept) patch.dept = preDept;
+    if (preHospital) patch.hospital = preHospital;
+    if (preSymptom) patch.note = patch.note ? patch.note + '；' + preSymptom : preSymptom;
+    Patient.openNeedForm(serviceKey === 'ai_auto' ? null : serviceKey, patch);
   },
 
   _contactService(name) {
@@ -1023,24 +854,14 @@ const Patient = {
     App.toast('正在为您对接' + name + '顾问');
   },
 
-  _bookService(type) {
-    if (!App.requireLogin('预约服务')) return;
-    this._openBookingForm(type);
-  },
-
   // ===== 医院列表页 =====
   goHospitalList() {
     this._searchKeyword = '';
     this._searchFilter = { category: '', city: '', sort: '' };
-    this._renderHospitalListPage();
+    this.navigateTo(el => this._renderHospitalListPage(el), '医院列表');
   },
 
-  _openHospitalDetail(name) {
-    const h = (MockData.hospitals || []).find(x => x.name === name);
-    if (h) this.goHospitalDetail(h.id);
-  },
-
-  _renderHospitalListPage() {
+  _renderHospitalListPage(el) {
     const hospitals = MockData.hospitals || [];
     const kw = this._searchKeyword.toLowerCase();
     let list = hospitals.filter(h => {
@@ -1056,12 +877,12 @@ const Patient = {
     const cities = ['上海市', '北京市'];
     const sorts = ['', 'orders'];
 
-    const screen = document.getElementById('screen');
+    const screen = el || document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
     screen.innerHTML = `
       <div class="order-page">
         <div class="order-header">
-          <div class="oh-back" onclick="App.switchTab(0)">${P_ICON.chevronLeft}</div>
+          <div class="oh-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
           <h2>医院列表</h2>
         </div>
         <!-- 搜索框 -->
@@ -1123,11 +944,11 @@ const Patient = {
   },
 
   // ===== 医院详情页 =====
-  goHospitalDetail(id) {
+  goHospitalDetail(id, el) {
     const h = (MockData.hospitals || []).find(x => x.id === id);
     if (!h) return;
     this._currentHospitalDetail = h;
-    const screen = document.getElementById('screen');
+    const screen = el || document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
     screen.innerHTML = `
       <div class="order-page">
@@ -1165,20 +986,12 @@ const Patient = {
         </div>
       </div>
     `;
-    // 绑定返回
-    const backBtn = document.querySelector('.hd-hero-back');
-    if (backBtn) backBtn.onclick = () => this._backFromDetail();
-  },
-
-  _backFromDetail() {
-    // 如果是从首页来的，返回首页；否则返回列表
-    App.switchTab(0);
   },
 
   _bookHospital(id) {
-    if (!App.requireLogin('预订服务')) return;
     const h = (MockData.hospitals || []).find(x => x.id === id);
-    this._openBookingForm('consult_diagnosis', '就诊咨询', '', '', h ? h.name : '');
+    CareStore.patchDraft({ hospital: h ? h.name : '' });
+    Patient.openNeedForm('consult_diagnosis');
   },
 
   // ===== 陪诊师页 =====
@@ -1809,7 +1622,7 @@ const Patient = {
       <div class="me-menu">
         <div class="me-menu-item" onclick="Patient.navigateTo(el => Patient.renderNeed(el), '我的需求')">
           <div class="me-menu-icon" style="background:rgba(59,108,181,0.1); color:var(--accent);">${P_ICON.edit}</div>
-          <div class="me-menu-text">我的需求（草稿表单）</div>
+          <div class="me-menu-text">我的需求</div>
           <div class="me-menu-arrow">${P_ICON.chevronRight}</div>
         </div>
         <div class="me-menu-item" onclick="Patient.navigateTo(el => Patient.renderProgress(el), '陪诊进度')">
