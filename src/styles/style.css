@@ -460,6 +460,15 @@ body.patient { background: var(--bg-tertiary); display: flex; justify-content: c
 
 /* ========== 订单接单状态 ========== */
 .order-status.cancelled { background: rgba(220,38,38,0.08); color: var(--status-notfound); }
+
+/* ========== 医院详情：分支地址 / 核心优势小标题 / 来源脚注 ========== */
+.hd-branches { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.hd-branch { display: flex; align-items: baseline; gap: 8px; font-size: 13px; color: var(--text-secondary); }
+.hd-branch-tag { flex-shrink: 0; background: var(--accent-bg); color: var(--accent); border-radius: 6px; font-size: 11px; font-weight: 600; padding: 1px 6px; }
+.hd-branch-tag.main { background: var(--accent); color: #fff; }
+.hd-branch-addr { line-height: 1.5; }
+.hd-adv-title { margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.hd-source-foot { margin-top: 10px; font-size: 11px; color: var(--text-muted); line-height: 1.6; }
 .order-escort-row { margin-top: 8px; padding: 8px 10px; background: var(--accent-bg); border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .order-escort-row strong { color: var(--accent); }
 .order-escort-right { display: flex; align-items: center; gap: 8px; }

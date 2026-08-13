@@ -461,19 +461,7 @@ const Patient = {
         <div>查看热门推荐医院及专科介绍</div>
       </div>
       <div class="ph-hosp-list">
-        ${hospitals.map(h => `
-          <div class="ph-hosp-card" onclick="Patient.navigateTo(el => Patient.goHospitalDetail('${h.id}', el), '医院详情')">
-            <div class="ph-hosp-img">${h.shortName?.charAt(0) || h.name.charAt(0)}</div>
-            <div class="ph-hosp-info">
-              <div class="ph-hosp-name">${h.name}</div>
-              <div class="ph-hosp-sub">${h.category || '综合医院'} · ${h.city || ''}</div>
-              <div class="ph-hosp-intro">${WUtil.escape((h.advantage || h.intro || '').slice(0, 40))}${(h.advantage || h.intro || '').length > 40 ? '…' : ''}</div>
-              <div class="ph-hosp-tags">
-                ${(h.keyDepts || []).slice(0, 3).map(d => `<span class="ph-hosp-tag">${d}</span>`).join('')}
-              </div>
-            </div>
-          </div>
-        `).join('')}
+        ${hospitals.map(h => HospitalUI.renderFeaturedCard(h)).join('')}
       </div>
     `;
   },
@@ -582,28 +570,7 @@ const Patient = {
   },
 
   _renderHospitalCard(h) {
-    // 提取总院地址（取分号或"；"前的部分），保持首页卡片简洁
-    const shortAddr = (h.address || '').split(/[;；]/)[0].replace(/^总院：/, '');
-    return `
-      <div class="ph-hosp-card" onclick="Patient.navigateTo(el => Patient.goHospitalDetail('${h.id}', el), '医院详情')">
-        <div class="ph-hosp-img">
-          <img src="${h.image}" alt="${h.name}" loading="lazy" onerror="this.style.display='none'">
-          <span class="ph-hosp-badge">${h.level}</span>
-        </div>
-        <div class="ph-hosp-info">
-          <div class="ph-hosp-name">${h.name}</div>
-          <div class="ph-hosp-tags">
-            <span class="ph-hosp-tag cat">${h.category}</span>
-            <span class="ph-hosp-tag">${h.keyDepts ? h.keyDepts.slice(0,2).join(' · ') : ''}</span>
-          </div>
-          <div class="ph-hosp-intro">${h.intro}</div>
-          <div class="ph-hosp-meta">
-            <span class="ph-hosp-addr">${P_ICON.location} ${shortAddr}</span>
-            <span class="ph-hosp-order">已服务 ${h.orders} 单</span>
-          </div>
-        </div>
-      </div>
-    `;
+    return HospitalUI.renderCard(h);
   },
 
   // ===== 服务点击 → 压栈进入二级目录页 =====
@@ -821,56 +788,14 @@ const Patient = {
       list.sort((a, b) => b.orders - a.orders);
     }
     const cats = ['综合医院', '专科医院', '中医医院'];
-    const cities = ['上海市', '北京市'];
+    const cities = [...new Set(hospitals.map(h => h.city).filter(Boolean))];
     const sorts = ['', 'orders'];
 
     const screen = el || document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
-    screen.innerHTML = `
-      <div class="order-page">
-        <div class="order-header">
-          <div class="oh-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
-          <h2>医院列表</h2>
-        </div>
-        <!-- 搜索框 -->
-        <div class="hs-search-bar">
-          <div class="hs-search-input">
-            ${P_ICON.search}
-            <input type="text" id="hsKeyword" placeholder="请输入医院名称" value="${this._searchKeyword}" />
-          </div>
-          <button class="hs-search-btn" onclick="Patient._doSearch()">搜索</button>
-        </div>
-        <!-- 筛选 -->
-        <div class="hs-filters">
-          <span style="font-size:12px; color:var(--text-muted); flex-shrink:0;">医院类别：</span>
-          ${cats.map(c => `<span class="hs-filter ${this._searchFilter.category === c ? 'active' : ''}" onclick="Patient._setFilter('category','${c}')">${c}</span>`).join('')}
-        </div>
-        <div class="hs-filters">
-          <span style="font-size:12px; color:var(--text-muted); flex-shrink:0;">城市：</span>
-          ${cities.map(c => `<span class="hs-filter ${this._searchFilter.city === c ? 'active' : ''}" onclick="Patient._setFilter('city','${c}')">${c}</span>`).join('')}
-        </div>
-        <div class="hs-filters">
-          <span style="font-size:12px; color:var(--text-muted); flex-shrink:0;">排序：</span>
-          <span class="hs-filter ${!this._searchFilter.sort ? 'active' : ''}" onclick="Patient._setFilter('sort','')">综合排序</span>
-          <span class="hs-filter ${this._searchFilter.sort === 'orders' ? 'active' : ''}" onclick="Patient._setFilter('sort','orders')">服务量</span>
-        </div>
-        <!-- 列表 -->
-        <div style="margin-top:12px;">
-          ${list.length === 0 ? `
-            <div class="order-empty">
-              <div class="order-empty-icon">${P_ICON.search}</div>
-              <div>没有找到相关医院</div>
-            </div>
-          ` : list.map(h => this._renderHospitalCard(h)).join('')}
-        </div>
-        <!-- 申请新医院 -->
-        <div style="margin-top:16px; text-align:center;">
-          <button class="btn btn-outline" style="width:auto; padding:12px 24px;" onclick="Patient.navigateTo(el => Patient.renderHospitals(el), '医院介绍')">
-            列表里没有？申请新医院
-          </button>
-        </div>
-      </div>
-    `;
+    screen.innerHTML = HospitalUI.renderListPage({
+      list, kw: this._searchKeyword, filter: this._searchFilter, cats, cities, sorts,
+    });
     const kwInput = document.getElementById('hsKeyword');
     if (kwInput) kwInput.addEventListener('keydown', e => { if (e.key === 'Enter') this._doSearch(); });
   },
@@ -897,46 +822,7 @@ const Patient = {
     this._currentHospitalDetail = h;
     const screen = el || document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
-    screen.innerHTML = `
-      <div class="order-page">
-        <div class="hd-hero">
-          <img src="${h.image}" alt="${h.name}" onerror="this.style.display='none'">
-          <div class="hd-hero-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
-        </div>
-        <div class="hd-info">
-          <div class="hd-name">${h.name}</div>
-          <div class="hd-tags">
-            <span class="hd-tag level">${h.level}</span>
-            <span class="hd-tag cat">${h.category}</span>
-          </div>
-          <div class="hd-addr">${P_ICON.location} ${h.address}</div>
-        </div>
-        <div class="hd-section">
-          <div class="hd-section-title">重点科室</div>
-          <div class="hd-depts">
-            ${(h.keyDepts || []).map(d => `<span class="hd-dept">${d}</span>`).join('')}
-          </div>
-        </div>
-        ${h.advantage ? `
-        <div class="hd-section">
-          <div class="hd-section-title">核心优势</div>
-          <div class="hd-intro">${WUtil.escape(h.advantage)}</div>
-        </div>` : ''}
-        <div class="hd-section">
-          <div class="hd-section-title">医院简介</div>
-          <div class="hd-intro">${h.intro}</div>
-        </div>
-        <div class="hd-bottom">
-          <div class="hd-section">
-            <div class="card-title" style="font-size:13px;">${P_ICON.phone} 联系电话</div>
-            <div style="font-size:14px; font-weight:600; color:var(--accent); margin-top:6px;">${h.phone}</div>
-          </div>
-        </div>
-        <div style="margin-top:16px;">
-          <button class="btn" style="width:100%;" onclick="Patient._bookHospital('${h.id}')">立即预约陪诊</button>
-        </div>
-      </div>
-    `;
+    screen.innerHTML = HospitalUI.renderDetail(h);
   },
 
   _bookHospital(id) {
