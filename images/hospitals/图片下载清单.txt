@@ -2,7 +2,8 @@
 # 规格：images/hospitals/H{id}.jpg；高清横图（建议 16:9、宽度 ≥1200px）
 # 来源：医院官网首页/医院概况页、官方公众号头图；禁止截图与示意图
 # 生效：文件放入本目录即自动替换占位图（缺文件时 imageFallback 自动兜底），无需改代码
-# 校验：下载后运行 node scripts/validate-hospitals.js（图片断言校验路径与 fallback 配置）
+# 状态：✅ 已完成（2026-08-14，23/23 张实景图已下载并提交仓库；PNG 已统一转 JPG）
+# 校验：运行 node scripts/validate-hospitals.js（校验图片路径与 id 一致、fallback 配置、文件存在性）
 
 H01.jpg ← 复旦大学附属中山医院 ← 官网首页/门头照 ← https://www.zs-hospital.sh.cn/
 H02.jpg ← 上海交通大学医学院附属瑞金医院 ← 官网首页/门头照 ← https://www.rjh.com.cn/

@@ -3,6 +3,8 @@
 // 注意：deriveAddress / parseAddress 与 store.js 中的实现保持同步（双份同源）。
 
 const HospitalData = require('../src/scripts/data-hospitals.js');
+const fs = require('fs');
+const path = require('path');
 
 // ---- 与 store.js 同源的派生函数（修改时保持同步）----
 function deriveAddress(branches) {
@@ -106,6 +108,7 @@ HospitalData.forEach(h => {
   if (isLocal) {
     check(`8-图片:${h.id}`, /^https?:\/\//.test(String(h.imageFallback || '').trim()), '本地路径必须有 imageFallback URL');
     check(`8-图片:${h.id}`, img === `images/hospitals/${h.id}.jpg`, `image 路径与 id 不一致：${img}`);
+    check(`8-图片:${h.id}`, fs.existsSync(path.join(__dirname, '../', img)), `本地图片文件缺失：${img}（按 images/hospitals/图片下载清单.txt 下载）`);
   }
 });
 
@@ -154,8 +157,6 @@ HospitalData.forEach(h => (h.branches || []).forEach(b => {
 }));
 
 // ---- 14. 复核统计报告（读取数据源文件中的"待人工复核/待补充"注释，零依赖）----
-const fs = require('fs');
-const path = require('path');
 const srcText = fs.readFileSync(path.join(__dirname, '../src/scripts/data-hospitals.js'), 'utf8');
 const marks = [];
 const markRe = /\/\/\s*(待人工复核|待补充)[：:]([^\n]*)/g;
