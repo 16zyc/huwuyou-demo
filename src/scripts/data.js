@@ -737,6 +737,23 @@ const ServiceCatalog = {
   }
 };
 
+// ========== 统一服务流程（3 阶段 7 步，全服务共用）==========
+const ServiceFlow = [
+  { phase: '服务前', steps: [
+    { title: '电话咨询', desc: '提出需求' },
+    { title: '解答问题', desc: '' },
+    { title: '合理配置', desc: '' },
+  ]},
+  { phase: '服务中', steps: [
+    { title: '提前预备', desc: '按时就位' },
+    { title: '安全到达', desc: '' },
+    { title: '按需服务', desc: '' },
+  ]},
+  { phase: '服务后', steps: [
+    { title: '服务记录', desc: '电话回访' },
+  ]},
+];
+
 // ========== 智能陪诊服务中心：特色医院数据库（21所上海三甲医院）==========
 const FeaturedHospitals = [
   // ===== 一、综合类三甲医院 =====

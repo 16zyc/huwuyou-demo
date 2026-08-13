@@ -350,8 +350,6 @@ const P_ICON = {
     .sub-card-arrow { color:var(--text-muted); }
     .sub-card-arrow svg { width:16px; height:16px; }
     .sub-card-desc { font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.4; padding-left:46px; }
-    .sub-card-price { font-size:13px; color:var(--accent); font-weight:700; margin-top:6px; padding-left:46px; }
-    .sub-card-price small { font-size:10px; color:var(--text-muted); text-decoration:line-through; font-weight:normal; margin-left:4px; }
 
     /* 流程步骤页 */
     .steps-list { display:flex; flex-direction:column; gap:16px; }
@@ -621,29 +619,30 @@ const Patient = {
       consult: {
         title: '诊前咨询', subTitle: '诊前咨询服务', desc: '为您提供专业的就诊前咨询服务',
         items: [
-          { key: 'consult_diagnosis', title: '就诊咨询', desc: '详述病情 → 介绍陪诊服务内容 → 给出合理化建议 → 人工服务 → 填写服务需求', icon: P_ICON.star, price: PriceTable.getPrice('半程陪诊'), origPrice: 398 },
-          { key: 'consult_agent', title: '代办咨询', desc: '详述病情 → 介绍代办范围 → 给出合理化建议 → 提供相关材料 → 填写需求', icon: P_ICON.card, price: PriceTable.getPrice('全程陪诊'), origPrice: 698 },
+          { key: 'consult_diagnosis', title: '就诊咨询', desc: '详述病情 → 介绍陪诊服务内容 → 给出合理化建议 → 人工服务 → 填写服务需求', icon: P_ICON.star },
+          { key: 'consult_agent', title: '代办咨询', desc: '详述病情 → 介绍代办范围 → 给出合理化建议 → 提供相关材料 → 填写需求', icon: P_ICON.card },
         ]
       },
       agent: {
         title: '代办服务', subTitle: '代办服务', desc: '代取报告、代诊咨询等代办服务',
         items: [
-          { key: 'agent_report', title: '代取报告', desc: '详述病情 → 介绍代办服务内容 → 给出合理化建议 → 人工服务 → 填写代取服务需求', icon: P_ICON.clipboard, price: PriceTable.getPrice('代办跑腿'), origPrice: 158 },
-          { key: 'agent_diagnosis', title: '代诊咨询', desc: '详述病情 → 介绍代诊范围 → 给出合理化建议 → 人工服务 → 填写代诊服务需求', icon: P_ICON.messageCircle, price: PriceTable.getPrice('全程陪诊'), origPrice: 698 },
+          { key: 'agent_report', title: '代取报告', desc: '详述病情 → 介绍代办服务内容 → 给出合理化建议 → 人工服务 → 填写代取服务需求', icon: P_ICON.clipboard },
+          { key: 'agent_diagnosis', title: '代诊咨询', desc: '详述病情 → 介绍代诊范围 → 给出合理化建议 → 人工服务 → 填写代诊服务需求', icon: P_ICON.messageCircle },
         ]
       },
       special: {
-        title: '特需服务', subTitle: '特需陪诊服务', desc: '预约车辆、轮椅助行等特需服务',
+        title: '特需服务', subTitle: '特需陪诊服务', desc: '就诊预约、预约车辆、轮椅助行等特需服务',
         items: [
-          { key: 'special_car', title: '预约车辆', desc: '详述需求 → 介绍服务车辆 → 给出合理化建议 → 人工服务 → 填写预约服务需求', icon: P_ICON.clock, price: PriceTable.getPrice('全程陪诊'), origPrice: 698 },
-          { key: 'special_wheelchair', title: '轮椅助行', desc: '详述需求 → 介绍服务内容 → 给出合理化建议 → 人工服务 → 填写需求', icon: P_ICON.userCheck, price: PriceTable.getPrice('全程陪诊'), origPrice: 698 },
+          { key: 'special_booking', title: '就诊预约', desc: '详述就诊需求 → 填写患者与就医信息 → 平台匹配陪诊师 → 按时陪诊', icon: P_ICON.building, directForm: true },
+          { key: 'special_car', title: '预约车辆', desc: '详述需求 → 介绍服务车辆 → 给出合理化建议 → 人工服务 → 填写预约服务需求', icon: P_ICON.clock },
+          { key: 'special_wheelchair', title: '轮椅助行', desc: '详述需求 → 介绍服务内容 → 给出合理化建议 → 人工服务 → 填写需求', icon: P_ICON.userCheck },
         ]
       },
       featured: {
         title: '特色介绍', subTitle: '特色医疗', desc: '特色医院、特色专家推荐',
         items: [
-          { key: 'featured_hospital', title: '特色医院', desc: '详述病情 → 介绍特色医院 → 给出合理化建议 → 人工服务 → 填写需求情况', icon: P_ICON.building, price: PriceTable.getPrice('陪同复诊'), origPrice: 498 },
-          { key: 'featured_expert', title: '特色专家', desc: '详述病情 → 介绍特色专家 → 给出合理化建议 → 提供相关材料 → 填写需求情况', icon: P_ICON.star, price: PriceTable.getPrice('全程陪诊'), origPrice: 698 },
+          { key: 'featured_hospital', title: '特色医院', desc: '详述病情 → 介绍特色医院 → 给出合理化建议 → 人工服务 → 填写需求情况', icon: P_ICON.building },
+          { key: 'featured_expert', title: '特色专家', desc: '详述病情 → 介绍特色专家 → 给出合理化建议 → 提供相关材料 → 填写需求情况', icon: P_ICON.star },
         ]
       },
     };
@@ -666,13 +665,12 @@ const Patient = {
         </div>
         <div class="sub-list">
           ${cfg.items.map(item => `
-            <div class="sub-card" onclick="Patient.navigateTo(el => Patient._openServiceSteps('${item.key}', el), '操作流程')">
+            <div class="sub-card" onclick="${item.directForm ? `Patient.openNeedForm('${item.key}')` : `Patient.navigateTo(el => Patient._openServiceSteps('${item.key}', el), '操作流程')`}">
               <div class="sub-card-head">
                 <div class="sub-card-icon" style="background:var(--accent-bg);color:var(--accent);">${item.icon}</div>
                 <div class="sub-card-title">${item.title}</div>
                 <div class="sub-card-arrow">${P_ICON.chevronRight}</div>
               </div>
-              <div class="sub-card-price">¥${item.price} <small>¥${item.origPrice}</small></div>
             </div>
           `).join('')}
         </div>
@@ -680,100 +678,48 @@ const Patient = {
     `;
   },
 
-  // ===== 服务流程步骤页 =====
+  // ===== 服务流程步骤页（统一 3 阶段 7 步流程）=====
   _openServiceSteps(key, el) {
-    const stepsMap = {
-      consult_diagnosis: { title: '就诊咨询', steps: [
-        { title: '提交订单', desc: '填写患者信息、就诊医院、科室等并提交预约' },
-        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
-        { title: '陪诊师联系患者', desc: '陪诊师接单后主动联系患者了解病情' },
-        { title: '预约就诊时间', desc: '与陪诊师协商确定具体就诊时间' },
-        { title: '陪诊服务', desc: '陪诊师按时前往医院提供全程陪诊服务' },
-        { title: '服务完成', desc: '就诊结束后确认服务完成' },
-      ]},
-      consult_agent: { title: '代办咨询', steps: [
-        { title: '提交订单', desc: '填写代办内容、患者信息等并提交预约' },
-        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
-        { title: '陪诊师联系患者', desc: '陪诊师接单后确认代办需求和材料' },
-        { title: '确认代办范围', desc: '明确代办事项、地点、时间等细节' },
-        { title: '执行代办服务', desc: '陪诊师按约定完成代办事项并反馈结果' },
-        { title: '服务完成', desc: '确认代办结果无误后完成服务' },
-      ]},
-      agent_report: { title: '代取报告', steps: [
-        { title: '提交订单', desc: '填写患者信息、就诊医院等并提交预约' },
-        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
-        { title: '陪诊师接单', desc: '陪诊师接单后确认取报告的医院和时间' },
-        { title: '前往医院取报告', desc: '陪诊师按时前往医院自助机或窗口取报告' },
-        { title: '报告送达', desc: '通过快递或同城配送将报告送至患者手中' },
-        { title: '服务完成', desc: '确认收到报告后完成服务' },
-      ]},
-      agent_diagnosis: { title: '代诊咨询', steps: [
-        { title: '提交订单', desc: '填写患者病情、咨询需求等并提交预约' },
-        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
-        { title: '陪诊师联系患者', desc: '陪诊师接单后详细了解患者病情' },
-        { title: '准备相关材料', desc: '整理病历、检查报告等代诊所需材料' },
-        { title: '远程代诊', desc: '陪诊师代为线上就诊咨询并反馈结果' },
-        { title: '服务完成', desc: '反馈诊疗建议后完成服务' },
-      ]},
-      special_car: { title: '预约车辆', steps: [
-        { title: '提交订单', desc: '填写用车时间、地点、车型等并提交预约' },
-        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
-        { title: '陪诊师确认需求', desc: '陪诊师接单后确认用车时间和地点' },
-        { title: '调度车辆', desc: '根据需求安排合适的车辆和司机' },
-        { title: '按时接送', desc: '车辆按时到达指定地点接送患者' },
-        { title: '服务完成', desc: '送达目的地后确认服务完成' },
-      ]},
-      special_wheelchair: { title: '轮椅助行', steps: [
-        { title: '提交订单', desc: '填写需求时间、地点等并提交预约' },
-        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
-        { title: '陪诊师确认需求', desc: '陪诊师接单后确认助行需求和地点' },
-        { title: '准备助行设备', desc: '根据需求准备轮椅等助行设备' },
-        { title: '提供助行服务', desc: '陪诊师提供全程轮椅助行服务' },
-        { title: '服务完成', desc: '送达目的地后确认服务完成' },
-      ]},
-      featured_hospital: { title: '特色医院', steps: [
-        { title: '提交订单', desc: '填写患者病情、意向医院等并提交预约' },
-        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
-        { title: '陪诊师联系患者', desc: '陪诊师接单后详细了解患者病情' },
-        { title: '推荐特色医院', desc: '根据病情推荐合适的特色专科三甲医院' },
-        { title: '协助挂号就诊', desc: '协助预约挂号并提供陪诊服务' },
-        { title: '服务完成', desc: '就诊结束后确认服务完成' },
-      ]},
-      featured_expert: { title: '特色专家', steps: [
-        { title: '提交订单', desc: '填写患者病情、需求等并提交预约' },
-        { title: '系统分配陪诊师', desc: '后台根据订单自动匹配合适的陪诊师' },
-        { title: '陪诊师联系患者', desc: '陪诊师接单后详细了解患者病情' },
-        { title: '推荐特色专家', desc: '根据病情推荐领域内知名专家' },
-        { title: '协助预约就诊', desc: '协助预约专家号并提供陪诊服务' },
-        { title: '服务完成', desc: '就诊结束后确认服务完成' },
-      ]},
+    const serviceTitles = {
+      consult_diagnosis: '就诊咨询', consult_agent: '代办咨询',
+      agent_report: '代取报告', agent_diagnosis: '代诊咨询',
+      special_booking: '就诊预约', special_car: '预约车辆', special_wheelchair: '轮椅助行',
+      featured_hospital: '特色医院', featured_expert: '特色专家',
     };
 
-    const cfg = stepsMap[key];
-    if (!cfg) return;
+    const title = serviceTitles[key];
+    if (!title) return;
 
     const screen = el || document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+
+    let stepNo = 0;
+    const flowHtml = ServiceFlow.map(phase => `
+      <div class="steps-phase">
+        <div class="steps-phase-head"><span class="steps-phase-badge">${phase.phase}</span></div>
+        <div class="steps-list">
+          ${phase.steps.map(s => { stepNo += 1; return `
+            <div class="step-item">
+              <div class="step-num">${stepNo}</div>
+              <div class="step-content">
+                <div class="step-title">${s.title}</div>
+                ${s.desc ? `<div class="step-desc">${s.desc}</div>` : ''}
+              </div>
+            </div>
+          `; }).join('')}
+        </div>
+      </div>
+    `).join('');
 
     screen.innerHTML = `
       <div class="sub-page">
         <div class="svd-header">
           <div class="svd-back" onclick="Patient.goBack()">${P_ICON.chevronLeft}</div>
-          <h2>${cfg.title} · 操作流程</h2>
+          <h2>${title} · 操作流程</h2>
         </div>
         <div class="svd-section">
           <div class="svd-section-title">操作流程</div>
-          <div class="steps-list">
-            ${cfg.steps.map((s, i) => `
-              <div class="step-item">
-                <div class="step-num">${i+1}</div>
-                <div class="step-content">
-                  <div class="step-title">${s.title}</div>
-                  <div class="step-desc">${s.desc}</div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
+          ${flowHtml}
         </div>
         <div class="svd-section">
           <div class="svd-section-title">注意事项</div>
@@ -785,7 +731,7 @@ const Patient = {
           </div>
         </div>
         <div class="svd-bottom-bar">
-          <button class="btn" onclick="Patient._openBookingForm('${key}')">立即预约</button>
+          <button class="btn" onclick="Patient.openNeedForm('${key}')">立即预约</button>
         </div>
       </div>
     `;
