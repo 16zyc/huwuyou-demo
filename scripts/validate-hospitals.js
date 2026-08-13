@@ -130,8 +130,11 @@ check('10-地址专项:仁济', (rj?.branches || []).length === 2, `仁济应 2 
 const xk = byId('H12');
 check('10-地址专项:胸科', (xk?.branches || []).length === 1, `胸科应仅总院，实际 ${xk?.branches?.length} 个分支`);
 const fk = byId('H13');
-check('10-地址专项:肺科', (fk?.branches || []).some(b => b.name === '松江南院' && b.address === '松江区广富林路758号'), '肺科应有松江南院（广富林路758号）');
-check('10-地址专项:肺科', (fk?.branches || []).some(b => b.name === '宝山分院' && b.address === '宝山区盘古路2188号'), '肺科宝山分院应为盘古路2188号');
+check('10-地址专项:肺科', (fk?.branches || []).length === 3, `肺科应按官网为 3 个分支（总院/延庆路院区/沽源路院区），实际 ${fk?.branches?.length}`);
+check('10-地址专项:肺科', (fk?.branches || []).some(b => b.name === '延庆路院区' && b.address === '徐汇区延庆路130号'), '肺科应有延庆路院区（延庆路130号）');
+check('10-地址专项:肺科', (fk?.branches || []).some(b => b.name === '沽源路院区' && b.address === '虹口区江湾镇沽源路229号'), '肺科应有沽源路院区（沽源路229号）');
+const yfy = byId('H15');
+check('10-地址专项:一妇婴', (yfy?.branches || []).some(b => b.name === '南院' && b.address === '浦东新区耀华路391号'), '一妇婴应有南院（耀华路391号）');
 const sy = byId('H08');
 check('10-地址专项:十院', (sy?.branches || []).length === 1, `十院应仅总院，实际 ${sy?.branches?.length} 个分支`);
 

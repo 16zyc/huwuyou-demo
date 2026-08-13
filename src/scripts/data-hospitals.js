@@ -204,8 +204,8 @@ const HospitalData = [
     keyDepts: ['胸外科', '呼吸内科', '结核科', '肿瘤科', '职业病科'],
     branches: [
       { name: '总院', address: '杨浦区政民路507号' },
-      { name: '松江南院', address: '松江区广富林路758号' },
-      { name: '宝山分院', address: '宝山区盘古路2188号' },
+      { name: '延庆路院区', address: '徐汇区延庆路130号' },
+      { name: '沽源路院区', address: '虹口区江湾镇沽源路229号' },
     ],
     orders: 320, hot: false,
     image: 'images/hospitals/H13.jpg',
@@ -236,6 +236,7 @@ const HospitalData = [
     branches: [
       { name: '总院（东院）', address: '浦东新区高科西路2699号' },
       { name: '西院', address: '静安区长乐路536号' },
+      { name: '南院', address: '浦东新区耀华路391号' },
     ],
     orders: 360, hot: false,
     image: 'images/hospitals/H15.jpg',
