@@ -129,14 +129,45 @@ App.togglePatientNotifications = function() {
 App.markAllPatientNotifications=function(){CareStore.markAllNotifications('patient');this.render();};
 App.openPatientNotification=function(id){const n=CareStore.markNotification(id);document.getElementById('patientNotifyPanel')?.remove();if(n?.targetType==='need'&&CareStore.need(n.targetId)){this.switchTab(2);setTimeout(()=>Patient.openNeedDetail(n.targetId),0);}else{this.toast('对应记录不存在或已移除');}};
 
-// ---- 患者端：共享草稿人工表单 ----
+// ---- 患者端：共享草稿统一表单（人工下单 / 我的需求共用）----
+const SERVICE_KEY_TYPE_MAP = {
+  consult_diagnosis:'半程陪诊', consult_agent:'全程陪诊',
+  agent_report:'代办跑腿', agent_diagnosis:'全程陪诊',
+  special_car:'全程陪诊', special_wheelchair:'全程陪诊',
+  featured_hospital:'陪同复诊', featured_expert:'全程陪诊',
+  special_booking:'半程陪诊',
+};
+Patient.openNeedForm = function(keyOrType, extra) {
+  if (!App.requireLogin('填写需求')) return;
+  const patch = {};
+  if (typeof keyOrType === 'string' && SERVICE_KEY_TYPE_MAP[keyOrType]) patch.serviceType = SERVICE_KEY_TYPE_MAP[keyOrType];
+  Object.assign(patch, extra || {});
+  CareStore.patchDraft(patch);
+  Patient.navigateTo(el => Patient.renderNeed(el), '我的需求');
+};
 Patient.renderNeed = function(el) {
-  const d=CareStore.draft(), u=MockData.patient.user, med=MockData.patient.medical;
+  const d=CareStore.draft();
   const hospitals=CareStore.state.hospitals.filter(h=>h.active);
-  el.innerHTML=`<div id="need_form" class="page-head"><h2>我的需求</h2><div>AI 帮填和自己填写会实时同步，不会重复填写</div></div>
+  const mobilityOptions=['可独立行走','需拐杖','需轮椅','需搀扶'];
+  const mobilityList = d.mobility && !mobilityOptions.includes(d.mobility) ? [d.mobility, ...mobilityOptions] : mobilityOptions;
+  el.innerHTML=`<div class="svd-header"><div class="svd-back" onclick="Patient.goBack()" aria-label="返回">${P_ICON.chevronLeft}</div><h2>我的需求</h2></div>
+    <div id="need_form" class="page-head"><h2>填写需求</h2><div>AI 帮填和自己填写会实时同步，不会重复填写</div></div>
     <div class="path-switch" role="group" aria-label="需求填写方式"><button class="active" aria-pressed="true">自己填写</button><button onclick="App.openAI()">AI 帮我填写</button></div>
     <div class="draft-status">草稿已自动保存到本机浏览器</div>
-    <section class="card"><div class="card-title">${P_ICON.user} 就诊人</div><div class="summary-grid"><div><span>姓名</span><strong>${WUtil.escape(u.name)}</strong></div><div><span>电话</span><strong>${WUtil.escape(u.phone)}</strong></div><div><span>病史</span><strong>${WUtil.escape(med.history)}</strong></div><div><span>行动能力</span><strong>${WUtil.escape(med.mobility)}</strong></div></div></section>
+    <section class="card"><div class="card-title">${P_ICON.user} 就诊人</div>
+      <div class="form-grid-2">
+        <div><label class="field-label" for="req_name">姓名 <em>*</em></label><input class="fg-input draft-field" id="req_name" data-draft="patientName" value="${WUtil.escape(d.patientName)}" placeholder="患者姓名" /></div>
+        <div><div class="field-label">性别 <em>*</em></div><div class="gender-row"><label><input type="radio" name="req_gender" class="draft-field" data-draft="gender" value="男" ${d.gender==='男'?'checked':''} /> 男</label><label><input type="radio" name="req_gender" class="draft-field" data-draft="gender" value="女" ${d.gender==='女'?'checked':''} /> 女</label></div></div>
+        <div><label class="field-label" for="req_age">年龄 <em>*</em></label><input class="fg-input draft-field" id="req_age" data-draft="age" type="number" min="0" max="120" value="${WUtil.escape(d.age)}" placeholder="0-120" /></div>
+        <div><label class="field-label" for="req_phone">联系电话 <em>*</em></label><input class="fg-input draft-field" id="req_phone" data-draft="phone" type="tel" value="${WUtil.escape(d.phone)}" placeholder="11位手机号" /></div>
+        <div class="form-grid-full"><label class="field-label" for="req_history">病史信息</label><textarea class="fg-input draft-field" id="req_history" data-draft="history" rows="2" placeholder="例如：高血压、糖尿病">${WUtil.escape(d.history)}</textarea></div>
+        <div><label class="field-label" for="req_allergy">过敏史</label><input class="fg-input draft-field" id="req_allergy" data-draft="allergy" value="${WUtil.escape(d.allergy)}" placeholder="例如：青霉素过敏" /></div>
+        <div><label class="field-label" for="req_medicine">用药情况</label><input class="fg-input draft-field" id="req_medicine" data-draft="medicine" value="${WUtil.escape(d.medicine)}" placeholder="例如：降压药" /></div>
+        <div><label class="field-label" for="req_mobility">行动能力</label><select class="fg-select draft-field" id="req_mobility" data-draft="mobility"><option value="">请选择</option>${mobilityList.map(o=>`<option ${d.mobility===o?'selected':''}>${WUtil.escape(o)}</option>`).join('')}</select></div>
+        <div><label class="field-label" for="req_emergencyName">紧急联系人</label><input class="fg-input draft-field" id="req_emergencyName" data-draft="emergencyName" value="${WUtil.escape(d.emergencyName)}" placeholder="联系人姓名" /></div>
+        <div><label class="field-label" for="req_emergencyPhone">联系人电话</label><input class="fg-input draft-field" id="req_emergencyPhone" data-draft="emergencyPhone" type="tel" value="${WUtil.escape(d.emergencyPhone)}" placeholder="联系人电话" /></div>
+      </div>
+    </section>
     <section class="card"><div class="card-title">${P_ICON.clipboard} 就诊与服务</div>
       <label class="field-label" for="req_hospital">希望就诊医院 <em>*</em></label><select class="fg-select draft-field" id="req_hospital" data-draft="hospital"><option value="">请选择医院</option>${hospitals.map(h=>`<option ${d.hospital===h.name?'selected':''}>${WUtil.escape(h.name)}</option>`).join('')}</select><button class="text-action" onclick="Patient.navigateTo(el => Patient.renderHospitals(el), '医院介绍')">列表里没有？申请新医院</button>
       <label class="field-label" for="req_dept">就诊科室 <em>*</em></label><input class="fg-input draft-field" id="req_dept" data-draft="dept" value="${WUtil.escape(d.dept)}" placeholder="例如：心内科" />
@@ -163,7 +194,7 @@ Patient.confirmIdentity=function(){const identity=CareStore.draft().identity;con
 Patient.renderReportArea=function(){const imgs=CareStore.draft().reportImages||[];return `${WUtil.imageGrid(imgs,'Patient.removeReportImage')}<input hidden type="file" id="report_input_v2" accept="image/jpeg,image/png,image/webp" multiple onchange="Patient.uploadReportImages(this)" /><button class="btn btn-outline" ${imgs.length>=6?'disabled':''} onclick="document.getElementById('report_input_v2').click()">${imgs.length?'继续添加':'上传检查报告'}（${imgs.length}/6）</button>`;};
 Patient.uploadReportImages=async function(input){const existing=[...(CareStore.draft().reportImages||[])],files=[...(input.files||[])];if(existing.length+files.length>6){this.toast('检查报告最多上传 6 张');input.value='';return;}for(const file of files){try{existing.push(await MediaService.process(file));}catch(e){this.toast(`${file.name}：${e.message}`);}}CareStore.patchDraft({reportImages:existing});document.getElementById('reportArea').innerHTML=this.renderReportArea();input.value='';};
 Patient.removeReportImage=function(i){const imgs=[...(CareStore.draft().reportImages||[])];imgs.splice(i,1);CareStore.patchDraft({reportImages:imgs});document.getElementById('reportArea').innerHTML=this.renderReportArea();};
-Patient.openFinalConfirm=function(){document.querySelectorAll('.draft-field').forEach(f=>CareStore.patchDraft({[f.dataset.draft]:f.value.trim()}));const d=CareStore.draft(),p=PriceTable.items.find(x=>x.name===d.serviceType);const missing=[['hospital','医院'],['dept','科室'],['date','日期']].filter(([k])=>!d[k]);if(missing.length){this.toast(`请补充：${missing.map(x=>x[1]).join('、')}`);document.getElementById('req_'+missing[0][0])?.focus();return;}WUtil.sheet('finalConfirmSheet','确认并提交',`<dl class="confirm-list"><div><dt>医院</dt><dd>${WUtil.escape(d.hospital)}</dd></div><div><dt>科室</dt><dd>${WUtil.escape(d.dept)}</dd></div><div><dt>日期</dt><dd>${WUtil.escape(d.date)}</dd></div><div><dt>服务</dt><dd>${WUtil.escape(d.serviceType)}</dd></div></dl><div class="confirm-total"><span>服务费用</span><strong>¥${p.price}<small>/${WUtil.escape(p.unit)}</small></strong></div><label class="consent-row"><input type="checkbox" id="privacyConsent" /> 我已核对信息，并了解敏感资料用途</label>`,`<button class="btn btn-outline" onclick="WUtil.closeSheet('finalConfirmSheet')">返回修改</button><button class="btn" onclick="Patient.submitConfirmedNeed()">确认提交</button>`);};
+Patient.openFinalConfirm=function(){document.querySelectorAll('.draft-field').forEach(f=>{if(f.type==='radio'&&!f.checked)return;CareStore.patchDraft({[f.dataset.draft]:f.value.trim()});});const d=CareStore.draft(),p=PriceTable.items.find(x=>x.name===d.serviceType);if(!String(d.patientName||'').trim()){this.toast('请填写患者姓名');document.getElementById('req_name')?.focus();return;}const age=Number(d.age);if(d.age===''||d.age==null||!Number.isFinite(age)||age<0||age>120){this.toast('请填写正确的年龄（0-120）');document.getElementById('req_age')?.focus();return;}const phone=String(d.phone||'').replace(/\s/g,'');if(!/^1\d{10}$/.test(phone)){this.toast('请填写正确的11位手机号');document.getElementById('req_phone')?.focus();return;}const missing=[['hospital','医院'],['dept','科室'],['date','日期']].filter(([k])=>!d[k]);if(missing.length){this.toast(`请补充：${missing.map(x=>x[1]).join('、')}`);document.getElementById('req_'+missing[0][0])?.focus();return;}WUtil.sheet('finalConfirmSheet','确认并提交',`<dl class="confirm-list"><div><dt>医院</dt><dd>${WUtil.escape(d.hospital)}</dd></div><div><dt>科室</dt><dd>${WUtil.escape(d.dept)}</dd></div><div><dt>日期</dt><dd>${WUtil.escape(d.date)}</dd></div><div><dt>服务</dt><dd>${WUtil.escape(d.serviceType)}</dd></div></dl><div class="confirm-total"><span>服务费用</span><strong>¥${p.price}<small>/${WUtil.escape(p.unit)}</small></strong></div><label class="consent-row"><input type="checkbox" id="privacyConsent" /> 我已核对信息，并了解敏感资料用途</label>`,`<button class="btn btn-outline" onclick="WUtil.closeSheet('finalConfirmSheet')">返回修改</button><button class="btn" onclick="Patient.submitConfirmedNeed()">确认提交</button>`);};
 Patient.submitConfirmedNeed=function(){if(!document.getElementById('privacyConsent')?.checked)return this.toast('请先勾选信息确认与资料用途说明');try{const need=CareStore.createNeedFromDraft();WUtil.closeSheet('finalConfirmSheet');this.toast(`需求已提交，编号 ${need.id}`);setTimeout(()=>App.switchTab(2),700);}catch(e){this.toast(e.message);}};
 
 Patient.renderProgress=function(el){const needs=CareStore.state.needs.filter(n=>n.patientName===MockData.patient.user.name);const flow=['待处理','已分配','服务中','已完成'];el.innerHTML=`<div class="page-head"><h2>陪诊进度</h2><div>关键状态变化会在顶部提醒您</div></div>${needs.length?needs.map(n=>{const idx=Math.max(0,flow.indexOf(n.status));return `<button class="need-card card" onclick="Patient.openNeedDetail('${n.id}')"><div><span class="status-badge ${WUtil.statusClass(n.status)}">${n.status}</span><small>${WUtil.escape(n.id)}</small></div><h3>${WUtil.escape(n.hospital)}</h3><p>${WUtil.escape(n.dept)} · ${WUtil.escape(n.date)} · ¥${n.serviceSnapshot?.price||n.amount}</p><div class="step-bar">${flow.map((s,i)=>`<span class="step ${i<idx?'done':''} ${i===idx?'active':''}"></span>`).join('')}</div>${n.escortReportId?'<strong class="report-ready">陪诊报告已发布 · 点击查看</strong>':''}</button>`;}).join(''):`<div class="empty"><div class="em-icon">${P_ICON.inbox}</div><p>暂无需求</p><button class="btn btn-sm" onclick="App.switchTab(1)">提交需求</button></div>`}`;};

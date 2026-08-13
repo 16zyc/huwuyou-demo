@@ -833,3 +833,38 @@ body.patient #root { width:min(100vw, 420px); min-width:0; height:100%; }
   .hhs-intro { font-size: 11px; }
   .hhs-name { font-size: 14px; }
 }
+
+/* ===== 统一需求表单：患者档案两列网格 ===== */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.form-grid-full {
+  grid-column: 1 / -1;
+}
+.form-grid-2 .field-label {
+  display: block;
+}
+.gender-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 44px;
+}
+.gender-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.gender-row input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+@media (max-width:374px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+}
