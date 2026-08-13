@@ -258,7 +258,7 @@ CareStore（唯一事实源，所有状态变更必须经过它）
 
 | Tab | 页面 | 渲染函数 | 文件:行 |
 | --- | --- | --- | --- |
-| 首页 | 首页（Banner + AI下单横幅 + 2×2 服务 + 热门医院） | `Patient.renderHome` | patient.js:460 |
+| 首页 | 首页（Banner + 2×2 服务 + 人工/AI双入口横幅 + 热门医院） | `Patient.renderHome` | patient.js:483 |
 | 特色 | 特色医院列表/详情 | `Patient.renderFeaturedHospitals` / `goHospitalDetail` | patient.js:435/1065 |
 | 订单 | 订单列表（状态筛选）+ 详情时间线 | `Patient.renderOrders` / `_renderOrderDetailPage` | patient.js:1407/1472 |
 | 我的 | 个人信息/统计/就诊人管理/设置 | `Patient.renderProfile` | patient.js:1591 |
@@ -266,16 +266,18 @@ CareStore（唯一事实源，所有状态变更必须经过它）
 **子页面（直接改写 `#screen`）**：
 - 二级目录页：`_renderSubCategoryPage`（patient.js:577）
 - 流程步骤页：`_openServiceSteps`（patient.js:645）
-- 统一预约表单：`_openBookingForm`（patient.js:806）
+- 统一需求表单（人工下单/我的需求共用，draft 驱动）：`Patient.renderNeed` + 唯一入口 `Patient.openNeedForm`（workflow.js）
 - AI智能下单页：`_openAIOrder`（patient.js:758）
 - 医院列表（搜索/筛选）：`_renderHospitalListPage`（patient.js:988）
 - 订单详情：`_renderOrderDetailPage`（patient.js:1472）
 - 就诊人管理：`openPatientManager`（patient.js:1681）
 
-**孤儿页面（代码存在但无 Tab 入口）**：
-- 我的需求（草稿人工表单）：`Patient.renderNeed`（workflow.js:116）
-- 陪诊进度：`Patient.renderProgress`（workflow.js:152）
-- 医院介绍/申请：`Patient.renderHospitals`（workflow.js:155）
+**无 Tab 入口、经二级入口进入的页面**：
+- 我的需求（统一需求表单，经首页人工下单横幅/流程页"立即预约"/特需"就诊预约"/我的菜单/AI 面板进入）：`Patient.renderNeed`（workflow.js）
+- 陪诊进度（经"我的→订单中心"进入）：`Patient.renderProgress`（workflow.js）
+- 医院介绍/申请（经表单"申请新医院"链接进入）：`Patient.renderHospitals`（workflow.js）
+
+**孤儿页面（代码存在但无任何入口）**：
 - 陪诊师列表/详情/聊天：`Patient.renderEscorts` 等（patient.js:1123-1405）
 
 ### 管理端（SaaS 布局）
