@@ -312,7 +312,7 @@ const HospitalData = [
       { name: '总院', address: '徐汇区宛平南路725号' },
       { name: '浦东分院', address: '上南路1000弄上钢二村45号' },
     ],
-    orders: 340, hot: false,
+    orders: 340, hot: true,
     image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海龙华医院建筑外观，中医三甲医院，传统与现代结合建筑风格，高清摄影&image_size=landscape_16_9',
     imageFallback: '',
   },
