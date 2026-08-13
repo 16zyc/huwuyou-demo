@@ -44,12 +44,16 @@ http://localhost:8000/
 ```text
 .
 ├── index.html                         # 应用入口和脚本加载顺序
+├── scripts/
+│   └── validate-hospitals.js          # 医院数据完整性校验（零依赖，node 直跑）
 ├── src/
 │   ├── scripts/
-│   │   ├── data.js                    # 模拟数据、需求池、价格、医院与通知
+│   │   ├── data-hospitals.js          # 23家上海三甲医院数据（branches 结构化地址 + source 数据来源）
+│   │   ├── data.js                    # 数据定义、需求池、价格、通知与模拟数据
 │   │   ├── store.js                   # LocalStorage 状态层与服务适配器
 │   │   ├── app.js                     # 登录、路由、患者端外框和旧 AI 兼容逻辑
 │   │   ├── patient.js                 # 患者端页面与交互
+│   │   ├── hospital-ui.js             # HospitalUI：医院卡片/列表/详情渲染纯函数模块
 │   │   ├── admin.js                   # 管理后台页面与交互
 │   │   └── workflow.js                # 统一工作流增强、状态流转和最终初始化
 │   └── styles/
@@ -78,12 +82,16 @@ http://localhost:8000/
 
 项目使用传统 `<script>` 和全局对象，没有 ES Module 或打包器，加载顺序不能随意调整：
 
-1. `data.js` 创建 `NeedPool`、`PriceTable`、`MockData` 等基础对象。
-2. `store.js` 创建 `CareStore`、图片/OCR/AI 适配器，并初始化持久化状态。
-3. `app.js` 创建 `App`，负责登录和顶层路由。
-4. `patient.js` 创建 `Patient` 和患者端页面。
-5. `admin.js` 创建 `Admin` 和管理后台页面。
-6. `workflow.js` 基于前述对象追加统一工作流，并覆盖部分旧渲染方法。
+1. `data-hospitals.js` 创建 `HospitalData`（23 家上海三甲医院数据，含结构化分支地址与数据来源）。
+2. `data.js` 创建 `NeedPool`、`PriceTable`、`MockData` 等基础对象。
+3. `store.js` 创建 `CareStore`、图片/OCR/AI 适配器，并初始化持久化状态。
+4. `app.js` 创建 `App`，负责登录和顶层路由。
+5. `patient.js` 创建 `Patient` 和患者端页面。
+6. `hospital-ui.js` 创建 `HospitalUI`（医院卡片/列表/详情渲染纯函数）。
+7. `admin.js` 创建 `Admin` 和管理后台页面。
+8. `workflow.js` 基于前述对象追加统一工作流，并覆盖部分旧渲染方法。
+
+医院数据维护：23 家医院数据集中在 `src/scripts/data-hospitals.js`，字段含 `intro`（医院简介）、`advantage`（核心优势）、`keyDepts`（重点科室）、`branches`（总院/分院结构化地址）、`source`（数据来源与更新时间）；`address` 字符串由 store.js 派生兼容旧渲染点。修改数据后运行 `node scripts/validate-hospitals.js` 校验完整性（796 项断言）。
 
 若准备改造成模块化工程，建议先为这些全局对象建立明确的导入导出边界和自动化回归测试，再逐步拆分。
 

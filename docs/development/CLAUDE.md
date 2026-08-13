@@ -155,10 +155,12 @@
 ### 脚本加载顺序（不可调整）
 
 ```
-data.js → store.js → app.js → patient.js → admin.js → workflow.js
+data-hospitals.js → data.js → store.js → app.js → patient.js → hospital-ui.js → admin.js → workflow.js
 ```
 
-**`workflow.js` 是覆盖层**：通过直接替换前面模块的方法实现扩展。修改任何被覆盖的方法时，必须同时检查 workflow.js。
+- `data-hospitals.js`（链首）：23 家医院纯数据声明（`HospitalData`，branches 结构化地址 + source 数据来源），零依赖。
+- `hospital-ui.js`（patient.js 之后）：`HospitalUI` 医院渲染纯函数模块（卡片/特色卡/列表骨架/详情页），运行时经 `window.P_ICON` 取图标，自含转义。
+- **`workflow.js` 是覆盖层**：通过直接替换前面模块的方法实现扩展。修改任何被覆盖的方法时，必须同时检查 workflow.js。
 
 ### 分层架构
 
@@ -226,12 +228,16 @@ CareStore（唯一事实源，所有状态变更必须经过它）
 ├── testing_strategy.md               # 测试策略（子Agent产出）
 ├── deploy/
 │   └── nginx-huwuyou-demo.conf       # Nginx 演示站配置
+├── scripts/
+│   └── validate-hospitals.js         # 医院数据零依赖校验脚本（node 直跑）
 ├── src/
 │   ├── scripts/
+│   │   ├── data-hospitals.js         # 23家上海三甲医院数据（branches 结构化地址 + source 来源）
 │   │   ├── data.js                   # 数据定义（828行）
 │   │   ├── store.js                  # CareStore 状态层（364行）
 │   │   ├── app.js                    # 应用外壳/路由（649行）
 │   │   ├── patient.js                # 患者端页面（1941行）
+│   │   ├── hospital-ui.js            # HospitalUI 医院渲染纯函数模块
 │   │   ├── admin.js                  # 管理后台页面（1147行）
 │   │   └── workflow.js               # 工作流覆盖层（194行）
 │   └── styles/
