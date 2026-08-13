@@ -49,6 +49,15 @@ const CareStore = {
       draft: {
         patientName: MockData.patient.user.name,
         phone: MockData.patient.user.phone,
+        gender: MockData.patient.user.gender,
+        age: MockData.patient.user.age,
+        history: MockData.patient.medical.history,
+        allergy: MockData.patient.medical.allergy,
+        medicine: MockData.patient.medical.medicine,
+        mobility: MockData.patient.medical.mobility,
+        emergencyName: MockData.patient.user.emergencyName,
+        emergencyPhone: MockData.patient.user.emergencyPhone,
+        insurance: MockData.patient.medical.insurance,
         hospital: '', dept: '', date: '', serviceType: '半程陪诊', note: '',
         identity: { front:null, back:null, fields:{}, status:'unconfirmed' },
         reportImages: [], hospitalApplicationId: null,
@@ -63,6 +72,7 @@ const CareStore = {
         intro:h.intro || '', phone:h.phone || '', keyDepts:h.keyDepts || [],
         orders:h.orders || 0, hot:h.hot || false, image:h.image || '',
         specialties:h.dept || h.keyDepts?.join('、') || '综合',
+        advantage:h.advantage || '',
         active:true,
       })),
       hospitalApplications: this.clone(HospitalApplyPool.list).map(a => ({
@@ -101,7 +111,7 @@ const CareStore = {
       needs: Array.isArray(loaded.needs) ? loaded.needs : base.needs,
       prices: Array.isArray(loaded.prices) ? loaded.prices : base.prices,
       priceChanges: Array.isArray(loaded.priceChanges) ? loaded.priceChanges : [],
-      hospitals: Array.isArray(loaded.hospitals) ? loaded.hospitals : base.hospitals,
+      hospitals: Array.isArray(loaded.hospitals) ? loaded.hospitals.map(h => ({ ...h, advantage: h.advantage || base.hospitals.find(b => b.id === h.id)?.advantage || '' })) : base.hospitals,
       hospitalApplications: Array.isArray(loaded.hospitalApplications) ? loaded.hospitalApplications : base.hospitalApplications,
       notifications: Array.isArray(loaded.notifications) ? loaded.notifications : base.notifications,
       escortReports: Array.isArray(loaded.escortReports) ? loaded.escortReports : base.escortReports,
@@ -142,7 +152,11 @@ const CareStore = {
     return next;
   },
   clearDraft() {
-    const keep = { patientName:this.state.draft.patientName, phone:this.state.draft.phone };
+    const d = this.state.draft;
+    const keep = ['patientName','phone','gender','age','history','allergy','medicine','mobility','emergencyName','emergencyPhone','insurance'].reduce((acc, k) => {
+      if (d[k] !== undefined && d[k] !== null) acc[k] = d[k];
+      return acc;
+    }, {});
     this.state.draft = { ...this.defaults().draft, ...keep };
     this.state.ai = { stage:'idle', messages:[] };
     this.save();
@@ -177,9 +191,12 @@ const CareStore = {
     if (missing.length) throw new Error('请先补充完整医院、科室、日期和服务类型');
     const u = MockData.patient.user, med = MockData.patient.medical;
     const need = this.addNeed({
-      patientName:u.name, gender:u.gender, age:u.age, phone:u.phone,
-      emergencyName:u.emergencyName, emergencyPhone:u.emergencyPhone,
-      history:med.history, allergy:med.allergy, medicine:med.medicine, mobility:med.mobility, insurance:med.insurance,
+      patientName:d.patientName || u.name, gender:d.gender || u.gender,
+      age:(d.age !== '' && d.age != null) ? Number(d.age) : u.age,
+      phone:d.phone || u.phone,
+      emergencyName:d.emergencyName || u.emergencyName, emergencyPhone:d.emergencyPhone || u.emergencyPhone,
+      history:d.history || med.history, allergy:d.allergy || med.allergy,
+      medicine:d.medicine || med.medicine, mobility:d.mobility || med.mobility, insurance:d.insurance || med.insurance,
       hospital:d.hospital, dept:d.dept, date:d.date, serviceType:d.serviceType, note:d.note,
       identity:d.identity, reportImages:d.reportImages,
       idCardFront:d.identity.front?.name || null, idCardBack:d.identity.back?.name || null,
@@ -239,7 +256,7 @@ const CareStore = {
     if (!a || a.status !== '待审批') throw new Error('申请已处理或不存在');
     let hospital = this.state.hospitals.find(h => h.name === a.hospital);
     if (!hospital) {
-      hospital = { id:this.uid('H'), name:a.hospital, level:'待完善', address:'', specialties:a.dept || '综合', intro:'医院资料正在完善中', phone:'', active:true };
+      hospital = { id:this.uid('H'), name:a.hospital, level:'待完善', address:'', specialties:a.dept || '综合', intro:'医院资料正在完善中', advantage:'', phone:'', active:true };
       this.state.hospitals.push(hospital);
     }
     Object.assign(a, { status:'已通过', handledAt:this.now(), hospitalId:hospital.id });

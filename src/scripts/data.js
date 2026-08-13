@@ -130,6 +130,7 @@ const MockData = {
       phone: '021-6404-1990', level: '三甲', category: '综合医院', city: '上海市',
       address: '总院：徐汇区枫林路180号；分院：闵行区春申路2768号（闵行分院）',
       intro: '复旦大学附属中山医院是国家卫生健康委员会直属事业单位，是复旦大学附属综合性教学医院。医院开业于1937年，是中国人民创建和管理的最早的大型综合性医院之一，为纪念中国民主革命的先驱孙中山先生而命名。',
+      advantage: '以心脏外科、心内科、肾脏病科等国家重点专科见长，器官移植与重症救治能力突出，多学科诊疗体系成熟，就诊动线清晰。',
       keyDepts: ['心脏外科', '心内科', '肾脏病科', '内分泌科', '神经内科', '普外科', '消化科', '胸外科', '呼吸内科', '重症医学科', '器官移植科', '急诊医学科', '神经外科', '骨科', '中西医结合科'],
       orders: 1280, hot: true,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属中山医院建筑外观，上海三甲综合医院，现代医疗大楼，蓝天背景，专业医疗环境，高清摄影&image_size=landscape_16_9'
@@ -139,6 +140,7 @@ const MockData = {
       phone: '021-6437-0045', level: '三甲', category: '综合医院', city: '上海市',
       address: '总院：黄浦区瑞金二路197号；分院：黄浦区徐家汇路573号（卢湾分院）',
       intro: '上海交通大学医学院附属瑞金医院创建于1907年，是一所集医疗、教学、科研为一体的大型综合性三级甲等医院，在血液病、内分泌、消化内科等领域处于国内领先地位。',
+      advantage: '血液科、内分泌科、消化内科全国领先，百年名院，疑难重症多学科联合诊疗经验丰富，各科室实力均衡。',
       keyDepts: ['血液科', '内分泌科', '消化内科', '心血管内科', '神经内科', '普外科', '骨科', '泌尿外科', '妇产科', '儿科'],
       orders: 960, hot: true,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海瑞金医院建筑外观，交通大学附属三甲医院，法式古典建筑与现代医疗结合，高清摄影&image_size=landscape_16_9'
@@ -148,6 +150,7 @@ const MockData = {
       phone: '021-5288-9999', level: '三甲', category: '综合医院', city: '上海市',
       address: '总院：静安区乌鲁木齐中路12号；分院：闵行区金光路958号（西院）、宝山区陆翔路108号（北院）',
       intro: '复旦大学附属华山医院始建于1907年，是中国最早创办的综合性医院之一，以神经外科、皮肤科、手外科、感染科等国家临床重点专科闻名。',
+      advantage: '神经外科、神经内科、皮肤科享誉全国，专科深度突出，疑难病例会诊能力强，分诊流程清晰高效。',
       keyDepts: ['神经外科', '神经内科', '皮肤科', '手外科', '感染科', '骨科', '普外科', '放射科'],
       orders: 890, hot: true,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海华山医院红会老楼建筑外观，复旦大学附属三甲医院，百年红砖古典建筑，高清摄影&image_size=landscape_16_9'
@@ -157,6 +160,7 @@ const MockData = {
       phone: '021-6838-3390', level: '三甲', category: '综合医院', city: '上海市',
       address: '总院：浦东新区浦建路160号（东院）；分院：黄浦区山东中路145号（西院）',
       intro: '仁济医院建于1844年，是上海最早的西式医院之一，现为上海交通大学医学院附属综合性教学医院，在消化内科、风湿免疫、妇产科等领域具有优势。',
+      advantage: '消化内科、风湿免疫科、妇产科优势明显，上海最早的西式医院之一，综合救治能力均衡，就诊环境便捷。',
       keyDepts: ['消化内科', '风湿免疫科', '妇产科', '泌尿外科', '神经外科', '肝脏外科', '头颈外科'],
       orders: 720, hot: true,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海仁济医院建筑外观，百年历史三甲医院，浦东现代医疗大楼，高清摄影&image_size=landscape_16_9'
@@ -166,6 +170,7 @@ const MockData = {
       phone: '021-6313-0120', level: '三甲', category: '综合医院', city: '上海市',
       address: '总院：黄浦区制造局路639号；分院：浦东新区严桥路350号（浦东分院）',
       intro: '上海交通大学医学院附属第九人民医院是一所以口腔医学、整复外科为特色的三级甲等综合性教学医院，口腔医学和整形外科在全国享有盛誉。',
+      advantage: '口腔医学与整复外科全国顶尖，专科特色鲜明，兼顾综合诊疗，口腔与整形患者就诊动线集中。',
       keyDepts: ['口腔医学中心', '整复外科', '骨科', '眼科', '耳鼻喉头颈外科', '普外科', '心内科'],
       orders: 680,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海第九人民医院建筑外观，交大附属三甲医院，现代医疗综合体，高清摄影&image_size=landscape_16_9'
@@ -175,6 +180,7 @@ const MockData = {
       phone: '021-6324-0090', level: '三甲', category: '综合医院', city: '上海市',
       address: '总院：虹口区武进路85号（北院）；分院：松江区新松江路650号（南院）',
       intro: '上海市第一人民医院创建于1864年，是一所三级甲等综合性教学医院，以眼科、泌尿外科、心内科为优势学科。',
+      advantage: '眼科、泌尿外科、心内科优势突出，建院160余年，南北两院覆盖中心城区与松江，就诊选择灵活。',
       keyDepts: ['眼科', '泌尿外科', '心内科', '呼吸科', '普外科', '妇产科'],
       orders: 580,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第一人民医院建筑外观，三甲综合医院，现代医疗建筑，高清摄影&image_size=landscape_16_9'
@@ -184,6 +190,7 @@ const MockData = {
       phone: '021-6436-9181', level: '三甲', category: '综合医院', city: '上海市',
       address: '总院：徐汇区宜山路600号；分院：浦东新区南汇新城环湖西三路222号（东院）',
       intro: '上海市第六人民医院创建于1947年，是一所三级甲等综合性教学医院，以骨科、内分泌代谢、心血管、影像医学等国家重点学科著称。',
+      advantage: '骨科与内分泌代谢科全国知名，运动损伤、慢性病管理经验丰富，影像诊断设备齐全，检查流程集中。',
       keyDepts: ['骨科', '内分泌代谢科', '心血管内科', '影像医学科', '神经外科', '普外科'],
       orders: 650,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第六人民医院建筑外观，三甲综合医院，现代医疗大楼，高清摄影&image_size=landscape_16_9'
@@ -193,6 +200,7 @@ const MockData = {
       phone: '021-6630-1030', level: '三甲', category: '综合医院', city: '上海市',
       address: '总院：静安区延长中路301号；分院：杨浦区控江路1665号（控江分院）',
       intro: '上海市第十人民医院（同济大学附属第十人民医院）创建于1910年，是一所三级甲等综合性教学医院，以心内科、骨科、神经外科等为优势学科。',
+      advantage: '心内科、骨科、神经外科优势学科，同济大学附属，常见病与疑难病诊疗能力均衡，急诊绿色通道完善。',
       keyDepts: ['心内科', '骨科', '神经外科', '内分泌科', '呼吸科', '普外科'],
       orders: 520,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第十人民医院建筑外观，同济大学附属三甲医院，现代医疗大楼，高清摄影&image_size=landscape_16_9'
@@ -202,6 +210,7 @@ const MockData = {
       phone: '021-2507-6888', level: '三甲', category: '综合医院', city: '上海市',
       address: '总院：杨浦区控江路1665号；分院：崇明区城桥镇南门路25号（崇明分院）',
       intro: '上海交通大学医学院附属新华医院创建于1958年，是一所三级甲等综合性教学医院，以儿科、心血管、医学影像为特色学科。',
+      advantage: '儿科与心血管诊疗特色鲜明，儿童专科与成人综合双线并重，适合全家就诊需求。',
       keyDepts: ['儿科', '心血管内科', '医学影像科', '神经内科', '骨科', '普外科'],
       orders: 480,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海新华医院建筑外观，交大附属三甲医院，儿科特色综合医院，高清摄影&image_size=landscape_16_9'
@@ -211,6 +220,7 @@ const MockData = {
       phone: '021-6634-7757', level: '三甲', category: '综合医院', city: '上海市',
       address: '总院：普陀区新村路389号；分院：普陀区真南路528号（大华门诊部）',
       intro: '上海市同济医院（同济大学附属同济医院）创建于1991年，是一所三级甲等综合性教学医院，以心内科、骨科、神经外科等为优势学科。',
+      advantage: '心内科、骨科、神经外科为优势学科，同济大学附属，就医流程规范，多学科协作顺畅。',
       keyDepts: ['心内科', '骨科', '神经外科', '消化内科', '呼吸科', '普外科'],
       orders: 380,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市同济医院建筑外观，同济大学附属三甲医院，现代医疗建筑，高清摄影&image_size=landscape_16_9'
@@ -222,6 +232,7 @@ const MockData = {
       phone: '021-6417-5590', level: '三甲', category: '专科医院', city: '上海市',
       address: '总院：徐汇区东安路270号；分院：闵行区放鹤路1087号（闵行分院）',
       intro: '复旦大学附属肿瘤医院是一所集医疗、教学、科研、预防为一体的三级甲等肿瘤专科医院，是国家临床医学研究中心。',
+      advantage: '专注肿瘤诊疗，肿瘤外科、放疗、化疗全链条覆盖，国家临床医学研究中心，适合已明确肿瘤方向的患者。',
       keyDepts: ['肿瘤外科', '放疗科', '化疗科', '病理科', '肿瘤内科', '头颈外科', '乳腺外科'],
       orders: 520,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属肿瘤医院建筑外观，三甲肿瘤专科医院，现代医疗建筑，高清摄影&image_size=landscape_16_9'
@@ -231,6 +242,7 @@ const MockData = {
       phone: '021-6282-1990', level: '三甲', category: '专科医院', city: '上海市',
       address: '总院：徐汇区淮海西路241号；分院：松江区广富林路758号（松江南院）',
       intro: '上海市胸科医院是一所三级甲等胸科专科医院，以心胸外科、心内科、呼吸内科为国家临床重点专科。',
+      advantage: '心胸外科、心内科、呼吸内科国家临床重点专科，心肺疾病专病专治，检查与治疗流程集中。',
       keyDepts: ['心胸外科', '心内科', '呼吸内科', '肿瘤科', '纵隔外科'],
       orders: 380,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市胸科医院建筑外观，三甲胸科专科医院，现代医院大楼，高清摄影&image_size=landscape_16_9'
@@ -240,6 +252,7 @@ const MockData = {
       phone: '021-6513-5050', level: '三甲', category: '专科医院', city: '上海市',
       address: '总院：杨浦区政民路507号；分院：宝山区盘河路2188号（宝山分院）',
       intro: '上海市肺科医院是一所三级甲等肺科专科医院，以呼吸内科、胸外科、结核病科为国家临床重点专科。',
+      advantage: '呼吸内科、胸外科、结核病科国家临床重点专科，肺部疾病诊疗全链条覆盖，就诊动线短。',
       keyDepts: ['呼吸内科', '胸外科', '结核病科', '肿瘤科', '职业病科'],
       orders: 320,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市肺科医院建筑外观，三甲肺科专科医院，现代医疗大楼，高清摄影&image_size=landscape_16_9'
@@ -249,6 +262,7 @@ const MockData = {
       phone: '021-6438-7250', level: '三甲', category: '专科医院', city: '上海市',
       address: '总院：徐汇区宛平南路600号；分院：闵行区沪闵路3210号（闵行分院）',
       intro: '上海市精神卫生中心是一所三级甲等精神专科医院，以精神科、心理科、儿童精神科为国家临床重点专科。',
+      advantage: '精神科、心理科国家临床重点专科，覆盖儿童到老年全人群精神心理服务，就诊环境安静私密。',
       keyDepts: ['精神科', '心理科', '儿童精神科', '老年精神科', '成瘾医学科'],
       orders: 280,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市精神卫生中心建筑外观，三甲精神专科医院，现代医疗建筑，高清摄影&image_size=landscape_16_9'
@@ -258,6 +272,7 @@ const MockData = {
       phone: '021-5403-5252', level: '三甲', category: '专科医院', city: '上海市',
       address: '总院：浦东新区高科西路2699号（东院）；分院：静安区长乐路536号（西院）',
       intro: '上海市第一妇婴保健院是一所三级甲等妇产科专科医院，以产科、妇科、计划生育科为国家临床重点专科。',
+      advantage: '产科、妇科、计划生育科国家临床重点专科，孕产保健与生殖医学体系完整，东院西院就诊便利。',
       keyDepts: ['产科', '妇科', '计划生育科', '生殖医学科', '乳腺科'],
       orders: 360,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市第一妇婴保健院建筑外观，三甲妇产科专科医院，现代医疗大楼，高清摄影&image_size=landscape_16_9'
@@ -267,6 +282,7 @@ const MockData = {
       phone: '021-6407-5321', level: '三甲', category: '专科医院', city: '上海市',
       address: '总院：徐汇区衡山路910号；分院：闵行区沪闵路3391号（闵行分院）',
       intro: '中国福利会国际和平妇幼保健院是一所三级甲等妇产科专科医院，由宋庆龄主席创办，以产科、妇科、生殖医学科为特色。',
+      advantage: '由宋庆龄主席创办，产科、妇科、生殖医学科为特色，孕产全程管理与辅助生殖经验丰富。',
       keyDepts: ['产科', '妇科', '生殖医学科', '计划生育科', '乳腺外科'],
       orders: 340,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=中国福利会国际和平妇幼保健院建筑外观，三甲妇产科医院，现代医疗建筑，高清摄影&image_size=landscape_16_9'
@@ -276,6 +292,7 @@ const MockData = {
       phone: '021-6247-3363', level: '三甲', category: '专科医院', city: '上海市',
       address: '总院：静安区北京西路1400弄24号（北京西路院区）；分院：普陀区泸定路355号（泸定路院区）',
       intro: '上海市儿童医院是一所三级甲等儿童专科医院，以儿科各专业、儿童保健、儿童康复为特色。',
+      advantage: '儿科各专业齐全，儿童保健与康复特色突出，两院区覆盖中心城区与普陀，儿童就诊环境友好。',
       keyDepts: ['儿内科', '儿外科', '儿童保健科', '儿童康复科', '新生儿科'],
       orders: 420,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市儿童医院建筑外观，三甲儿童医院，色彩活泼的现代医疗建筑，高清摄影&image_size=landscape_16_9'
@@ -285,6 +302,7 @@ const MockData = {
       phone: '021-6493-2523', level: '三甲', category: '专科医院', city: '上海市',
       address: '总院：闵行区万源路399号；分院：徐汇区医学院路130号（枫林路门诊部）',
       intro: '复旦大学附属儿科医院是国家儿童医学中心，一所三级甲等儿童专科医院，以新生儿科、儿科各专业为特色。',
+      advantage: '国家儿童医学中心，新生儿科与儿科各专业实力顶尖，疑难儿科疾病诊治能力全国领先。',
       keyDepts: ['新生儿科', '儿内科', '儿外科', '儿童保健科', '儿童感染科'],
       orders: 560,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属儿科医院建筑外观，国家儿童医学中心，现代儿童医院建筑，高清摄影&image_size=landscape_16_9'
@@ -294,6 +312,7 @@ const MockData = {
       phone: '021-6437-1716', level: '三甲', category: '专科医院', city: '上海市',
       address: '总院：徐汇区汾阳路83号；分院：闵行区江月路2600号（浦江分院）',
       intro: '复旦大学附属眼耳鼻喉科医院是一所三级甲等眼耳鼻喉专科医院，以眼科、耳鼻喉科、口腔科为国家临床重点专科。',
+      advantage: '眼科、耳鼻喉科国家临床重点专科，头颈外科配套完整，五官疾病专病专治，检查设备先进。',
       keyDepts: ['眼科', '耳鼻喉科', '口腔科', '头颈外科', '视光学中心'],
       orders: 320,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=复旦大学附属眼耳鼻喉科医院建筑外观，三甲五官科专科医院，现代医疗大楼，高清摄影&image_size=landscape_16_9'
@@ -305,6 +324,7 @@ const MockData = {
       phone: '021-6432-7129', level: '三甲', category: '中医医院', city: '上海市',
       address: '总院：徐汇区宛平南路725号；分院：上南路1000弄上钢二村45号（浦东分院）',
       intro: '龙华医院创建于1960年，是上海中医药大学附属医院，是中国最早建立的四大中医临床基地之一，以中医肿瘤、中医骨伤、针灸推拿为特色。',
+      advantage: '中医肿瘤、中医骨伤、针灸推拿特色鲜明，中国最早的中医临床基地之一，擅长慢病调理与术后调养。',
       keyDepts: ['中医肿瘤科', '中医骨伤科', '针灸推拿科', '中医内科', '中医外科', '中医妇科'],
       orders: 340,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海龙华医院建筑外观，中医三甲医院，传统与现代结合建筑风格，高清摄影&image_size=landscape_16_9'
@@ -314,6 +334,7 @@ const MockData = {
       phone: '021-5382-3390', level: '三甲', category: '中医医院', city: '上海市',
       address: '总院：浦东新区张衡路528号（东院）；分院：黄浦区普安路185号（西院）',
       intro: '上海中医药大学附属曙光医院创建于1960年，是一所三级甲等中医医院，以中医肝病、中医外科、针灸推拿为特色。',
+      advantage: '中医肝病、中医外科特色突出，针灸推拿与中医内科并重，中西结合施治，注重长期调养。',
       keyDepts: ['中医肝病科', '中医外科', '针灸推拿科', '中医内科', '中医妇科'],
       orders: 280,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海曙光医院建筑外观，中医三甲医院，传统风格与现代建筑结合，高清摄影&image_size=landscape_16_9'
@@ -323,6 +344,7 @@ const MockData = {
       phone: '021-6516-1782', level: '三甲', category: '中医医院', city: '上海市',
       address: '总院：虹口区甘河路110号；分院：杨浦区营口路588号（东院）',
       intro: '上海中医药大学附属岳阳中西医结合医院创建于1952年，是一所三级甲等中西医结合医院，以针灸推拿、中医康复、中西医结合为特色。',
+      advantage: '针灸推拿全国知名，中医康复与中西医结合为特色，花园式就诊环境，适合康复与调理需求。',
       keyDepts: ['针灸推拿科', '中医康复科', '中西医结合科', '中医内科', '中医骨伤科'],
       orders: 260,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海岳阳中西医结合医院建筑外观，三甲中西医结合医院，花园式医疗环境，高清摄影&image_size=landscape_16_9'
@@ -332,6 +354,7 @@ const MockData = {
       phone: '021-6589-3390', level: '三甲', category: '中医医院', city: '上海市',
       address: '总院：静安区芷江中路274号（芷江路院区）；分院：静安区石门一路67弄1号（石门一路门诊部）',
       intro: '上海市中医医院创建于1954年，是一所三级甲等中医医院，以中医内科、中医外科、针灸推拿为特色。',
+      advantage: '中医内科、中医外科、针灸推拿特色突出，建院七十余年，膏方调理与常见病中医诊疗经验丰富。',
       keyDepts: ['中医内科', '中医外科', '针灸推拿科', '中医妇科', '中医骨伤科'],
       orders: 220,
       image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=上海市中医医院建筑外观，三甲中医医院，传统中式建筑风格，高清摄影&image_size=landscape_16_9'
