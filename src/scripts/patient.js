@@ -467,6 +467,7 @@ const Patient = {
             <div class="ph-hosp-info">
               <div class="ph-hosp-name">${h.name}</div>
               <div class="ph-hosp-sub">${h.category || '综合医院'} · ${h.city || ''}</div>
+              <div class="ph-hosp-intro">${WUtil.escape((h.advantage || h.intro || '').slice(0, 40))}${(h.advantage || h.intro || '').length > 40 ? '…' : ''}</div>
               <div class="ph-hosp-tags">
                 ${(h.keyDepts || []).slice(0, 3).map(d => `<span class="ph-hosp-tag">${d}</span>`).join('')}
               </div>
@@ -916,6 +917,11 @@ const Patient = {
             ${(h.keyDepts || []).map(d => `<span class="hd-dept">${d}</span>`).join('')}
           </div>
         </div>
+        ${h.advantage ? `
+        <div class="hd-section">
+          <div class="hd-section-title">核心优势</div>
+          <div class="hd-intro">${WUtil.escape(h.advantage)}</div>
+        </div>` : ''}
         <div class="hd-section">
           <div class="hd-section-title">医院简介</div>
           <div class="hd-intro">${h.intro}</div>
@@ -926,9 +932,8 @@ const Patient = {
             <div style="font-size:14px; font-weight:600; color:var(--accent); margin-top:6px;">${h.phone}</div>
           </div>
         </div>
-        <div style="display:flex; gap:10px; margin-top:16px;">
-          <button class="btn btn-outline" style="flex:1;" onclick="App.requireLogin('预约陪诊') ? Patient._bookHospital('${h.id}') : null">预约陪诊</button>
-          <button class="btn" style="flex:1;" onclick="Patient._bookHospital('${h.id}')">立即预订</button>
+        <div style="margin-top:16px;">
+          <button class="btn" style="width:100%;" onclick="Patient._bookHospital('${h.id}')">立即预约陪诊</button>
         </div>
       </div>
     `;
