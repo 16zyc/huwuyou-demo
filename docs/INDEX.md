@@ -9,7 +9,7 @@
 | --- | --- | --- |
 | `requirements/` | 产品需求、用户需求原文 | `智陪护需求.docx`（原始需求）、`用户需求-2026-08-08.md`（用户白话需求原文）、`PRODUCT_REQUIREMENTS_ANALYSIS.md`（需求正式化 REQ-01~13）、`REQUIREMENT_GAP_ANALYSIS.md`（需求差距分析） |
 | `architecture/` | 架构设计、UI 设计体系 | `APPLE_DESIGN_REFERENCE.md`（Apple 官方规范研究）、`UI_DESIGN_SYSTEM.md`（唯一设计系统定义）、`FINAL_UI_GUIDELINE_FOR_CLAUDE.md`（UI 执行规范与禁止事项）、`HOSPITAL_DATA_SOURCES.md`（23 家医院数据调研来源台账） |
-| `development/` | 开发记录、完成报告、工作规范 | `CLAUDE.md`（AI Agent 最高工作规范）、`PHASE_0~3_COMPLETION_REPORT.md`、`PROJECT_COMPLETION_REPORT.md`（5 Phase 验收）、`FINAL_OPTIMIZATION_REPORT.md`（修复完成报告） |
+| `development/` | 开发记录、完成报告、工作规范 | `CLAUDE.md`（AI Agent 最高工作规范）、`PHASE_0~3_COMPLETION_REPORT.md`、`PROJECT_COMPLETION_REPORT.md`（5 Phase 验收）、`FINAL_OPTIMIZATION_REPORT.md`（修复完成报告）、`HOSPITAL_DATA_RESEARCH_COMPLETION_REPORT.md`（23 家医院数据调研录入报告） |
 | `planning/` | 实施路线图、开发计划、优化决策 | `IMPLEMENTATION_ROADMAP.md`（实施路线图）、`UI_OPTIMIZATION_ROADMAP.md`（逐页 UI 优化路线）、`FINAL_OPTIMIZATION_DECISION.md`（最终优化决策）、`2026-07-17-patient-ai-workflow-design.md`（患者-AI 工作流设计） |
 | `reports/` | 代码审查、流程审计、UI 评估、验证报告 | `CURRENT_PROJECT_STATE_REVIEW.md`、`CODE_REVIEW_REPORT.md`、`BUSINESS_FLOW_AUDIT.md`、`AI_PAGE_DESIGN_REVIEW.md`、`FINAL_REVIEW_AND_FIX_PLAN.md`、`FIX_VALIDATION_REPORT.md`、`FINAL_UI_VISUAL_AUDIT.md`、`AI_PAGE_FINAL_DESIGN_REVIEW.md`、`FINAL_UI_ENHANCEMENT_PLAN.md`、`FINAL_PROJECT_VALIDATION_AND_UI_REPORT.md`、`FINAL_DELIVERY_REPORT.md` |
 | `testing/` | 测试清单与验证记录 | `smoke-checklist.md`（人工冒烟测试清单） |
