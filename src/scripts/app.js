@@ -1,6 +1,8 @@
 // ========== 应用主控（登录状态机 + 路由）==========
 const App = {
-  state: 'patientGuest', // loginSelect | patientLogin | adminLogin | patient | patientGuest | admin
+  state: 'patientGuest', // patientGuest(默认主界面) | patientLogin | adminLogin | patient | admin
+  // 登录流程（2026-08 简化）：启动直进主界面；普通用户点"登录"直达患者登录；
+  // 管理员通过主界面右上角隐蔽"管理登录"入口进入；renderLoginSelect 角色选择页已停用（保留兼容）
   patientTab: 0,
   adminMenu: 'dashboard',
   isGuest: true, // true = 访客模式，false = 已登录
@@ -139,7 +141,7 @@ const App = {
   // ===== 跳转 =====
   goPatientLogin() { this.state = 'patientLogin'; this.render(); },
   goAdminLogin() { this.state = 'adminLogin'; this.render(); },
-  back() { this.state = 'loginSelect'; this.render(); },
+  back() { this.state = 'patientGuest'; this.render(); },
 
   // 验证码倒计时
   sendCode(prefix) {
@@ -218,7 +220,7 @@ const App = {
     modal.querySelector('#lm_cancel').onclick = () => modal.remove();
     modal.querySelector('#lm_login').onclick = () => {
       modal.remove();
-      this.state = 'loginSelect';
+      this.state = 'patientLogin';
       this.render();
     };
     setTimeout(() => {
@@ -241,7 +243,10 @@ const App = {
               </div>
             </div>
             ${isGuest
-              ? `<button class="role-btn role-btn-login" onclick="App.state='loginSelect';App.render()">登录</button>`
+              ? `<div class="role-actions">
+                  <button class="role-btn role-btn-login" onclick="App.state='patientLogin';App.render()">登录</button>
+                  <button class="role-btn role-btn-admin" title="管理员登录" onclick="App.state='adminLogin';App.render()">管理登录</button>
+                </div>`
               : `<button class="role-btn" onclick="App.logout()">退出</button>`
             }
           </header>

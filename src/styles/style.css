@@ -149,6 +149,10 @@ body.patient { background: var(--bg-tertiary); display: flex; justify-content: c
 .brand-name { font-size: 15px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.5px; }
 .brand-sub { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
 .role-btn { padding: 6px 14px; border: 1px solid var(--border-color); background: #fff; border-radius: 16px; font-size: 12px; cursor: pointer; color: var(--text-secondary); }
+.role-actions { display: flex; align-items: center; gap: 6px; }
+/* 隐蔽的管理员登录入口：弱化视觉，避免干扰普通用户 */
+.role-btn-admin { padding: 4px 8px; border: 0; background: transparent; color: var(--text-muted); font-size: 11px; opacity: .7; }
+.role-btn-admin:hover { opacity: 1; color: var(--accent); }
 /* screen 作为独立滚动区，高度固定 = 视口 - 顶栏 - tabbar，每个 Tab 高度一致 */
 .screen { flex: 1; min-height: 0; padding: 14px 14px 18px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .fade-in { animation: fadeIn .25s ease; }
@@ -431,15 +435,20 @@ body.patient { background: var(--bg-tertiary); display: flex; justify-content: c
 .ph-hosp-order { font-size: 10px; color: var(--accent); background: var(--accent-bg); padding: 2px 8px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
 
 /* ========== 首页热门医院入口卡 ========== */
-.ph-hosp-entry { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); cursor: pointer; margin-bottom: 14px; }
-.ph-hosp-entry:active { background: var(--bg-hover); transform: scale(0.98); }
-.ph-he-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.ph-he-icon svg { width: 24px; height: 24px; stroke: var(--accent); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.ph-he-text { flex: 1; min-width: 0; }
-.ph-he-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
-.ph-he-desc { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-.ph-he-cta { color: var(--accent); font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-.ph-he-cta svg { width: 14px; height: 14px; stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ph-hosp-list { margin-bottom: 14px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden; }
+.ph-hl-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 8px; }
+.ph-hl-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.ph-hl-cta { color: var(--accent); font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 2px; cursor: pointer; }
+.ph-hl-cta svg { width: 14px; height: 14px; stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ph-hosp-row { display: flex; flex-direction: column; gap: 3px; padding: 10px 16px; border-top: 1px solid var(--border-color); cursor: pointer; }
+.ph-hosp-row:active { background: var(--bg-hover); }
+.ph-hr-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.ph-hr-tags { display: flex; gap: 6px; }
+.ph-hr-tag { font-size: 10px; padding: 1px 6px; border-radius: 8px; background: var(--bg-tertiary); color: var(--text-muted); }
+.ph-hr-tag.level { background: var(--accent-bg); color: var(--accent); }
+.ph-hr-meta { font-size: 11px; color: var(--text-muted); }
+.ph-hl-foot { padding: 10px 16px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 11px; text-align: center; cursor: pointer; }
+.ph-hl-foot:active { background: var(--bg-hover); }
 
 /* 首页快捷服务入口（特色介绍等大卡片） */
 .ph-svc-big-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; cursor: pointer; }
@@ -467,7 +476,8 @@ body.patient { background: var(--bg-tertiary); display: flex; justify-content: c
 .steps-phase { margin-bottom: 16px; }
 .steps-phase:last-child { margin-bottom: 0; }
 .steps-phase-head { display: flex; align-items: center; margin: 0 0 6px; }
-.steps-phase-badge { background: var(--accent-bg); color: var(--accent); border-radius: 6px; font-size: 12px; font-weight: 600; padding: 2px 10px; }
+/* 阶段标题（服务前/服务中/服务后）：放大加粗 + 实底高对比，视觉层级高于步骤文字（.step-title 14px） */
+.steps-phase-badge { background: var(--accent); color: #fff; border-radius: 8px; font-size: 17px; font-weight: 700; letter-spacing: 1px; padding: 4px 14px; box-shadow: 0 2px 6px rgba(59,108,181,0.25); }
 
 /* ========== 订单接单状态 ========== */
 .order-status.cancelled { background: rgba(220,38,38,0.08); color: var(--status-notfound); }

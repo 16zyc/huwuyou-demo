@@ -29,12 +29,16 @@ const AIConfig = {
 };
 
 // ========== 服务价格表（后台可改，患者可见）==========
+// group 分组：escort=陪诊服务（表单"服务类型"区）；expert=专家预约（表单"专家预约"选项卡区）
 const PriceTable = {
   items: [
-    { id: 'S01', name: '半程陪诊', desc: '4小时陪诊服务，含挂号陪同、排队取药', price: 298, unit: '次' },
-    { id: 'S02', name: '全程陪诊', desc: '挂号→就诊→检查→取药全程陪同', price: 598, unit: '次' },
-    { id: 'S03', name: '代办跑腿', desc: '代取药、代取报告、代挂号', price: 98, unit: '次' },
-    { id: 'S04', name: '陪同复诊', desc: '单次复诊陪诊服务', price: 398, unit: '次' },
+    { id: 'S01', name: '半程陪诊', desc: '4小时陪诊服务，含挂号陪同、排队取药', price: 298, unit: '次', group: 'escort' },
+    { id: 'S02', name: '全程陪诊', desc: '挂号→就诊→检查→取药全程陪同', price: 598, unit: '次', group: 'escort' },
+    { id: 'S03', name: '代办跑腿', desc: '代取药、代取报告、代挂号', price: 98, unit: '次', group: 'escort' },
+    { id: 'S04', name: '陪同复诊', desc: '单次复诊陪诊服务', price: 398, unit: '次', group: 'escort' },
+    { id: 'S05', name: '普通专家', desc: '副主任医师专家门诊，预约挂号并陪同就诊', price: 500, unit: '次', group: 'expert' },
+    { id: 'S06', name: '专家门诊', desc: '主任医师专家门诊，预约挂号并全程陪诊', price: 800, unit: '次', group: 'expert' },
+    { id: 'S07', name: '特需专家', desc: '特需门诊/知名专家，绿色通道优先安排', price: 1200, unit: '次', group: 'expert' },
   ],
   getPrice(name) { const it = this.items.find(i => i.name === name); return it ? it.price : 298; },
   updatePrice(id, price) { const it = this.items.find(i => i.id === id); if (it) it.price = price; },

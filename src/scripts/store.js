@@ -136,7 +136,14 @@ const CareStore = {
       draft: { ...base.draft, ...(loaded.draft || {}), identity:{ ...base.draft.identity, ...(loaded.draft?.identity || {}) } },
       ai: { ...base.ai, ...(loaded.ai || {}) },
       needs: Array.isArray(loaded.needs) ? loaded.needs : base.needs,
-      prices: Array.isArray(loaded.prices) ? loaded.prices : base.prices,
+      prices: Array.isArray(loaded.prices)
+        ? base.prices.map(bp => {
+            // 增量合并：以默认价目表为骨架，已存在的项保留本地值（含管理员改价），
+            // 本地缺失的新增项（如专家预约）自动补齐默认值
+            const lp = loaded.prices.find(p => p.id === bp.id);
+            return lp ? { ...bp, ...lp } : bp;
+          })
+        : base.prices,
       priceChanges: Array.isArray(loaded.priceChanges) ? loaded.priceChanges : [],
       hospitals: Array.isArray(loaded.hospitals) ? loaded.hospitals.map(h => {
         const baseH = base.hospitals.find(b => b.id === h.id);

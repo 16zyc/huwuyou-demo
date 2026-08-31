@@ -487,6 +487,15 @@ const Patient = {
   // ===== 首页 =====
   renderHome(el) {
     const isGuest = App.isGuest;
+    // 热门医院列表：直接读取 CareStore 持久化缓存（localStorage），刷新页面零等待直显；
+    // 缓存缺失（首次访问/数据异常）时兜底回退静态数据源，保证列表始终立即可见
+    const allHospitals = (CareStore.state.hospitals && CareStore.state.hospitals.length
+      ? CareStore.state.hospitals : (MockData.hospitals || [])).filter(h => h.active !== false);
+    const shortAddr = h => (h.branches && h.branches.length ? h.branches[0].address : String(h.address || '').split(/[;；]/)[0].replace(/^总院：/, ''));
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const hotHospitals = [...allHospitals]
+      .sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0) || (b.orders || 0) - (a.orders || 0))
+      .slice(0, 6);
     el.innerHTML = `
       <!-- Banner -->
       <div class="ph-banner-placeholder">
@@ -536,14 +545,19 @@ const Patient = {
         </div>
       </div>
 
-      <!-- 热门医院入口（点击跳转特色 Tab 查看完整医院目录）-->
-      <div class="ph-hosp-entry" onclick="Patient.goFeaturedHospitals()">
-        <div class="ph-he-icon">${P_ICON.building}</div>
-        <div class="ph-he-text">
-          <div class="ph-he-title">热门医院</div>
-          <div class="ph-he-desc">上海 ${(MockData.hospitals || []).length} 家三甲医院 · 支持搜索与分类筛选</div>
+      <!-- 热门医院：持久化缓存直显医院基本信息列表（点击进详情，查看全部进完整目录）-->
+      <div class="ph-hosp-list">
+        <div class="ph-hl-head">
+          <div class="ph-hl-title">热门医院</div>
+          <div class="ph-hl-cta" onclick="Patient.goFeaturedHospitals()">查看全部 ${P_ICON.chevronRight}</div>
         </div>
-        <div class="ph-he-cta">去查看 ${P_ICON.chevronRight}</div>
+        ${hotHospitals.map(h => `
+          <div class="ph-hosp-row" onclick="Patient.navigateTo(el => Patient.goHospitalDetail('${h.id}', el), '医院详情')">
+            <div class="ph-hr-name">${esc(h.name)}</div>
+            <div class="ph-hr-tags"><span class="ph-hr-tag level">${esc(h.level)}</span><span class="ph-hr-tag">${esc(h.category)}</span></div>
+            <div class="ph-hr-meta">${esc(shortAddr(h) || '地址待完善')} · 已服务 ${h.orders || 0} 单</div>
+          </div>`).join('')}
+        <div class="ph-hl-foot" onclick="Patient.goFeaturedHospitals()">上海 ${allHospitals.length} 家三甲医院 · 支持搜索与分类筛选</div>
       </div>
 
       ${(CareStore.state.announcements||[]).filter(a=>a.status==='published').slice(0,2).map(a => `
