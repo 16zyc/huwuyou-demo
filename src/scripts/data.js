@@ -71,6 +71,14 @@ const NotifyPool = {
   get unread() { return this.list.filter(n => !n.read); },
 };
 
+// ========== 演示用相对日期助手（data.js 内部使用）==========
+// 就诊档案的"复查到期时间"按运行当天动态生成，保证"复查提醒"功能在任何时间打开都可演示
+function demoDateISO(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + Number(days || 0));
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 // ========== 模拟数据 ==========
 const MockData = {
   // ===== 患者端 =====
@@ -147,6 +155,34 @@ const MockData = {
       emergencyName: '刘强', emergencyPhone: '139****3300',
       history: '骨关节炎、高血压', allergy: '青霉素', medicine: '布洛芬', mobility: '可独立行走', insurance: '北京医保',
       orders: 7, lastService: '07-14', satisfaction: 4.8 },
+  ],
+
+  // ===== 系统配置（管理员可在"系统设置"修改，患者端实时读取）=====
+  settings: {
+    consultPhone: '400-800-1234',
+    consultHours: '每日 08:00-20:00',
+  },
+
+  // ===== 就诊档案（演示种子数据；复查到期时间按"今天"动态生成，保证提醒功能始终可演示）=====
+  archives: [
+    { id: 'AR01', patientId: 'P00', patientName: '王秀兰', needId: null,
+      visitDate: demoDateISO(-12), hospital: '北京协和医院', dept: '心内科', doctor: '张明华',
+      visitSummary: '复诊血压控制情况，医生根据近期记录调整了降压药剂量，整体平稳，无明显不适。',
+      careContent: '测量血压 145/90mmHg；调整氨氯地平剂量为 5mg/日；开具 1 个月药量；建议低盐饮食并每日记录血压。',
+      needRecheck: true, recheckDate: demoDateISO(3), recheckStatus: '待复查',
+      recheckNote: '复查时请携带近两周的血压记录本与本次处方。',
+      fieldsSource: { hospital:'admin', dept:'admin', visitDate:'admin', doctor:'admin', visitSummary:'admin', careContent:'admin' },
+      attachments: [], remindKeys: [], remindedAt: null, recheckedAt: '',
+      active: true, createdBy: 'admin', updatedBy: 'admin', createdAt: '07-20 10:00', updatedAt: '07-20 10:00' },
+    { id: 'AR02', patientId: 'P01', patientName: '张建国', needId: null,
+      visitDate: demoDateISO(-30), hospital: '北京同仁医院', dept: '眼科', doctor: '李国强',
+      visitSummary: '白内障术后复查，切口愈合良好，视力恢复符合预期。',
+      careContent: '视力检查：右眼 0.8、左眼 0.6；眼压正常；继续使用抗生素眼药水 2 周，避免揉眼与剧烈运动。',
+      needRecheck: true, recheckDate: demoDateISO(-2), recheckStatus: '待复查',
+      recheckNote: '建议尽快补做复查，逾期可能影响术后用药调整。',
+      fieldsSource: { hospital:'admin', dept:'admin', visitDate:'admin', doctor:'admin', visitSummary:'admin', careContent:'admin' },
+      attachments: [], remindKeys: [], remindedAt: null, recheckedAt: '',
+      active: true, createdBy: 'admin', updatedBy: 'admin', createdAt: '07-02 09:20', updatedAt: '07-02 09:20' },
   ],
 
   // ===== 评价 =====

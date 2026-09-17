@@ -424,6 +424,7 @@ const Patient = {
 
   // 页面栈导航
   navigateTo(renderFn, title) {
+    this.stopCarousel(); // 离开首页即停止轮播计时器，避免后台空转
     this._pageStack.push({ renderFn, title });
     const screen = document.getElementById('screen');
     screen.classList.remove('fade-in'); void screen.offsetWidth;
@@ -453,7 +454,10 @@ const Patient = {
 
   // ===== 特色医院页（完整医院目录：搜索/分类/城市/排序 + 实景图卡）=====
   renderFeaturedHospitals(el) {
-    const hospitals = MockData.hospitals || [];
+    // 统一读取契约：仅展示在架医院（停用医院在首页/特色/介绍/需求下拉四处一致隐藏）
+    const hospitals = (typeof CareStore !== 'undefined' && typeof CareStore.activeHospitals === 'function')
+      ? CareStore.activeHospitals()
+      : (MockData.hospitals || []);
     const kw = this._searchKeyword.toLowerCase();
     let list = hospitals.filter(h => {
       if (kw && !h.name.toLowerCase().includes(kw) && !h.shortName.toLowerCase().includes(kw) && !h.intro.toLowerCase().includes(kw)) return false;
@@ -496,13 +500,70 @@ const Patient = {
     const hotHospitals = [...allHospitals]
       .sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0) || (b.orders || 0) - (a.orders || 0))
       .slice(0, 6);
+    // 数据条：全部读实时状态（医院 / 在售服务项 / 在岗陪诊师），无硬编码
+    const activePriceCount = (CareStore.state.prices || []).filter(p => p.active !== false).length;
+    const activeEscortCount = (CareStore.state.escorts || []).filter(e => e.active !== false && e.status !== '已停用').length;
+    // 轮播数据源：settings.bannerHospitalIds 指定时按其顺序，否则自动取"热门且带图"的医院（最多 6 张）
+    const bannerSlides = this.carouselSlides();
+    // 兜底 Hero：无带图医院时退回单张品牌色块（与旧版一致，不破版）
+    const bannerHospital = hotHospitals.find(h => h.image) || allHospitals.find(h => h.image) || null;
+    // 复查提醒（仅登录患者）：与"我的档案"同源，避免重复入口
+    const myRechecks = !isGuest
+      ? CareStore.archivesFor(MockData.patient.user.name).filter(a => a.needRecheck && a.recheckStatus !== '已复查')
+      : [];
+    const overdueRechecks = myRechecks.filter(a => a.recheckStatus === '已逾期');
     el.innerHTML = `
-      <!-- Banner -->
-      <div class="ph-banner-placeholder">
-        <div class="bp-title">专业陪诊 · 全程无忧</div>
-        <div class="bp-sub">陪诊咨询 · 代办服务 · 特需服务</div>
+      ${bannerSlides.length > 1 ? `
+      <!-- Hero 轮播：复用现有医院实景图 + 既有 .ph-banner-overlay 渐变遮罩（不新增渐变）-->
+      <div class="ph-carousel" id="homeCarousel" aria-roledescription="carousel" aria-label="热门医院实景轮播">
+        <div class="ph-carousel-track" id="carouselTrack" data-index="0">
+          ${bannerSlides.map((h, i) => `
+            <div class="ph-carousel-slide" role="group" aria-label="第 ${i + 1} 张，共 ${bannerSlides.length} 张：${esc(h.name)}"
+                 onclick="Patient.navigateTo(el => Patient.goHospitalDetail('${h.id}', el), '医院详情')">
+              <img src="${esc(h.image)}" alt="${esc(h.name)}实景" ${i === 0 ? '' : 'loading="lazy"'} onerror="this.style.display='none'" />
+              <div class="ph-banner-overlay">
+                <div class="bp-brand">专业陪诊 · 全程无忧</div>
+                <div class="bp-title">${esc(h.name)}</div>
+                <div class="bp-sub">${esc(h.level)} · ${esc(h.category)}${shortAddr(h) ? ` · ${esc(shortAddr(h))}` : ''}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+        <button class="ph-carousel-arrow prev" aria-label="上一张" onclick="event.stopPropagation();Patient.carouselGo(-1)">${P_ICON.chevronLeft}</button>
+        <button class="ph-carousel-arrow next" aria-label="下一张" onclick="event.stopPropagation();Patient.carouselGo(1)">${P_ICON.chevronRight}</button>
+        <div class="ph-carousel-dots" id="carouselDots" role="tablist">
+          ${bannerSlides.map((h, i) => `<button class="ph-carousel-dot${i === 0 ? ' active' : ''}" role="tab" aria-label="切换到第 ${i + 1} 张：${esc(h.name)}" onclick="event.stopPropagation();Patient.carouselGoTo(${i})"></button>`).join('')}
+        </div>
+      </div>
+      ` : `
+      <!-- 兜底 Hero：带图医院不足 2 家时使用静态展示 -->
+      <div class="ph-banner${bannerHospital ? '' : ' ph-banner-brand'}">
+        ${bannerHospital ? `<img src="${esc(bannerHospital.image)}" alt="${esc(bannerHospital.name)}实景" onerror="this.style.display='none'" />` : ''}
+        <div class="ph-banner-overlay">
+          <div class="bp-title">专业陪诊 · 全程无忧</div>
+          <div class="bp-sub">陪诊咨询 · 代办服务 · 特需服务</div>
+        </div>
+      </div>
+      `}
+      <div class="ph-trust-bar"><span>全程陪同</span><span>透明计价</span><span>实名陪诊师</span></div>
+
+      <!-- 实时数据条：医院 / 服务项 / 在岗陪诊师（读取 CareStore，改后台即变）-->
+      <div class="ph-stats">
+        <div class="ph-stat"><strong>${allHospitals.length}</strong><span>合作医院</span></div>
+        <div class="ph-stat"><strong>${activePriceCount}</strong><span>服务项目</span></div>
+        <div class="ph-stat"><strong>${activeEscortCount}</strong><span>在岗陪诊师</span></div>
       </div>
 
+      ${myRechecks.length ? `
+      <div class="ph-recheck${overdueRechecks.length ? ' overdue' : ''}" onclick="Patient.navigateTo(el => Patient.renderMyArchives(el), '我的档案')">
+        <span class="ph-recheck-icon">${P_ICON.clock}</span>
+        <span class="ph-recheck-text">
+          <strong>${overdueRechecks.length ? '复查已逾期' : '复查提醒'}</strong>
+          ${myRechecks.map(a => `${esc(a.hospital)}${a.recheckDate ? `（${esc(a.recheckDate)}）` : ''}`).join('、')}
+        </span>
+        <span class="ph-recheck-cta">查看档案</span>
+      </div>` : ''}
+
+      <div class="ph-sec-head"><span class="ph-sec-bar"></span><h3>服务分类</h3></div>
       <!-- 四大业务入口（2x2网格）-->
       <div class="ph-grid-2x2">
         <div class="ph-svc-tile c1" onclick="Patient.onServiceClick('consult')">
@@ -527,8 +588,9 @@ const Patient = {
         </div>
       </div>
 
+      <div class="ph-sec-head"><span class="ph-sec-bar"></span><h3>快速下单</h3></div>
       <!-- 人工下单 + AI下单 双入口（位于四大核心业务下方）-->
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div class="ai-order-banner" style="background:linear-gradient(135deg, var(--accent), var(--accent-deep)); box-shadow:0 4px 16px rgba(59,108,181,0.25);" onclick="Patient.openNeedForm('consult_diagnosis')">
           <div class="ai-order-icon">${P_ICON.clipboard}</div>
           <div class="ai-order-text">
@@ -546,34 +608,120 @@ const Patient = {
       </div>
 
       <!-- 热门医院：持久化缓存直显医院基本信息列表（点击进详情，查看全部进完整目录）-->
+      <div class="ph-sec-head"><span class="ph-sec-bar"></span><h3>热门医院</h3>
+        <span class="ph-sec-more" onclick="Patient.goFeaturedHospitals()">查看全部 ${P_ICON.chevronRight}</span>
+      </div>
       <div class="ph-hosp-list">
-        <div class="ph-hl-head">
-          <div class="ph-hl-title">热门医院</div>
-          <div class="ph-hl-cta" onclick="Patient.goFeaturedHospitals()">查看全部 ${P_ICON.chevronRight}</div>
-        </div>
         ${hotHospitals.map(h => `
           <div class="ph-hosp-row" onclick="Patient.navigateTo(el => Patient.goHospitalDetail('${h.id}', el), '医院详情')">
-            <div class="ph-hr-name">${esc(h.name)}</div>
-            <div class="ph-hr-tags"><span class="ph-hr-tag level">${esc(h.level)}</span><span class="ph-hr-tag">${esc(h.category)}</span></div>
-            <div class="ph-hr-meta">${esc(shortAddr(h) || '地址待完善')} · 已服务 ${h.orders || 0} 单</div>
+            ${HospitalUI.renderThumb(h)}
+            <div class="ph-hr-body">
+              <div class="ph-hr-name">${esc(h.name)}</div>
+              <div class="ph-hr-tags"><span class="ph-hr-tag level">${esc(h.level)}</span><span class="ph-hr-tag">${esc(h.category)}</span></div>
+              <div class="ph-hr-meta">${esc(shortAddr(h) || '地址待完善')} · 已服务 ${h.orders || 0} 单</div>
+            </div>
           </div>`).join('')}
         <div class="ph-hl-foot" onclick="Patient.goFeaturedHospitals()">上海 ${allHospitals.length} 家三甲医院 · 支持搜索与分类筛选</div>
       </div>
 
+      <!-- 电话咨询条（号码由管理员在后台"系统设置"配置）-->
+      ${this.consultStripHTML()}
+
       ${(CareStore.state.announcements||[]).filter(a=>a.status==='published').slice(0,2).map(a => `
-      <div style="margin-top:12px; padding:12px 14px; background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius); font-size:12px; color:var(--accent);">
-        <strong>📢 ${a.title}</strong>
-        <div style="margin-top:4px; color:var(--text-secondary);">${a.content.slice(0,80)}${a.content.length>80?'…':''}</div>
+      <div class="ph-announce">
+        <strong>📢 ${esc(a.title)}</strong>
+        <div>${esc(a.content.slice(0,80))}${a.content.length>80?'…':''}</div>
       </div>
       `).join('')}
 
       ${isGuest ? `
-      <div style="margin-top:16px; padding:14px; background:var(--accent-bg); border:1px solid var(--accent); border-radius:var(--radius); text-align:center; cursor:pointer;" onclick="App.state='patientLogin';App.render()">
-        <div style="font-size:14px; font-weight:600; color:var(--accent); margin-bottom:4px;">登录后享受更多服务</div>
-        <div style="font-size:12px; color:var(--text-secondary);">提交需求、查看进度、紧急联系等功能需登录</div>
+      <div class="ph-guest-card" onclick="App.state='patientLogin';App.render()">
+        <div class="pgc-title">登录后享受更多服务</div>
+        <div class="pgc-desc">提交需求、查看进度、我的档案与复查提醒等功能需登录</div>
       </div>
       ` : ''}
     `;
+    this.initHomeCarousel();
+  },
+
+  // ===== 首页轮播（Carousel）=====
+  // 数据源：settings.bannerHospitalIds（管理员指定顺序，空则自动取热门带图医院）
+  carouselSlides() {
+    const hospitals = CareStore.activeHospitals();
+    const cfg = CareStore.state.settings || {};
+    const ids = Array.isArray(cfg.bannerHospitalIds) ? cfg.bannerHospitalIds : [];
+    let picked;
+    if (ids.length) {
+      picked = ids.map(id => hospitals.find(h => h.id === id)).filter(Boolean);
+    } else {
+      picked = [...hospitals]
+        .sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0) || (b.orders || 0) - (a.orders || 0));
+    }
+    return picked.filter(h => h.image).slice(0, 6);
+  },
+  prefersReducedMotion() {
+    try {
+      return typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (_) { return false; }
+  },
+  initHomeCarousel() {
+    this.stopCarousel();
+    const track = document.getElementById('carouselTrack');
+    const slides = this.carouselSlides();
+    this.carouselState = { index: 0, count: slides.length };
+    if (!track || slides.length < 2) return; // 无轮播节点或不足 2 张 → 保持静态 Hero
+    this.carouselGoTo(0);
+    const cfg = CareStore.state.settings || {};
+    const autoPlay = cfg.bannerAutoPlay !== false && !this.prefersReducedMotion();
+    const box = document.getElementById('homeCarousel');
+    const start = () => {
+      this.stopCarousel();
+      if (autoPlay) this._carouselTimer = setInterval(() => this.carouselGo(1), 5000);
+    };
+    if (box && box.addEventListener) {
+      box.addEventListener('mouseenter', () => this.stopCarousel());
+      box.addEventListener('mouseleave', start);
+      // 触摸横滑（移动端）
+      let startX = null;
+      box.addEventListener('touchstart', e => { startX = e.touches && e.touches[0] ? e.touches[0].clientX : null; }, { passive: true });
+      box.addEventListener('touchend', e => {
+        if (startX === null) return;
+        const endX = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : startX;
+        const dx = endX - startX;
+        if (Math.abs(dx) > 40) this.carouselGo(dx < 0 ? 1 : -1);
+        startX = null;
+      }, { passive: true });
+    }
+    start();
+  },
+  carouselGo(delta) {
+    const count = (this.carouselState && this.carouselState.count) || 0;
+    if (count < 2) return;
+    this.carouselGoTo(this.carouselState.index + delta);
+  },
+  carouselGoTo(index) {
+    const count = (this.carouselState && this.carouselState.count) || 0;
+    if (!count) return;
+    const idx = ((index % count) + count) % count;
+    this.carouselState.index = idx;
+    const track = document.getElementById('carouselTrack');
+    if (track) {
+      track.style.transform = `translateX(-${idx * 100}%)`;
+      track.setAttribute('data-index', String(idx));
+    }
+    const dots = document.getElementById('carouselDots');
+    if (dots && dots.querySelectorAll) {
+      dots.querySelectorAll('.ph-carousel-dot').forEach((dot, i) => {
+        if (dot.classList) dot.classList.toggle('active', i === idx);
+      });
+    }
+  },
+  stopCarousel() {
+    if (this._carouselTimer) {
+      clearInterval(this._carouselTimer);
+      this._carouselTimer = null;
+    }
   },
 
   _renderServiceBigCard(type, title, desc, colorCls, icon, tags) {
@@ -723,14 +871,196 @@ const Patient = {
             <div>1. 至少提前24小时预约</div>
             <div>2. 急、重、传染病不在服务范围</div>
             <div>3. 超时30分钟将自动取消服务要求</div>
-            <div>4. 遇到服务费外增收费用请联系服务平台，谨防假冒</div>
+            <div>${this.consultNoticeLine()}</div>
           </div>
+        </div>
+        <div class="svd-section">
+          <div class="svd-section-title">电话咨询</div>
+          ${this.consultCardHTML()}
         </div>
         <div class="svd-bottom-bar">
           <button class="btn" onclick="Patient.openNeedForm('${key}')">立即预约</button>
         </div>
       </div>
     `;
+  },
+
+  // ===== 咨询电话（读管理员在"系统设置"配置的号码，患者端统一展示）=====
+  consultSettings() {
+    const s = (typeof CareStore !== 'undefined' && CareStore.state && CareStore.state.settings) || {};
+    const phone = String(s.consultPhone || '').trim();
+    return { phone, hours: String(s.consultHours || '').trim(), tel: phone.replace(/[^\d+]/g, '') };
+  },
+  // 大卡：用于流程页 / 客服中心
+  consultCardHTML() {
+    const { phone, hours, tel } = this.consultSettings();
+    if (!phone) {
+      return `<div class="consult-card empty"><div class="cc-icon">${P_ICON.phone}</div><div class="cc-body"><div class="cc-title">暂未配置咨询电话</div><div class="cc-desc">请联系平台工作人员获取帮助</div></div></div>`;
+    }
+    return `
+      <div class="consult-card">
+        <div class="cc-icon">${P_ICON.phone}</div>
+        <div class="cc-body">
+          <div class="cc-title">平台咨询电话</div>
+          <a class="cc-phone" href="tel:${WUtil.escape(tel)}">${WUtil.escape(phone)}</a>
+          ${hours ? `<div class="cc-desc">服务时间：${WUtil.escape(hours)}</div>` : ''}
+        </div>
+        <a class="cc-call" href="tel:${WUtil.escape(tel)}">拨打</a>
+      </div>
+    `;
+  },
+  // 细条：用于首页
+  consultStripHTML() {
+    const { phone, hours, tel } = this.consultSettings();
+    if (!phone) return '';
+    return `
+      <a class="consult-strip" href="tel:${WUtil.escape(tel)}">
+        <span class="cs-icon">${P_ICON.phone}</span>
+        <span class="cs-text"><strong>${WUtil.escape(phone)}</strong>${hours ? ` · ${WUtil.escape(hours)}` : ''}</span>
+        <span class="cs-cta">电话咨询</span>
+      </a>
+    `;
+  },
+  // 流程页"注意事项"第 4 条：号码同样动态读取后台配置，未配置时回退通用文案
+  consultNoticeLine() {
+    const { phone, tel } = this.consultSettings();
+    if (!phone) return '4. 遇到服务费外增收费用请联系平台工作人员，谨防假冒';
+    return `4. 遇到服务费外增收费用请联系平台咨询电话 <a href="tel:${WUtil.escape(tel)}" style="color:var(--accent); text-decoration:none; font-weight:600;">${WUtil.escape(phone)}</a>，谨防假冒`;
+  },
+  // 客服中心页（配电话；未配置时给出提示）
+  renderServiceCenter(el) {    const screen = el || document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+    screen.innerHTML = `
+      <div class="sub-page">
+        <div class="svd-header">
+          <div class="svd-back" onclick="Patient.goBack()" aria-label="返回">${P_ICON.chevronLeft}</div>
+          <h2>客服中心</h2>
+        </div>
+        <div class="svd-section">
+          <div class="svd-section-title">电话咨询</div>
+          ${this.consultCardHTML()}
+        </div>
+        <div class="svd-section">
+          <div class="svd-section-title">常见问题</div>
+          <div class="faq-list">
+            <div class="faq-item"><div class="faq-q">陪诊师什么时候能确定？</div><div class="faq-a">提交需求后由平台根据病情与医院匹配陪诊师，匹配成功后可在"陪诊进度"查看姓名与电话。</div></div>
+            <div class="faq-item"><div class="faq-q">可以指定陪诊师吗？</div><div class="faq-a">填写需求时可以选择"意向陪诊师"，平台会优先按意向安排，最终以实际派单为准。</div></div>
+            <div class="faq-item"><div class="faq-q">费用如何计算？</div><div class="faq-a">按所选服务类型公开价结算，提交时生成价格快照，后续调价不影响已提交需求。</div></div>
+          </div>
+        </div>
+        <div class="svd-bottom-bar">
+          <button class="btn" onclick="Patient.openNeedForm(null)">填写陪诊需求</button>
+        </div>
+      </div>
+    `;
+  },
+
+  // ===== 我的档案（读取管理员建档内容；患者可补充，双向同步）=====
+  renderMyArchives(el) {
+    const screen = el || document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+    const name = MockData.patient.user.name;
+    const list = CareStore.archivesFor(name);
+    const overdue = list.filter(a => a.needRecheck && a.recheckStatus === '已逾期');
+    const soon = list.filter(a => {
+      if (!a.needRecheck || a.recheckStatus === '已复查') return false;
+      const days = CareStore.daysUntil(a.recheckDate);
+      return days !== null && days >= 0 && days <= RECHECK_REMIND_DAYS;
+    });
+    const srcLabel = (a, key) => {
+      const v = a.fieldsSource?.[key];
+      if (!v) return '';
+      return `<span class="ac-src-tag ${v === 'patient' ? 'by-patient' : 'by-admin'}">${v === 'patient' ? '我补充' : '平台填写'}</span>`;
+    };
+    screen.innerHTML = `
+      <div class="svd-header"><div class="svd-back" onclick="Patient.goBack()" aria-label="返回">${P_ICON.chevronLeft}</div><h2>我的档案</h2></div>
+      <div class="page-head"><div>就诊记录与复查计划，与平台实时同步；缺失的资料可自行补充</div></div>
+      ${overdue.length ? `<div class="archive-alert overdue"><strong>复查已逾期</strong><div>${overdue.map(a => `${WUtil.escape(a.hospital)}（计划 ${WUtil.escape(a.recheckDate)}）`).join('、')} 建议尽快安排复查，或联系平台协助预约。</div></div>` : ''}
+      ${soon.length ? `<div class="archive-alert"><strong>复查提醒</strong><div>${soon.map(a => { const d = CareStore.daysUntil(a.recheckDate); return `${WUtil.escape(a.hospital)} · ${d === 0 ? '今天到期' : `还有 ${d} 天`}（${WUtil.escape(a.recheckDate)}）`; }).join('；')}，请提前安排。</div></div>` : ''}
+      ${list.length ? list.map(a => `
+        <article class="card archive-card patient-view">
+          <div class="ac-head">
+            <div>
+              <div class="ac-name">${WUtil.escape(a.hospital)}${a.dept ? ` · ${WUtil.escape(a.dept)}` : ''}</div>
+              <div class="cp-sub">就诊日期 ${WUtil.escape(a.visitDate || '-')} · 主诊医生 ${WUtil.escape(a.doctor || '待补充')}</div>
+            </div>
+            ${a.needRecheck
+              ? (a.recheckStatus === '已复查' ? '<span class="status-badge done">已复查</span>'
+                : a.recheckStatus === '已逾期' ? '<span class="status-badge cancelled">已逾期</span>'
+                : `<span class="status-badge pending">${WUtil.escape(a.recheckDate)} 复查</span>`)
+              : '<span class="status-badge cancelled">无需复查</span>'}
+          </div>
+          <div class="ac-body">
+            <div class="ac-row"><span class="ac-label">就诊情况 ${srcLabel(a, 'visitSummary')}</span><span class="ac-value">${WUtil.escape(a.visitSummary || '待补充')}</span></div>
+            <div class="ac-row"><span class="ac-label">基本诊疗内容 ${srcLabel(a, 'careContent')}</span><span class="ac-value">${WUtil.escape(a.careContent || '待补充')}</span></div>
+            ${a.needRecheck && a.recheckNote ? `<div class="ac-row"><span class="ac-label">复查提示</span><span class="ac-value">${WUtil.escape(a.recheckNote)}</span></div>` : ''}
+          </div>
+          <div class="ac-actions">
+            <button class="btn btn-outline btn-sm" onclick="Patient.openArchiveSupplement('${a.id}')">补充资料</button>
+            ${a.needRecheck && a.recheckStatus !== '已复查' ? `<button class="btn btn-sm" onclick="Patient.markArchiveRechecked('${a.id}')">我已复查</button>` : ''}
+          </div>
+        </article>`).join('') : `
+        <div class="card empty"><div class="em-icon">${P_ICON.inbox}</div><p>暂无就诊档案</p><div class="helper-text">完成陪诊服务后，平台会在此记录就诊情况与复查计划。</div></div>`}
+    `;
+  },
+
+  // 患者补充填写（只提交自己填写的字段，不覆盖其他字段；来源记为患者）
+  openArchiveSupplement(id) {
+    const a = CareStore.archive(id);
+    if (!a) return this.toast('档案不存在');
+    const src = (key) => {
+      const v = a.fieldsSource?.[key];
+      return v ? `<span class="ac-src-tag ${v === 'patient' ? 'by-patient' : 'by-admin'}">${v === 'patient' ? '我补充' : '平台填写'}</span>` : '';
+    };
+    const screen = document.getElementById('screen');
+    screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+    screen.innerHTML = `
+      <div class="sub-page">
+        <div class="svd-header"><div class="svd-back" onclick="Patient.renderMyArchives()" aria-label="返回">${P_ICON.chevronLeft}</div><h2>补充档案资料</h2></div>
+        <div class="page-head"><div>${WUtil.escape(a.hospital)}${a.dept ? ` · ${WUtil.escape(a.dept)}` : ''} · 就诊日期 ${WUtil.escape(a.visitDate || '-')}</div></div>
+        <section class="card">
+          <div class="card-title">${P_ICON.edit} 可补充内容</div>
+          <label class="field-label" for="as_doctor">主诊医生 ${src('doctor')}</label>
+          <input class="fg-input" id="as_doctor" value="${WUtil.escape(a.doctor || '')}" placeholder="例如：张明华" />
+          <label class="field-label" for="as_visitSummary">就诊情况 ${src('visitSummary')}</label>
+          <textarea class="fg-input" id="as_visitSummary" rows="3" placeholder="本次就诊医生说了什么、结论如何">${WUtil.escape(a.visitSummary || '')}</textarea>
+          <label class="field-label" for="as_careContent">基本诊疗内容 ${src('careContent')}</label>
+          <textarea class="fg-input" id="as_careContent" rows="3" placeholder="做了哪些检查、用药如何调整、医嘱要点">${WUtil.escape(a.careContent || '')}</textarea>
+          ${a.needRecheck ? `
+          <label class="field-label" for="as_recheckNote">复查提示补充</label>
+          <input class="fg-input" id="as_recheckNote" value="${WUtil.escape(a.recheckNote || '')}" placeholder="例如：复查时需空腹" />` : ''}
+          <p class="helper-text">提交后平台即可看到您补充的内容；平台已填写的字段不会被自动清空。</p>
+          <button class="btn" onclick="Patient.saveArchiveSupplement('${a.id}')">提交补充</button>
+        </section>
+      </div>
+    `;
+  },
+
+  saveArchiveSupplement(id) {
+    const patch = {
+      doctor: WUtil.value('as_doctor'),
+      visitSummary: WUtil.value('as_visitSummary'),
+      careContent: WUtil.value('as_careContent'),
+    };
+    if (document.getElementById('as_recheckNote')) patch.recheckNote = WUtil.value('as_recheckNote');
+    try {
+      CareStore.updateArchive(id, patch, 'patient');
+      this.toast('已提交，平台同步可见');
+      this.renderMyArchives();
+    } catch (e) {
+      this.toast(e.message);
+    }
+  },
+
+  markArchiveRechecked(id) {
+    if (!confirm('确认已按计划完成复查？')) return;
+    try {
+      CareStore.updateArchive(id, { rechecked: true }, 'patient');
+      this.toast('已记录复查完成');
+      this.renderMyArchives();
+    } catch (e) {
+      this.toast(e.message);
+    }
   },
 
   // ===== AI智能下单入口 =====
@@ -1496,11 +1826,18 @@ const Patient = {
 
   _svcAction(type) {
     const nameMap = { orders: '就诊人管理', escort: '陪诊师入驻', address: '地址管理', review: '我的评价', service: '客服中心', settings: '设置中心' };
+    // 客服中心（电话咨询）无需登录即可查看号码
+    if (type === 'service') {
+      this.navigateTo(el => this.renderServiceCenter(el), '客服中心');
+      return;
+    }
     if (!App.requireLogin(nameMap[type] || '使用此功能')) return;
     if (type === 'orders') {
       this.openPatientManager();
     } else if (type === 'address') {
       this._openAddressManager();
+    } else if (type === 'records') {
+      this.navigateTo(el => this.renderMyArchives(el), '我的档案');
     } else {
       App.toast('功能演示中');
     }

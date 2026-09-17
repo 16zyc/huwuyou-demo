@@ -4,6 +4,7 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
+.vs/
 node_modules/
 dist/
 tmp/

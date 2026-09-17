@@ -23,10 +23,15 @@ function parseAddress(str) {
     return { name, address };
   }).filter(Boolean);
 }
+// 复查提醒提前天数（到期前 N 天开始自动提醒，模块级常量便于统一调整）
+const RECHECK_REMIND_DAYS = 7;
+
 const CareStore = {
   key: 'huwuyou_store_v1',
   backupKey: 'huwuyou_store_corrupt_backup',
-  version: 2,
+  legacyPatientsKey: 'huwuyou_patients',
+  // v3：新增 settings / patients / archives；needs 增 preferredEscortId/Name；hospitals 支持上传图片；escorts 支持停用
+  version: 3,
   state: null,
   clone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -34,8 +39,39 @@ const CareStore = {
   now() {
     return new Date().toLocaleString('zh-CN', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
   },
+  todayISO() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  },
+  shiftDateISO(days) {
+    const d = new Date();
+    d.setDate(d.getDate() + Number(days || 0));
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  },
+  // 距目标日期还有几天（负数=已逾期，null=日期无效）
+  daysUntil(iso) {
+    if (!iso) return null;
+    const target = new Date(String(iso) + 'T00:00:00');
+    if (Number.isNaN(target.getTime())) return null;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    return Math.round((target.getTime() - today.getTime()) / 86400000);
+  },
+  recheckStatusFor(iso) {
+    const days = this.daysUntil(iso);
+    if (days === null) return '待复查';
+    return days < 0 ? '已逾期' : '待复查';
+  },
   uid(prefix) {
     return prefix + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,5).toUpperCase();
+  },
+  // 按 id 增量合并：已存在的保留本地值（含管理员修改），本地缺失的用默认值补齐
+  mergeById(baseList, loadedList) {
+    const list = loadedList.map(l => {
+      const b = baseList.find(x => x.id === l.id);
+      return b ? { ...b, ...l } : l;
+    });
+    baseList.forEach(b => { if (!list.some(l => l.id === b.id)) list.push(this.clone(b)); });
+    return list;
   },
   defaults() {
     const needs = this.clone(NeedPool.list).map(n => ({
@@ -83,6 +119,7 @@ const CareStore = {
         emergencyPhone: MockData.patient.user.emergencyPhone,
         insurance: MockData.patient.medical.insurance,
         hospital: '', dept: '', date: '', serviceType: '半程陪诊', note: '',
+        preferredEscortId: null, preferredEscortName: '',
         identity: { front:null, back:null, fields:{}, status:'unconfirmed' },
         reportImages: [], hospitalApplicationId: null,
       },
@@ -90,6 +127,34 @@ const CareStore = {
       needs,
       prices: this.clone(PriceTable.items).map(i => ({ ...i, active:true })),
       priceChanges: [],
+      // 系统配置：咨询电话 + 首页轮播（管理员可改，患者端实时读取）
+      settings: {
+        consultPhone: MockData.settings?.consultPhone || '400-800-1234',
+        consultHours: MockData.settings?.consultHours || '每日 08:00-20:00',
+        // 首页轮播：bannerHospitalIds 为空时自动取"热门且带图"的医院；bannerAutoPlay=false 或系统开启 reduce 时仅手动切换
+        bannerHospitalIds: [],
+        bannerAutoPlay: true,
+        updatedAt: '',
+      },
+      // 患者数据（管理员可增删改；患者端"就诊人/我的档案"共用同一份）
+      patients: [
+        {
+          id: 'P00', name: MockData.patient.user.name, gender: MockData.patient.user.gender,
+          age: MockData.patient.user.age, phone: MockData.patient.user.phone,
+          emergencyName: MockData.patient.user.emergencyName, emergencyPhone: MockData.patient.user.emergencyPhone,
+          history: MockData.patient.medical.history, allergy: MockData.patient.medical.allergy,
+          medicine: MockData.patient.medical.medicine, mobility: MockData.patient.medical.mobility,
+          insurance: MockData.patient.medical.insurance,
+          orders: 1, satisfaction: 5.0, note: '当前登录演示患者', active: true, source: 'admin',
+          createdAt: '07-08 14:30', updatedAt: '07-08 14:30',
+        },
+        ...this.clone(MockData.patientArchives || []).map(p => ({
+          ...p, note: p.note || '', active: p.active !== false, source: p.source || 'admin',
+          createdAt: p.createdAt || this.now(), updatedAt: p.updatedAt || this.now(),
+        })),
+      ],
+      // 就诊档案（管理员与患者双向填写；含复查到期提醒）
+      archives: this.clone(MockData.archives || []).map(a => ({ ...a, active: true })),
       hospitals: this.clone(MockData.hospitals).map(h => {
         const branches = h.branches || parseAddress(h.address) || [{ name:'总院', address:h.address || '' }];
         return {
@@ -100,7 +165,8 @@ const CareStore = {
           specialties:h.dept || h.keyDepts?.join('、') || '综合',
           advantage:h.advantage || '',
           branches, source:h.source || { info:'', ranking:'', updated:'' }, imageFallback:h.imageFallback || '',
-          active:true,
+          imageUploaded: !!h.imageUploaded,
+          active:true, createdAt: h.createdAt || this.now(), updatedAt: h.updatedAt || this.now(),
         };
       }),
       hospitalApplications: this.clone(HospitalApplyPool.list).map(a => ({
@@ -113,7 +179,7 @@ const CareStore = {
       announcements: [
         { id:'AN-001', title:'平台服务说明', content:'护无忧智陪诊平台为您提供专业陪诊服务。提交需求后，管理员将根据您的实际情况匹配最合适的陪诊师。', status:'published', publishedAt:'07-15 10:00' },
       ],
-      escorts: this.clone(MockData.escorts).map(e => ({ ...e, active: true })),
+      escorts: this.clone(MockData.escorts).map(e => ({ ...e, active: e.active !== false, note: e.note || '', updatedAt: e.updatedAt || this.now() })),
     };
   },
   init() {
@@ -126,9 +192,45 @@ const CareStore = {
       try { localStorage.setItem(this.backupKey, localStorage.getItem(this.key) || ''); } catch (_) {}
       setTimeout(() => window.App?.toast?.('本地数据损坏，已恢复演示初始数据'), 0);
     }
-    this.state = loaded && loaded.version === this.version ? this.merge(base, loaded) : base;
+    // 版本兼容：任意已知版本（旧版/新版）都走增量合并，结构升级不丢用户数据；合并后统一升到当前版本
+    const loadedVersion = Number(loaded?.version || 0);
+    if (loaded && Number.isFinite(loadedVersion) && loadedVersion >= 1) {
+      this.state = this.merge(base, loaded);
+      this.state.version = this.version;
+    } else {
+      this.state = base;
+    }
     this.bindLegacy();
+    this.migrateLegacyPatients();
     this.save();
+  },
+  // 旧独立键 huwuyou_patients（患者端"就诊人管理"）一次性并入 state.patients；旧键保留作备份，不删除
+  migrateLegacyPatients() {
+    let legacy = null;
+    try {
+      legacy = JSON.parse(localStorage.getItem(this.legacyPatientsKey) || 'null');
+    } catch (_) { legacy = null; }
+    if (!Array.isArray(legacy) || !legacy.length) return 0;
+    let added = 0;
+    legacy.forEach(lp => {
+      const name = String(lp?.name || '').trim();
+      if (!name) return;
+      if (this.state.patients.some(p => p.name === name)) return;
+      this.state.patients.push({
+        id: this.uid('P'), name, gender: lp.gender || '', age: lp.age ?? '', phone: lp.phone || '',
+        emergencyName: '', emergencyPhone: '',
+        history: lp.medicalHistory || '', allergy: '', medicine: '', mobility: '', insurance: '',
+        relation: lp.relation || '', images: Array.isArray(lp.images) ? this.clone(lp.images) : [],
+        orders: 0, satisfaction: 0, note: '由患者端就诊人迁移',
+        active: true, source: 'patient', createdAt: this.now(), updatedAt: this.now(),
+      });
+      added += 1;
+    });
+    if (added) {
+      this.state.legacyPatientsMerged = true;
+      this.save();
+    }
+    return added;
   },
   merge(base, loaded) {
     return {
@@ -145,7 +247,10 @@ const CareStore = {
           })
         : base.prices,
       priceChanges: Array.isArray(loaded.priceChanges) ? loaded.priceChanges : [],
-      hospitals: Array.isArray(loaded.hospitals) ? loaded.hospitals.map(h => {
+      settings: { ...base.settings, ...(loaded.settings || {}) },
+      patients: Array.isArray(loaded.patients) ? this.mergeById(base.patients, loaded.patients) : base.patients,
+      archives: Array.isArray(loaded.archives) ? this.mergeById(base.archives, loaded.archives) : base.archives,
+      hospitals: Array.isArray(loaded.hospitals) ? this.mergeById(base.hospitals, loaded.hospitals).map(h => {
         const baseH = base.hospitals.find(b => b.id === h.id);
         return {
           ...h,
@@ -154,13 +259,17 @@ const CareStore = {
           advantage: h.advantage || baseH?.advantage || '',
           image: /trae-api-cn\.mchost\.guru/.test(h.image || '') ? (baseH?.image || h.image) : h.image,
           imageFallback: h.imageFallback || baseH?.imageFallback || '',
+          imageUploaded: !!h.imageUploaded,
+          active: h.active !== false,
         };
       }) : base.hospitals,
       hospitalApplications: Array.isArray(loaded.hospitalApplications) ? loaded.hospitalApplications : base.hospitalApplications,
       notifications: Array.isArray(loaded.notifications) ? loaded.notifications : base.notifications,
       escortReports: Array.isArray(loaded.escortReports) ? loaded.escortReports : base.escortReports,
       announcements: Array.isArray(loaded.announcements) ? loaded.announcements : base.announcements,
-      escorts: Array.isArray(loaded.escorts) ? loaded.escorts : base.escorts,
+      escorts: Array.isArray(loaded.escorts)
+        ? this.mergeById(base.escorts, loaded.escorts).map(e => ({ ...e, active: e.active !== false }))
+        : base.escorts,
     };
   },
   bindLegacy() {
@@ -216,6 +325,10 @@ const CareStore = {
     const need = {
       id, status:'待处理', createTime:this.now(), updatedAt:this.now(), escortName:null, escortPhone:null, feedback:null,
       ...input,
+      // 不变量：新建订单一律不携带"已分配陪诊师"字段（仅可带患者意向 preferredEscort*）
+      escortId: null, escortName: null, escortPhone: null,
+      preferredEscortId: input.preferredEscortId || null,
+      preferredEscortName: input.preferredEscortName || '',
       amount: input.amount ?? service.price,
       serviceSnapshot: input.serviceSnapshot || { name:service.name, price:service.price, unit:service.unit },
       identity: this.clone(input.identity || { front:null, back:null, fields:{}, status:'unconfirmed' }),
@@ -241,6 +354,8 @@ const CareStore = {
       history:d.history || med.history, allergy:d.allergy || med.allergy,
       medicine:d.medicine || med.medicine, mobility:d.mobility || med.mobility, insurance:d.insurance || med.insurance,
       hospital:d.hospital, dept:d.dept, date:d.date, serviceType:d.serviceType, note:d.note,
+      preferredEscortId:d.preferredEscortId || null,
+      preferredEscortName:d.preferredEscortName || '',
       identity:d.identity, reportImages:d.reportImages,
       idCardFront:d.identity.front?.name || null, idCardBack:d.identity.back?.name || null,
       reportFiles:(d.reportImages || []).map(i => i.name),
@@ -281,6 +396,394 @@ const CareStore = {
     this.save();
     return item;
   },
+  // 未完成订单（待处理/已分配/服务中）计数：软删除与停用的统一守卫
+  busyNeeds(predicate) {
+    return this.state.needs.filter(n => ['待处理','已分配','服务中'].includes(n.status) && predicate(n));
+  },
+
+  // ===== 系统设置（咨询电话等；患者端实时读取）=====
+  updateSettings(patch) {
+    const next = { ...this.state.settings, ...(patch || {}) };
+    next.consultPhone = String(next.consultPhone || '').trim();
+    next.consultHours = String(next.consultHours || '').trim();
+    next.updatedAt = this.now();
+    this.state.settings = next;
+    if (next.consultPhone) {
+      this.notify({ recipientRole:'patient', type:'settings_updated', title:`平台咨询电话已更新：${next.consultPhone}`, targetType:'settings', targetId:'consultPhone', eventKey:next.consultPhone });
+    }
+    this.save();
+    return next;
+  },
+
+  // ===== 患者数据 CRUD（管理员增删改；患者端就诊人共用同一份）=====
+  patient(id) { return this.state.patients.find(p => p.id === id); },
+  patientByName(name) { return this.state.patients.find(p => p.name === name && p.active !== false); },
+  activePatients() { return this.state.patients.filter(p => p.active !== false); },
+  addPatient(input) {
+    const name = String(input?.name || '').trim();
+    if (!name) throw new Error('请填写患者姓名');
+    if (this.state.patients.some(p => p.name === name && p.active !== false)) throw new Error('已存在同名患者');
+    const patient = {
+      id: this.uid('P'), name,
+      gender: input.gender || '男', age: input.age ?? '', phone: String(input.phone || '').trim(),
+      emergencyName: input.emergencyName || '', emergencyPhone: input.emergencyPhone || '',
+      history: input.history || '', allergy: input.allergy || '', medicine: input.medicine || '',
+      mobility: input.mobility || '', insurance: input.insurance || '',
+      relation: input.relation || '', note: input.note || '',
+      orders: 0, satisfaction: 0,
+      active: true, source: input.source || 'admin',
+      createdAt: this.now(), updatedAt: this.now(),
+    };
+    this.state.patients.unshift(patient);
+    this.save();
+    return patient;
+  },
+  updatePatient(id, patch) {
+    const p = this.patient(id);
+    if (!p) throw new Error('患者不存在');
+    const next = { ...patch };
+    if ('name' in next) {
+      next.name = String(next.name || '').trim();
+      if (!next.name) throw new Error('请填写患者姓名');
+      if (this.state.patients.some(x => x.id !== id && x.name === next.name && x.active !== false)) throw new Error('已存在同名患者');
+    }
+    Object.assign(p, next, { updatedAt: this.now() });
+    this.save();
+    return p;
+  },
+  removePatient(id) {
+    const p = this.patient(id);
+    if (!p) throw new Error('患者不存在');
+    const busy = this.busyNeeds(n => n.patientName === p.name);
+    if (busy.length) throw new Error(`${p.name} 还有 ${busy.length} 条未完成需求，不能删除`);
+    p.active = false; p.updatedAt = this.now();
+    this.save();
+    return p;
+  },
+  restorePatient(id) {
+    const p = this.patient(id);
+    if (!p) throw new Error('患者不存在');
+    p.active = true; p.updatedAt = this.now();
+    this.save();
+    return p;
+  },
+
+  // ===== 就诊档案 CRUD（管理员 / 患者双向填写）=====
+  archive(id) { return this.state.archives.find(a => a.id === id); },
+  activeArchives() { return this.state.archives.filter(a => a.active !== false); },
+  archivesFor(patientName) {
+    return this.activeArchives()
+      .filter(a => a.patientName === patientName)
+      .sort((a, b) => String(b.visitDate || '').localeCompare(String(a.visitDate || '')));
+  },
+  archiveFieldsSource(input, byRole) {
+    const source = {};
+    ['hospital','dept','visitDate','doctor','visitSummary','careContent'].forEach(k => {
+      if (String(input?.[k] ?? '').trim()) source[k] = byRole;
+    });
+    return source;
+  },
+  addArchive(input, byRole = 'admin') {
+    const patientName = String(input?.patientName || '').trim();
+    const hospital = String(input?.hospital || '').trim();
+    if (!patientName) throw new Error('请选择或填写就诊人');
+    if (!hospital) throw new Error('请填写就诊医院');
+    const needRecheck = !!input.needRecheck;
+    if (needRecheck && !String(input.recheckDate || '').trim()) throw new Error('需要复查时必须填写复查到期时间');
+    const archive = {
+      id: this.uid('AR'), patientId: input.patientId || '', patientName, needId: input.needId || null,
+      visitDate: input.visitDate || this.todayISO(), hospital, dept: input.dept || '',
+      doctor: input.doctor || '',
+      visitSummary: input.visitSummary || '', careContent: input.careContent || '',
+      needRecheck, recheckDate: needRecheck ? String(input.recheckDate).trim() : '',
+      recheckStatus: needRecheck ? this.recheckStatusFor(input.recheckDate) : '无需复查',
+      recheckNote: input.recheckNote || '',
+      attachments: this.clone(input.attachments || []),
+      fieldsSource: this.archiveFieldsSource(input, byRole),
+      remindKeys: [], remindedAt: null, recheckedAt: '',
+      active: true, createdBy: byRole, updatedBy: byRole,
+      createdAt: this.now(), updatedAt: this.now(),
+    };
+    this.state.archives.unshift(archive);
+    this.save();
+    return archive;
+  },
+  updateArchive(id, patch, byRole = 'admin') {
+    const a = this.archive(id);
+    if (!a) throw new Error('档案不存在');
+    const { rechecked, attachments, needRecheck, recheckDate, ...rest } = patch || {};
+    const prevRecheckDate = String(a.recheckDate || '');
+    const nextRecheck = ('needRecheck' in (patch || {})) ? !!needRecheck : a.needRecheck;
+    const nextRecheckDate = ('recheckDate' in (patch || {})) ? String(recheckDate || '').trim() : prevRecheckDate;
+    if (nextRecheck && !nextRecheckDate) throw new Error('需要复查时必须填写复查到期时间');
+    const source = { ...(a.fieldsSource || {}) };
+    ['hospital','dept','visitDate','doctor','visitSummary','careContent'].forEach(k => {
+      if (!(k in rest)) return;
+      const next = String(rest[k] ?? '').trim();
+      if (next && next !== String(a[k] ?? '').trim()) source[k] = byRole;
+    });
+    Object.assign(a, rest);
+    if (Array.isArray(attachments)) a.attachments = this.clone(attachments);
+    a.needRecheck = nextRecheck;
+    a.recheckDate = nextRecheck ? nextRecheckDate : '';
+    if (nextRecheckDate !== prevRecheckDate) a.remindKeys = []; // 复查日期变更后允许重新提醒
+    if (rechecked === true) {
+      a.recheckStatus = '已复查'; a.recheckedAt = this.now();
+    } else if (!nextRecheck) {
+      a.recheckStatus = '无需复查'; a.recheckedAt = '';
+    } else if (a.recheckStatus !== '已复查') {
+      a.recheckStatus = this.recheckStatusFor(nextRecheckDate);
+    }
+    a.fieldsSource = source;
+    a.updatedBy = byRole;
+    a.updatedAt = this.now();
+    this.save();
+    return a;
+  },
+  markArchiveRechecked(id) { return this.updateArchive(id, { rechecked: true }, 'admin'); },
+  removeArchive(id) {
+    const a = this.archive(id);
+    if (!a) throw new Error('档案不存在');
+    a.active = false; a.updatedAt = this.now();
+    this.save();
+    return a;
+  },
+  // 复查到期自动提醒：到期前 RECHECK_REMIND_DAYS 天提醒一次（按 档案id+复查日期 去重），逾期自动置为"已逾期"
+  checkRecheckReminders() {
+    const due = [], overdue = [];
+    let changed = false;
+    this.activeArchives().forEach(a => {
+      if (!a.needRecheck || !a.recheckDate) return;
+      const days = this.daysUntil(a.recheckDate);
+      if (days === null) return;
+      if (a.recheckStatus === '已复查') return;
+      if (days < 0) {
+        if (a.recheckStatus !== '已逾期') { a.recheckStatus = '已逾期'; changed = true; }
+        overdue.push({ archive: a, days });
+        return;
+      }
+      if (a.recheckStatus !== '待复查') { a.recheckStatus = '待复查'; changed = true; }
+      if (days > RECHECK_REMIND_DAYS) return;
+      due.push({ archive: a, days });
+      const key = `${a.id}:${a.recheckDate}`;
+      if (!(a.remindKeys || []).includes(key)) {
+        this.notify({ recipientRole:'patient', type:'recheck_due', title:`复查提醒：${a.patientName} 建议在 ${a.recheckDate} 前到 ${a.hospital} 复查`, targetType:'archive', targetId:a.id, eventKey:a.recheckDate });
+        a.remindKeys = [...(a.remindKeys || []), key];
+        a.remindedAt = this.now();
+        changed = true;
+      }
+    });
+    if (changed) this.save();
+    return { due, overdue, remindDays: RECHECK_REMIND_DAYS };
+  },
+
+  // ===== 医院 CRUD（新增/编辑/停用；删除为软删除并校验进行中订单）=====
+  hospital(id) { return this.state.hospitals.find(h => h.id === id); },
+  activeHospitals() { return this.state.hospitals.filter(h => h.active !== false); },
+  normalizeBranches(branches, fallbackAddress) {
+    if (Array.isArray(branches) && branches.length) {
+      return branches.map((b, i) => ({
+        name: String(b?.name || (i === 0 ? '总院' : `分院${i}`)).trim(),
+        address: String(b?.address || '').trim(),
+      }));
+    }
+    return [{ name: '总院', address: String(fallbackAddress || '').trim() }];
+  },
+  addHospital(input) {
+    const name = String(input?.name || '').trim();
+    if (!name) throw new Error('请填写医院全称');
+    if (this.state.hospitals.some(h => h.name === name && h.active !== false)) throw new Error('该医院已存在');
+    const branches = this.normalizeBranches(input.branches, input.address);
+    const keyDepts = Array.isArray(input.keyDepts) ? input.keyDepts.filter(Boolean) : [];
+    const hospital = {
+      id: this.uid('H'), name, shortName: String(input.shortName || '').trim(),
+      level: input.level || '三甲', category: input.category || '综合医院', city: input.city || '上海市',
+      address: deriveAddress(branches), branches,
+      intro: input.intro || '', advantage: input.advantage || '', phone: input.phone || '',
+      keyDepts, specialties: input.specialties || keyDepts.join('、') || '综合',
+      orders: (Number.isFinite(Number(input.orders)) && Number(input.orders) >= 0) ? Number(input.orders) : 0,
+      hot: !!input.hot,
+      image: input.image || '', imageFallback: '', imageUploaded: !!input.imageUploaded,
+      source: { info:'管理员新增', ranking:'', updated: this.todayISO() },
+      active: true, createdAt: this.now(), updatedAt: this.now(),
+    };
+    this.state.hospitals.push(hospital);
+    this.save();
+    return hospital;
+  },
+  updateHospital(id, patch) {
+    const h = this.hospital(id);
+    if (!h) throw new Error('医院不存在');
+    const { branches, keyDepts, ...rest } = patch || {};
+    Object.assign(h, rest);
+    if (Array.isArray(branches) && branches.length) h.branches = this.normalizeBranches(branches, h.branches?.[0]?.address);
+    if (Array.isArray(keyDepts)) h.keyDepts = keyDepts.filter(Boolean);
+    h.address = deriveAddress(h.branches);
+    h.specialties = h.specialties || (h.keyDepts || []).join('、') || '综合';
+    h.updatedAt = this.now();
+    this.save();
+    return h;
+  },
+  removeHospital(id) {
+    const h = this.hospital(id);
+    if (!h) throw new Error('医院不存在');
+    const busy = this.busyNeeds(n => n.hospital === h.name);
+    if (busy.length) throw new Error(`${h.name} 还有 ${busy.length} 条未完成需求，不能删除（可先停用）`);
+    h.active = false; h.updatedAt = this.now();
+    this.save();
+    return h;
+  },
+  restoreHospital(id) {
+    const h = this.hospital(id);
+    if (!h) throw new Error('医院不存在');
+    h.active = true; h.updatedAt = this.now();
+    this.save();
+    return h;
+  },
+  // 彻底删除：仅当无任何需求/申请引用时才允许（否则只能停用）
+  deleteHospital(id) {
+    const idx = this.state.hospitals.findIndex(h => h.id === id);
+    if (idx < 0) throw new Error('医院不存在');
+    const h = this.state.hospitals[idx];
+    const refs = this.state.needs.filter(n => n.hospital === h.name).length
+      + this.state.hospitalApplications.filter(a => a.hospital === h.name).length;
+    if (refs) throw new Error(`${h.name} 已被 ${refs} 条需求/申请引用，只能停用，不能删除`);
+    this.state.hospitals.splice(idx, 1);
+    this.save();
+    return h;
+  },
+
+  // ===== 服务项目 CRUD（新增 / 停用 / 删除）=====
+  addPrice(input) {
+    const name = String(input?.name || '').trim();
+    const price = Number(input?.price);
+    if (!name) throw new Error('请填写服务名称');
+    if (!Number.isFinite(price) || price <= 0) throw new Error('请填写大于 0 的价格');
+    if (this.state.prices.some(p => p.name === name)) throw new Error('已存在同名服务项');
+    const item = {
+      id: this.uid('S'), name, desc: String(input.desc || '').trim(), price,
+      unit: String(input.unit || '次').trim() || '次',
+      group: input.group === 'expert' ? 'expert' : 'escort',
+      active: true, createdAt: this.now(),
+    };
+    this.state.prices.push(item);
+    this.state.priceChanges.unshift({ id:this.uid('PC'), priceId:item.id, itemName:item.name, oldPrice:0, newPrice:item.price, time:this.now() });
+    this.save();
+    return item;
+  },
+  setPriceActive(id, active) {
+    const item = this.state.prices.find(p => p.id === id);
+    if (!item) throw new Error('服务项不存在');
+    item.active = !!active;
+    this.save();
+    return item;
+  },
+  removePrice(id) {
+    const idx = this.state.prices.findIndex(p => p.id === id);
+    if (idx < 0) throw new Error('服务项不存在');
+    const item = this.state.prices[idx];
+    const busy = this.busyNeeds(n => n.serviceType === item.name);
+    if (busy.length) throw new Error(`${item.name} 还有 ${busy.length} 条未完成需求，不能删除（可先停用）`);
+    this.state.prices.splice(idx, 1);
+    this.save();
+    return item;
+  },
+  // 服务项编辑：改名 / 改描述 / 改单位 / 改分组 / 改价格
+  // opts.syncNeeds !== false 时，改名会同步"未完成需求"的 serviceType（已完成订单用价格快照，不受影响）
+  updatePriceItem(id, patch, opts = {}) {
+    const item = this.state.prices.find(p => p.id === id);
+    if (!item) throw new Error('服务项不存在');
+    const next = { ...(patch || {}) };
+    if ('name' in next) {
+      const name = String(next.name || '').trim();
+      if (!name) throw new Error('请填写服务名称');
+      if (this.state.prices.some(p => p.id !== id && p.name === name)) throw new Error('已存在同名服务项');
+      next.name = name;
+    }
+    if ('price' in next) {
+      const price = Number(next.price);
+      if (!Number.isFinite(price) || price <= 0) throw new Error('请填写大于 0 的价格');
+      next.price = price;
+    }
+    if ('unit' in next) next.unit = String(next.unit || '次').trim() || '次';
+    if ('desc' in next) next.desc = String(next.desc || '').trim();
+    if ('group' in next) next.group = next.group === 'expert' ? 'expert' : 'escort';
+    const oldName = item.name;
+    const oldPrice = item.price;
+    const renamed = !!next.name && next.name !== oldName;
+    const priceChanged = ('price' in next) && next.price !== oldPrice;
+    Object.assign(item, next, { updatedAt: this.now() });
+    let renamedNeeds = 0;
+    if (renamed && opts.syncNeeds !== false) {
+      this.state.needs.forEach(n => {
+        if (n.serviceType === oldName && ['待处理', '已分配', '服务中'].includes(n.status)) {
+          n.serviceType = item.name;
+          n.updatedAt = this.now();
+          renamedNeeds += 1;
+        }
+      });
+    }
+    if (renamed || priceChanged) {
+      this.state.priceChanges.unshift({ id: this.uid('PC'), priceId: id, itemName: item.name, oldPrice, newPrice: item.price, time: this.now() });
+    }
+    this.save();
+    return { item, renamedNeeds, oldName, oldPrice, renamed, priceChanged };
+  },
+
+  // ===== 陪诊师 CRUD（新增 / 编辑 / 停用 / 删除）=====
+  escort(id) { return this.state.escorts.find(e => e.id === id); },
+  activeEscorts() { return this.state.escorts.filter(e => e.active !== false && e.status !== '已停用'); },
+  addEscort(input) {
+    const name = String(input?.name || '').trim();
+    if (!name) throw new Error('请填写陪诊师姓名');
+    const tags = Array.isArray(input.tags)
+      ? input.tags.filter(Boolean)
+      : String(input.tags || '').split(/[,，、]/).map(t => t.trim()).filter(Boolean);
+    const escort = {
+      id: this.uid('E'), name, avatar: name.charAt(0),
+      gender: input.gender || '女', age: input.age ?? '', phone: String(input.phone || '').trim(),
+      star: 5.0, orders: 0, status: '空闲', score: Number(input.score) || 90,
+      tags, region: input.region || '', joinDate: input.joinDate || this.todayISO(),
+      income: 0, completionRate: Number(input.completionRate) || 100,
+      note: input.note || '', active: true,
+      createdAt: this.now(), updatedAt: this.now(),
+    };
+    this.state.escorts.unshift(escort);
+    this.save();
+    return escort;
+  },
+  updateEscort(id, patch) {
+    const e = this.escort(id);
+    if (!e) throw new Error('陪诊师不存在');
+    const { tags, ...rest } = patch || {};
+    Object.assign(e, rest);
+    if ('name' in rest && rest.name) e.avatar = String(rest.name).trim().charAt(0);
+    if (tags !== undefined) {
+      e.tags = Array.isArray(tags) ? tags.filter(Boolean)
+        : String(tags || '').split(/[,，、]/).map(t => t.trim()).filter(Boolean);
+    }
+    e.updatedAt = this.now();
+    this.save();
+    return e;
+  },
+  setEscortActive(id, active) {
+    const e = this.escort(id);
+    if (!e) throw new Error('陪诊师不存在');
+    e.active = !!active;
+    e.status = active ? (e.status === '已停用' ? '空闲' : e.status) : '已停用';
+    e.updatedAt = this.now();
+    this.save();
+    return e;
+  },
+  removeEscort(id) {
+    const e = this.escort(id);
+    if (!e) throw new Error('陪诊师不存在');
+    const busy = this.busyNeeds(n => n.escortId === e.id && ['已分配','服务中'].includes(n.status));
+    if (busy.length) throw new Error(`${e.name} 还有 ${busy.length} 条进行中订单，不能删除（可先停用）`);
+    e.active = false; e.status = '已停用'; e.deletedAt = this.now(); e.updatedAt = this.now();
+    this.save();
+    return e;
+  },
   submitHospitalApplication(input) {
     const duplicate = this.state.hospitalApplications.find(a => a.patientName === input.patientName && a.hospital.trim() === input.hospital.trim() && a.status === '待审批');
     if (duplicate) return { application:duplicate, duplicate:true };
@@ -299,7 +802,17 @@ const CareStore = {
     if (!a || a.status !== '待审批') throw new Error('申请已处理或不存在');
     let hospital = this.state.hospitals.find(h => h.name === a.hospital);
     if (!hospital) {
-      hospital = { id:this.uid('H'), name:a.hospital, level:'待完善', address:'', branches:[{ name:'总院', address:'' }], specialties:a.dept || '综合', intro:'医院资料正在完善中', advantage:'', source:{ info:'', ranking:'', updated:'' }, imageFallback:'', phone:'', active:true };
+      // 审批通过时创建完整医院记录（含图片字段），避免患者端"特色医院"出现缺字段/空图
+      const branches = [{ name:'总院', address:'' }];
+      hospital = {
+        id:this.uid('H'), name:a.hospital, shortName:'', level:'三甲', category:'综合医院', city:'上海市',
+        address:deriveAddress(branches), branches,
+        intro:'医院资料正在完善中，管理员可在"医院审批与资料"中补充图片与简介。',
+        advantage:'', phone:'', keyDepts:[], specialties:a.dept || '综合',
+        orders:0, hot:false, image:'', imageFallback:'', imageUploaded:false,
+        source:{ info:'患者申请新增', ranking:'', updated:this.todayISO() },
+        active:true, createdAt:this.now(), updatedAt:this.now(),
+      };
       this.state.hospitals.push(hospital);
     }
     Object.assign(a, { status:'已通过', handledAt:this.now(), hospitalId:hospital.id });
@@ -361,7 +874,7 @@ const MediaService = {
   allowed: ['image/jpeg','image/png','image/webp'],
   async process(file, { maxBytes=10*1024*1024, targetBytes=800*1024, maxEdge=1600 }={}) {
     if (!file || !this.allowed.includes(file.type)) throw new Error('仅支持 JPEG、PNG 或 WebP 图片');
-    if (file.size > maxBytes) throw new Error('单张原图不能超过 10MB');
+    if (file.size > maxBytes) throw new Error(`单张原图不能超过 ${Math.round(maxBytes / 1024 / 1024)}MB`);
     const source = await this.read(file);
     if (file.size <= targetBytes && file.type !== 'image/png') return { name:file.name, type:file.type, size:file.size, dataUrl:source };
     const img = await this.image(source);

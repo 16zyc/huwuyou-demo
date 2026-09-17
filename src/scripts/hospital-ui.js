@@ -40,6 +40,14 @@ const HospitalUI = {
     return `<img src="${this.esc(src)}" alt="${alt}"${className ? ` class="${className}"` : ''} loading="lazy" onerror="${onerror}">`;
   },
 
+  // 缩略图（首页"热门医院"列表用）：与特色页同源同降级链；无图时渲染品牌占位块，绝不出现破图
+  renderThumb(h) {
+    if (!h.image) {
+      return `<div class="ph-hr-thumb placeholder">${this.icon('building')}</div>`;
+    }
+    return `<div class="ph-hr-thumb">${this.imgTag(h, 'ph-hr-img')}</div>`;
+  },
+
   // 医院通用卡（特色 Tab 目录 / 独立列表页共用）
   renderCard(h) {
     const shortAddr = this.shortAddress(h);
@@ -147,6 +155,31 @@ const HospitalUI = {
     const parts = [String(source.info).trim(), String(source.ranking || '').trim()].filter(Boolean);
     const updated = String(source.updated || '').trim();
     return `<div class="hd-source-foot">数据来源：${this.esc(parts.join('、'))}${updated ? `，更新于 ${this.esc(updated)}` : ''}；具体地址与门诊安排以医院实际信息为准。</div>`;
+  },
+
+  // 医院介绍卡（图文排版：实景图/品牌占位 + 简介 + 地址 + 优势科室 + 电话）
+  // 无图时直接渲染占位块；有图但加载失败时由 imgTag 的 onerror 隐藏 img，露出容器占位底色，不出现破图
+  renderIntroCard(h) {
+    const media = h.image
+      ? `<div class="hi-media">${this.imgTag(h, 'hi-img')}</div>`
+      : `<div class="hi-media placeholder">${this.icon('building')}<span>${this.esc(h.shortName || h.name)}</span></div>`;
+    return `
+      <article class="card hospital-intro">
+        ${media}
+        <div class="hi-body">
+          <div class="hi-head">
+            <h3>${this.esc(h.name)}</h3>
+            <span class="hi-level">${this.esc(h.level)}</span>
+          </div>
+          ${this.renderBranches(h, true)}
+          <p class="hi-intro">${this.esc(h.intro || '')}</p>
+          <dl class="hi-meta">
+            <div><dt>优势科室</dt><dd>${this.esc(h.specialties || '综合')}</dd></div>
+            <div><dt>咨询电话</dt><dd>${this.esc(h.phone || '以医院官网为准')}</dd></div>
+          </dl>
+        </div>
+      </article>
+    `;
   },
 
   // 医院详情页（严格两块：医院简介[含核心优势+来源脚注] + 重点科室）

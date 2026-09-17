@@ -8,6 +8,13 @@ const App = {
   isGuest: true, // true = 访客模式，false = 已登录
 
   init() {
+    // 复查到期自动提醒：启动时检查一次（幂等，按 档案id+复查日期 去重，不重复打扰）
+    try {
+      const r = CareStore.checkRecheckReminders();
+      if (r && (r.due.length || r.overdue.length)) console.info(`复查提醒：待复查 ${r.due.length} 条，已逾期 ${r.overdue.length} 条`);
+    } catch (e) {
+      console.warn('复查提醒检查失败：', e);
+    }
     this.render();
   },
 
@@ -325,6 +332,8 @@ const App = {
 
   renderPatientScreen() {
     const screen = document.getElementById('screen');
+    // 切换 Tab / 重渲染前停止首页轮播计时器（首页渲染完成时会重新初始化）
+    if (typeof Patient.stopCarousel === 'function') Patient.stopCarousel();
     screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
     Patient.render(this.patientTab, screen);
   },

@@ -14,6 +14,34 @@ const WUtil = {
     if (!images?.length) return '<div class="helper-text">暂无图片</div>';
     return `<div class="media-grid">${images.map((img,i)=>`<figure><img src="${img.dataUrl}" alt="${this.escape(img.name)}" loading="lazy" /><figcaption>${this.escape(img.name)}</figcaption>${removeCall?`<button class="media-remove" aria-label="删除 ${this.escape(img.name)}" onclick="${removeCall}(${i})">×</button>`:''}</figure>`).join('')}</div>`;
   },
+  // 统一二次确认弹窗（敏感操作：调价 / 删除 / 停用等）
+  // opts: { title, desc, rows:[[label,value]], okText, cancelText, danger, onOk }
+  confirm(opts) {
+    const { title = '请确认操作', desc = '', rows = [], okText = '确认', cancelText = '取消', danger = false, onOk } = opts || {};
+    const existing = document.getElementById('confirmDialog');
+    if (existing && existing.remove) existing.remove();
+    const mask = document.createElement('div');
+    mask.id = 'confirmDialog';
+    mask.className = 'confirm-mask';
+    mask.innerHTML = `
+      <div class="confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <h3 class="confirm-title" id="confirmTitle">${this.escape(title)}</h3>
+        ${desc ? `<p class="confirm-desc">${desc}</p>` : ''}
+        ${rows.length ? `<dl class="confirm-rows">${rows.map(([k, v]) => `<div><dt>${this.escape(k)}</dt><dd>${this.escape(v)}</dd></div>`).join('')}</dl>` : ''}
+        <div class="confirm-actions">
+          <button class="btn btn-outline" id="confirmCancel">${this.escape(cancelText)}</button>
+          <button class="btn${danger ? ' danger' : ''}" id="confirmOk">${this.escape(okText)}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(mask);
+    const close = () => { if (mask.remove) mask.remove(); };
+    const cancelBtn = document.getElementById('confirmCancel');
+    const okBtn = document.getElementById('confirmOk');
+    if (cancelBtn) cancelBtn.onclick = close;
+    if (okBtn) okBtn.onclick = () => { close(); if (typeof onOk === 'function') onOk(); };
+    if (mask.addEventListener) mask.addEventListener('click', e => { if (e.target === mask) close(); });
+    return mask;
+  },
 };
 
 // ---- 患者端应用外框：通知、AI 抽屉和稳定交互 ----
@@ -74,9 +102,11 @@ App.aiSend = function() {
   const result=AiAssistantService.interpret({ text:q, draft:CareStore.draft(), intent:CareStore.state.ai.stage });
   if(result.intent==='price_query') {
     const lines=PriceTable.items.filter(p=>p.active!==false).map(p=>`${WUtil.escape(p.name)}：¥${p.price}/${WUtil.escape(p.unit)}`).join('<br>');
-    this.aiAdd('bot',`当前公开收费如下：<br>${lines}<br><small>最终费用以提交确认卡为准。</small>`); return;
+    const c=Patient.consultSettings();
+    const tail=c.phone?`<small>最终费用以提交确认卡为准；疑问可拨打平台咨询电话 <a href="tel:${WUtil.escape(c.tel)}" style="color:var(--accent);">${WUtil.escape(c.phone)}</a>。</small>`:'<small>最终费用以提交确认卡为准。</small>';
+    this.aiAdd('bot',`当前公开收费如下：<br>${lines}<br>${tail}`); return;
   }
-  if(result.intent==='hospital_query') { this.aiAdd('bot',`当前可选医院：<br>${CareStore.state.hospitals.filter(h=>h.active).map(h=>`• ${WUtil.escape(h.name)}：${WUtil.escape(h.intro)}`).join('<br>')}`); return; }
+  if(result.intent==='hospital_query') { this.aiAdd('bot',`当前可选医院：<br>${CareStore.activeHospitals().map(h=>`• ${WUtil.escape(h.name)}：${WUtil.escape(h.intro)}`).join('<br>')}`); return; }
   if(result.intent==='progress_query') {
     const list=CareStore.state.needs.filter(n=>n.patientName===MockData.patient.user.name).slice(0,3);
     this.aiAdd('bot',list.length?list.map(n=>`• ${WUtil.escape(n.hospital)} · ${WUtil.escape(n.status)}`).join('<br>'):'您还没有提交过陪诊需求。'); return;
@@ -147,7 +177,7 @@ Patient.openNeedForm = function(keyOrType, extra) {
 };
 Patient.renderNeed = function(el) {
   const d=CareStore.draft();
-  const hospitals=CareStore.state.hospitals.filter(h=>h.active);
+  const hospitals=CareStore.activeHospitals();
   const mobilityOptions=['可独立行走','需拐杖','需轮椅','需搀扶'];
   const mobilityList = d.mobility && !mobilityOptions.includes(d.mobility) ? [d.mobility, ...mobilityOptions] : mobilityOptions;
   el.innerHTML=`<div class="svd-header"><div class="svd-back" onclick="Patient.goBack()" aria-label="返回">${P_ICON.chevronLeft}</div><h2>我的需求</h2></div>
@@ -207,12 +237,11 @@ Patient.toggleHospitalApply = function() {
   this._showApplyForm = !this._showApplyForm;
   this.renderHospitals(document.getElementById('screen'));
 };
-Patient.renderHospitals=function(el){const apps=CareStore.state.hospitalApplications.filter(a=>a.patientName===MockData.patient.user.name);el.innerHTML=`<div class="svd-header"><div class="svd-back" onclick="Patient.goBack()" aria-label="返回">${P_ICON.chevronLeft}</div><h2>医院介绍</h2></div><div class="page-head"><div>简介由管理员维护，具体就诊安排以医院通知为准</div></div><section class="card apply-hospital"><div class="card-title">${P_ICON.inbox} 没有想去的医院？</div><button class="btn btn-outline" onclick="Patient.toggleHospitalApply()">${this._showApplyForm?'收起申请':'申请新增医院'}</button></section>${this._showApplyForm?this._renderHospitalApplyForm():''}${apps.length?`<section class="card"><div class="card-title">我的医院申请</div>${apps.map(a=>`<div class="application-row"><div><strong>${WUtil.escape(a.hospital)}</strong><small>${WUtil.escape(a.dept)} · ${WUtil.escape(a.time)}</small>${a.rejectReason?`<p>原因：${WUtil.escape(a.rejectReason)}</p>`:''}</div><span class="status-badge ${a.status==='待审批'?'pending':a.status==='已通过'?'done':'cancelled'}">${a.status}</span></div>`).join('')}</section>`:''}${CareStore.state.hospitals.filter(h=>h.active).map(h=>`<article class="card hospital-intro"><div><h3>${WUtil.escape(h.name)}</h3><span>${WUtil.escape(h.level)}</span></div>${HospitalUI.renderBranches(h, true)}<p>${WUtil.escape(h.intro)}</p><dl><div><dt>优势科室</dt><dd>${WUtil.escape(h.specialties)}</dd></div><div><dt>咨询电话</dt><dd>${WUtil.escape(h.phone||'以医院官网为准')}</dd></div></dl></article>`).join('')}`;};
 Patient._renderHospitalApplyForm=function(){return `<section class="card"><div class="card-title">申请新增医院</div><label class="field-label" for="apply_hospital">医院全称 <em>*</em></label><input id="apply_hospital" class="fg-input" /><label class="field-label" for="apply_dept">科室 <em>*</em></label><input id="apply_dept" class="fg-input" /><label class="field-label" for="apply_reason">申请原因 <em>*</em></label><textarea id="apply_reason" class="fg-input" rows="3"></textarea><button class="btn" onclick="Patient.submitHospitalApply()">提交后台审批</button></section>`;};
 Patient.submitHospitalApply=function(){const hospital=WUtil.value('apply_hospital'),dept=WUtil.value('apply_dept'),reason=WUtil.value('apply_reason');if(!hospital||!dept||!reason)return this.toast('请完整填写医院、科室和申请原因');const r=CareStore.submitHospitalApplication({hospital,dept,reason,patientName:MockData.patient.user.name,patientPhone:MockData.patient.user.phone});this._showApplyForm=false;this.toast(r.duplicate?'相同医院申请正在审核中':'申请已提交，管理员已收到提醒');this.renderHospitals(document.getElementById('screen'));};
 
 // ---- 管理端：菜单、通知、状态流转、审批、收费和报告 ----
-Admin.menus=[{group:'运营总览',items:[{id:'dashboard',name:'工作台',icon:ICON.dashboard},{id:'track',name:'服务跟踪',icon:ICON.track},{id:'pricing',name:'服务收费',icon:ICON.finance}]},{group:'业务管理',items:[{id:'patients',name:'患者档案',icon:ICON.patients},{id:'needs',name:'需求处理',icon:ICON.needs},{id:'escorts',name:'陪诊师管理',icon:ICON.escorts},{id:'hospitals',name:'医院审批与资料',icon:ICON.hospitals}]},{group:'系统',items:[{id:'reviews',name:'评价反馈',icon:ICON.reviews},{id:'system',name:'系统设置',icon:ICON.system}]}];
+Admin.menus=[{group:'运营总览',items:[{id:'dashboard',name:'工作台',icon:ICON.dashboard},{id:'track',name:'服务跟踪',icon:ICON.track},{id:'pricing',name:'服务收费',icon:ICON.finance}]},{group:'业务管理',items:[{id:'records',name:'档案管理',icon:ICON.fileText},{id:'patients',name:'患者档案',icon:ICON.patients},{id:'needs',name:'需求处理',icon:ICON.needs},{id:'escorts',name:'陪诊师管理',icon:ICON.escorts},{id:'hospitals',name:'医院审批与资料',icon:ICON.hospitals}]},{group:'系统',items:[{id:'reviews',name:'评价反馈',icon:ICON.reviews},{id:'system',name:'系统设置',icon:ICON.system}]}];
 const _legacyAdminRenderContent=Admin.renderContent.bind(Admin);
 Admin.renderContent=function(){if(this.currentMenu==='pricing'){document.getElementById('atCrumb').textContent='服务收费';this.renderPricing(document.getElementById('adminContent'));return;} _legacyAdminRenderContent();};
 Admin.renderNeeds=function(el){const statuses=['all','待处理','已分配','服务中','已完成','已取消'];el.innerHTML=`<div class="page-head"><h2>需求处理</h2><div>患者提交的需求统一在此处理，状态按服务实际进度推进</div></div><div class="filter-bar">${statuses.map((s,i)=>`<button class="filter-btn ${i===0?'active':''}" data-status="${s}">${s==='all'?`全部（${CareStore.state.needs.length}）`:s}</button>`).join('')}</div><div id="needsListV2"></div>`;const render=status=>{el.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.status===status));this.renderNeedsListV2(status);};el.querySelectorAll('.filter-btn').forEach(b=>b.onclick=()=>render(b.dataset.status));render('all');};
@@ -234,15 +263,45 @@ Admin.addReportImages=async function(input){const files=[...(input.files||[])];i
 Admin.removeReportImage=function(i){this._reportImages.splice(i,1);document.getElementById('escortReportImages').innerHTML=this.renderReportImages();};
 Admin.saveReport=function(needId,publish){const timeline=WUtil.value('er_timeline').split('\n').filter(Boolean).map(line=>{const parts=line.split('|');return {time:(parts.shift()||'').trim(),text:parts.join('|').trim()||line.trim()};});const data={timeline,completedItems:WUtil.value('er_items').split(/[、,，]/).map(x=>x.trim()).filter(Boolean),summary:WUtil.value('er_summary'),notes:WUtil.value('er_notes'),plainExplanation:WUtil.value('er_plain'),images:this._reportImages||[]};try{CareStore.saveEscortReport(needId,data,publish);this.closeModal();this.toast(publish?'陪诊报告已发布，患者已收到提醒':'报告草稿已保存');this.renderContent();}catch(e){this.toast(e.message);}};
 
-Admin.renderHospitals=function(el){const pending=CareStore.state.hospitalApplications.filter(a=>a.status==='待审批'),handled=CareStore.state.hospitalApplications.filter(a=>a.status!=='待审批');el.innerHTML=`<div class="page-head"><h2>医院审批与资料</h2><div>仅审批患者提出的新医院，并维护患者端可见介绍</div></div><section class="db-card"><div class="db-card-head"><h3>${ICON.clipboard} 待审批（${pending.length}）</h3></div><div class="db-card-body">${pending.length?pending.map(a=>`<div class="approval-card"><div><strong>${WUtil.escape(a.hospital)}</strong><p>${WUtil.escape(a.patientName)} · ${WUtil.escape(a.dept)} · ${WUtil.escape(a.reason)}</p><small>${WUtil.escape(a.time)}</small></div><div><button class="btn btn-sm" onclick="Admin.approveHospitalV2('${a.id}')">通过</button><button class="btn btn-outline btn-sm" onclick="Admin.rejectHospitalV2('${a.id}')">驳回</button></div></div>`).join(''):'<div class="empty-inline">暂无待审批申请</div>'}</div></section><section class="db-card"><div class="db-card-head"><h3>${ICON.building} 医院资料（${CareStore.state.hospitals.length}）</h3></div><div class="db-card-body"><div class="hospital-grid">${CareStore.state.hospitals.map(h=>`<article class="hospital-card"><div class="hc-head"><div><div class="hc-name">${WUtil.escape(h.name)}</div><div class="hc-sub">${WUtil.escape(h.level)} · ${WUtil.escape(h.address||'地址待完善')}</div></div></div><div class="hc-body"><p>${WUtil.escape(h.intro)}</p><div class="pb-row"><span class="pb-label">优势科室</span><span class="pb-value">${WUtil.escape(h.specialties)}</span></div></div><button class="btn btn-outline btn-sm" onclick="Admin.editHospitalV2('${h.id}')">编辑患者端介绍</button></article>`).join('')}</div></div></section><section class="db-card"><div class="db-card-head"><h3>审批记录</h3></div><div class="db-card-body">${handled.map(a=>`<div class="application-row"><div><strong>${WUtil.escape(a.hospital)}</strong><small>${WUtil.escape(a.patientName)} · ${WUtil.escape(a.handledAt||a.time)}</small>${a.rejectReason?`<p>${WUtil.escape(a.rejectReason)}</p>`:''}</div><span class="status-badge ${a.status==='已通过'?'done':'cancelled'}">${a.status}</span></div>`).join('')||'<div class="empty-inline">暂无记录</div>'}</div></section>`;};
 Admin.approveHospitalV2=function(id){try{CareStore.approveHospitalApplication(id);this.toast('医院申请已通过，患者已收到提醒');this.renderContent();}catch(e){this.toast(e.message);}};
 Admin.rejectHospitalV2=function(id){const reason=prompt('请填写驳回原因（患者可见）：');if(reason===null)return;try{CareStore.rejectHospitalApplication(id,reason);this.toast('已驳回并通知患者');this.renderContent();}catch(e){this.toast(e.message);}};
 Admin.editHospitalV2=function(id){const h=CareStore.state.hospitals.find(x=>x.id===id);if(!h)return;const level=prompt('医院等级：',h.level);if(level===null)return;const address=prompt('医院地址（格式：总院：xx区xx路xx号；分院：xx路xx号（院区名））：',h.address);if(address===null)return;const specialties=prompt('优势科室：',h.specialties);if(specialties===null)return;const advantage=prompt('核心优势：',h.advantage||'');if(advantage===null)return;const intro=prompt('患者端简介：',h.intro);if(intro===null)return;Object.assign(h,{level:level.trim(),address:address.trim(),specialties:specialties.trim(),advantage:advantage.trim(),intro:intro.trim()});const parsed=parseAddress(h.address);h.branches=parsed.length?parsed:[{name:'总院',address:h.address.trim()}];CareStore.save();this.toast('医院介绍已更新，患者端已同步');this.renderContent();};
 
-Admin.renderPricing=function(el){const changes=CareStore.state.priceChanges;el.innerHTML=`<div class="page-head"><h2>服务收费</h2><div>仅维护患者端公开价格；历史需求保留提交时价格快照</div></div><div class="kpi-grid"><div class="kpi-card kpi-blue"><div class="kpi-icon">${ICON.finance}</div><div class="kpi-body"><div class="kpi-num">${PriceTable.items.length}</div><div class="kpi-label">在售服务</div></div></div><div class="kpi-card kpi-warn"><div class="kpi-icon">${ICON.scroll}</div><div class="kpi-body"><div class="kpi-num">${changes.length}</div><div class="kpi-label">价格变更记录</div></div></div></div><section class="db-card"><div class="db-card-head"><h3>公开价格表</h3></div><div class="table-card"><table class="data-table"><thead><tr><th>服务</th><th>说明</th><th>计价单位</th><th>公开价格</th><th>操作</th></tr></thead><tbody>${PriceTable.items.map(p=>`<tr><td><strong>${WUtil.escape(p.name)}</strong></td><td>${WUtil.escape(p.desc)}</td><td>${WUtil.escape(p.unit)}</td><td><input class="fg-input price-input" type="number" min="1" id="price_${p.id}" value="${p.price}" /></td><td><button class="btn btn-sm" onclick="Admin.savePriceV2('${p.id}')">保存价格</button></td></tr>`).join('')}</tbody></table></div></section><section class="db-card"><div class="db-card-head"><h3>最近变更</h3></div><div class="db-card-body">${changes.slice(0,10).map(c=>`<div class="db-row-item"><div><strong>${WUtil.escape(c.itemName)}</strong><p class="dbr-info">¥${c.oldPrice} → ¥${c.newPrice} · ${WUtil.escape(c.time)}</p></div><span class="status-badge done">已生效</span></div>`).join('')||'<div class="empty-inline">暂无变更</div>'}</div></section>`;};
-Admin.savePriceV2=function(id){const value=Number(document.getElementById('price_'+id)?.value);const item=CareStore.state.prices.find(p=>p.id===id);if(!item||!Number.isFinite(value)||value<=0)return this.toast('请输入大于 0 的有效价格');if(item.price===value)return this.toast('价格没有变化');CareStore.updatePrice(id,value);this.toast('公开价格已更新，患者端立即生效');this.renderPricing(document.getElementById('adminContent'));};
-Admin.renderSystem=function(el){const announcements=CareStore.state.announcements||[];el.innerHTML=`<div class="page-head"><h2>系统设置</h2><div>演示环境、数据安全与信息发布</div></div><div class="setting-grid"><section class="modal-card"><div class="card-title">${ICON.cpu} AI 助手</div><div class="pb-row"><span class="pb-label">运行方式</span><span class="pb-value">本地规则状态机</span></div><div class="pb-row"><span class="pb-label">外部密钥</span><span class="pb-value">未在浏览器保存</span></div><p class="helper-text">正式接入大模型时必须使用后端代理。</p></section><section class="modal-card"><div class="card-title">${ICON.shield} 数据范围</div><p>当前为单浏览器演示原型，图片和资料保存在 localStorage。请勿上传真实身份证或病历。</p><button class="btn btn-outline btn-sm" onclick="Admin.resetDemoData()">重置演示数据</button></section></div>
+Admin.renderSystem=function(el){const announcements=CareStore.state.announcements||[];const cfg=CareStore.state.settings||{};el.innerHTML=`<div class="page-head"><h2>系统设置</h2><div>联系方式、演示环境、数据安全与信息发布</div></div>
+    <section class="db-card"><div class="db-card-head"><h3>${ICON.phone} 联系方式配置</h3></div><div class="db-card-body"><div class="setting-grid">
+      <section class="modal-card"><div class="card-title">${ICON.phone} 咨询电话</div>
+        <label class="field-label" for="set_phone">对外展示的咨询电话 <em>*</em></label>
+        <input class="fg-input" id="set_phone" value="${WUtil.escape(cfg.consultPhone||'')}" placeholder="例如：400-800-1234" />
+        <label class="field-label" for="set_hours">服务时间</label>
+        <input class="fg-input" id="set_hours" value="${WUtil.escape(cfg.consultHours||'')}" placeholder="例如：每日 08:00-20:00" />
+        <p class="helper-text">保存后患者端立即同步：首页"电话咨询"条、服务流程页"电话咨询"卡、我的 → 客服中心。</p>
+        <button class="btn btn-sm" onclick="Admin.saveSettings()">保存并同步患者端</button>
+        ${cfg.updatedAt?`<div class="cp-sub" style="margin-top:10px;">最近更新：${WUtil.escape(cfg.updatedAt)}</div>`:''}
+      </section>
+      <section class="modal-card"><div class="card-title">${ICON.cpu} AI 助手</div><div class="pb-row"><span class="pb-label">运行方式</span><span class="pb-value">本地规则状态机</span></div><div class="pb-row"><span class="pb-label">外部密钥</span><span class="pb-value">未在浏览器保存</span></div><p class="helper-text">正式接入大模型时必须使用后端代理。</p></section>
+      <section class="modal-card"><div class="card-title">${ICON.shield} 数据范围</div><p>当前为单浏览器演示原型，图片和资料保存在 localStorage。请勿上传真实身份证或病历。</p><button class="btn btn-outline btn-sm" onclick="Admin.resetDemoData()">重置演示数据</button></section>
+    </div></div></section>
+    <section class="db-card" style="margin-top:24px;">
+      <div class="db-card-head"><h3>${ICON.image} 首页轮播配置</h3><span class="cp-sub">复用医院实景图，无需额外上传</span></div>
+      <div class="db-card-body">
+        <label class="consent-row"><input type="checkbox" id="set_banner_auto" ${cfg.bannerAutoPlay !== false ? 'checked' : ''} /> 开启自动轮播（5 秒/张；系统开启"减少动态效果"时自动停播，仅保留手动切换）</label>
+        <div class="field-label">参与轮播的医院（不勾选则由系统自动取"热门且带图"的医院，最多 6 张）</div>
+        <div class="banner-pick">
+          ${CareStore.activeHospitals().filter(h => h.image).map(h => `
+            <label class="banner-pick-item">
+              <input type="checkbox" class="set_banner_item" value="${h.id}" ${(cfg.bannerHospitalIds || []).includes(h.id) ? 'checked' : ''} />
+              <span class="bpi-thumb"><img src="${WUtil.escape(h.image)}" alt="${WUtil.escape(h.name)}" onerror="this.style.display='none'" /></span>
+              <span class="bpi-name">${WUtil.escape(h.name)}</span>
+            </label>`).join('') || '<div class="empty-inline">暂无可用于轮播的医院（请先在医院管理中上传图片）</div>'}
+        </div>
+        <button class="btn btn-sm" style="margin-top:12px;" onclick="Admin.saveBannerSettings()">保存轮播配置</button>
+      </div>
+    </section>
     <section class="db-card" style="margin-top:24px;"><div class="db-card-head"><h3>信息发布（公告）</h3><button class="btn btn-sm" onclick="Admin.addAnnouncement()">+ 新建公告</button></div><div class="db-card-body">${announcements.length?announcements.map(a=>`<div class="application-row"><div><strong>${WUtil.escape(a.title)}</strong><small>${WUtil.escape(a.status==='published'?'已发布':'草稿')} · ${WUtil.escape(a.publishedAt||'')}</small><p style="font-size:12px;color:var(--text-muted);">${WUtil.escape((a.content||'').slice(0,60))}${(a.content||'').length>60?'…':''}</p></div><div>${a.status==='draft'?`<button class="btn btn-sm" onclick="Admin.publishAnnouncement('${a.id}')">发布</button>`:`<button class="btn btn-outline btn-sm" onclick="Admin.unpublishAnnouncement('${a.id}')">下线</button>`}</div></div>`).join(''):'<div class="empty-inline">暂无公告</div>'}</div></section>`;};
+// 保存咨询电话配置：格式校验 → 写入 state.settings → 通知患者 → 患者端实时展示
+Admin.saveSettings=function(){const phone=WUtil.value('set_phone');const hours=WUtil.value('set_hours');if(!phone){this.toast('请填写咨询电话');document.getElementById('set_phone')?.focus();return;}if(!/^[\d+\-() ]{6,24}$/.test(phone)){this.toast('电话格式不正确，仅支持数字、空格与 + - ( )');document.getElementById('set_phone')?.focus();return;}try{CareStore.updateSettings({consultPhone:phone,consultHours:hours});this.toast('已保存，患者端咨询电话已同步');this.renderSystem(document.getElementById('adminContent'));}catch(e){this.toast(e.message);}};
+// 保存首页轮播配置：自动播放开关 + 指定参与医院（空 = 自动取热门带图医院）
+Admin.saveBannerSettings=function(){const auto=!!document.getElementById('set_banner_auto')?.checked;const nodes=(typeof document.querySelectorAll==='function')?document.querySelectorAll('.set_banner_item'):[];const ids=[];nodes.forEach(n=>{if(n&&n.checked)ids.push(n.value);});try{CareStore.updateSettings({bannerAutoPlay:auto,bannerHospitalIds:ids});this.toast(ids.length?`轮播配置已保存（指定 ${ids.length} 家医院）`:'轮播配置已保存（自动选取热门医院）');this.renderSystem(document.getElementById('adminContent'));}catch(e){this.toast(e.message);}};
 Admin.addAnnouncement=function(){const title=prompt('公告标题：');if(!title||!title.trim())return;const content=prompt('公告内容：');if(content===null)return;const item={id:CareStore.uid('AN'),title:title.trim(),content:(content||'').trim(),status:'draft',publishedAt:''};CareStore.state.announcements.unshift(item);CareStore.save();this.toast('公告草稿已保存');this.renderSystem(document.getElementById('adminContent'));};
 Admin.publishAnnouncement=function(id){const a=CareStore.state.announcements.find(x=>x.id===id);if(!a)return;a.status='published';a.publishedAt=CareStore.now();CareStore.save();this.toast('公告已发布，患者端可见');this.renderSystem(document.getElementById('adminContent'));};
 Admin.unpublishAnnouncement=function(id){const a=CareStore.state.announcements.find(x=>x.id===id);if(!a)return;a.status='draft';a.publishedAt='';CareStore.save();this.toast('公告已下线');this.renderSystem(document.getElementById('adminContent'));};
@@ -250,3 +309,1016 @@ Admin.resetDemoData=function(){if(!confirm('确认清空当前浏览器的演示
 
 // 兼容后台既有列表中的按钮调用，统一转到新状态机。
 Admin.assignEscort=Admin.assignEscortV2; Admin.startService=Admin.startServiceV2; Admin.finishService=Admin.finishServiceV2; Admin.cancelNeed=Admin.cancelNeedV2;
+
+// ======================================================================
+// B3：医院管理（完整 CRUD + 图片上传）与患者端"医院介绍"图文排版
+// 覆盖层：本节方法在文件末尾重新赋值，优先级高于前面的旧实现
+// ======================================================================
+// 医院封面图压缩档：图片以 dataUrl 存入 localStorage，需比证件照更省空间（约 200KB / 最长边 1280px）
+const HOSPITAL_IMAGE_PROFILE = { maxBytes: 8 * 1024 * 1024, targetBytes: 200 * 1024, maxEdge: 1280 };
+
+Admin._editingHospitalId = null;
+Admin._hospitalImage = null;
+Admin._hospitalImageUploaded = false;
+
+Admin.renderHospitals = function(el) {
+  const apps = CareStore.state.hospitalApplications;
+  const pending = apps.filter(a => a.status === '待审批');
+  const handled = apps.filter(a => a.status !== '待审批');
+  const hospitals = CareStore.state.hospitals;
+  const activeCount = hospitals.filter(h => h.active !== false).length;
+  const inactiveCount = hospitals.length - activeCount;
+  el.innerHTML = `
+    <div class="page-head"><h2>医院管理</h2><div>新增/编辑医院资料与图片，审批患者提出的新医院；停用后患者端立即隐藏</div></div>
+    <section class="db-card">
+      <div class="db-card-head">
+        <h3>${ICON.building} <span style="margin-left:6px;">医院资料（在架 ${activeCount}${inactiveCount?` · 已停用 ${inactiveCount}`:''}）</span></h3>
+        <button class="btn btn-sm" onclick="Admin.openHospitalForm(null)">+ 新增医院</button>
+      </div>
+      <div class="db-card-body"><div class="hospital-grid">
+        ${hospitals.length ? hospitals.map(h => `
+          <article class="hospital-card${h.active === false ? ' inactive' : ''}">
+            <div class="hc-thumb">
+              ${h.image ? `<img src="${WUtil.escape(h.image)}" alt="${WUtil.escape(h.name)}" loading="lazy" onerror="this.style.display='none'" />` : `<span class="hc-thumb-empty">${ICON.building}</span>`}
+              <span class="hc-thumb-tag">${h.imageUploaded ? '已上传' : (h.image ? '系统图' : '无图')}</span>
+            </div>
+            <div class="hc-head">
+              <div>
+                <div class="hc-name">${WUtil.escape(h.name)}</div>
+                <div class="hc-sub">${WUtil.escape(h.level)} · ${WUtil.escape(h.category || '')} · ${WUtil.escape(h.address || '地址待完善')}</div>
+              </div>
+              <span class="status-badge ${h.active === false ? 'cancelled' : 'done'}">${h.active === false ? '已停用' : '在架'}</span>
+            </div>
+            <div class="hc-body">
+              <p>${WUtil.escape(h.intro || '暂无简介')}</p>
+              <div class="pb-row"><span class="pb-label">优势科室</span><span class="pb-value">${WUtil.escape(h.specialties || '综合')}</span></div>
+            </div>
+            <div class="hc-actions">
+              <button class="btn btn-outline btn-sm" onclick="Admin.openHospitalForm('${h.id}')">编辑</button>
+              ${h.active === false
+                ? `<button class="btn btn-sm" onclick="Admin.toggleHospitalActive('${h.id}')">恢复启用</button><button class="btn btn-outline btn-sm danger" onclick="Admin.deleteHospital('${h.id}')">彻底删除</button>`
+                : `<button class="btn btn-outline btn-sm" onclick="Admin.toggleHospitalActive('${h.id}')">停用</button>`}
+            </div>
+          </article>`).join('') : '<div class="empty-inline">暂无医院，点击右上角新增</div>'}
+      </div></div>
+    </section>
+    <section class="db-card">
+      <div class="db-card-head"><h3>${ICON.clipboard} <span style="margin-left:6px;">待审批申请（${pending.length}）</span></h3></div>
+      <div class="db-card-body">${pending.length ? pending.map(a => `
+        <div class="approval-card">
+          <div><strong>${WUtil.escape(a.hospital)}</strong><p>${WUtil.escape(a.patientName)} · ${WUtil.escape(a.dept)} · ${WUtil.escape(a.reason)}</p><small>${WUtil.escape(a.time)}</small></div>
+          <div><button class="btn btn-sm" onclick="Admin.approveHospitalV2('${a.id}')">通过</button><button class="btn btn-outline btn-sm" onclick="Admin.rejectHospitalV2('${a.id}')">驳回</button></div>
+        </div>`).join('') : '<div class="empty-inline">暂无待审批申请</div>'}</div>
+    </section>
+    <section class="db-card">
+      <div class="db-card-head"><h3>审批记录</h3></div>
+      <div class="db-card-body">${handled.length ? handled.map(a => `
+        <div class="application-row">
+          <div><strong>${WUtil.escape(a.hospital)}</strong><small>${WUtil.escape(a.patientName)} · ${WUtil.escape(a.handledAt || a.time)}</small>${a.rejectReason ? `<p>原因：${WUtil.escape(a.rejectReason)}</p>` : ''}</div>
+          <span class="status-badge ${a.status === '已通过' ? 'done' : 'cancelled'}">${WUtil.escape(a.status)}</span>
+        </div>`).join('') : '<div class="empty-inline">暂无审批记录</div>'}</div>
+    </section>
+  `;
+};
+
+Admin._branchRowHTML = function(b, i) {
+  return `<div class="branch-row">
+    <input class="fg-input hf-branch-name" value="${WUtil.escape(b.name || '')}" placeholder="${i === 0 ? '总院' : '分院/院区名称'}" />
+    <input class="fg-input hf-branch-addr" value="${WUtil.escape(b.address || '')}" placeholder="所在区 + 路名门牌" />
+    <button class="text-danger" onclick="this.closest('.branch-row').remove()">移除</button>
+  </div>`;
+};
+Admin.addBranchRow = function() {
+  const host = document.getElementById('hf_branches');
+  if (!host) return;
+  host.insertAdjacentHTML('beforeend', this._branchRowHTML({ name: '', address: '' }, host.querySelectorAll('.branch-row').length));
+};
+Admin.collectBranchRows = function() {
+  const host = document.getElementById('hf_branches');
+  if (!host) return [];
+  const names = host.querySelectorAll('.hf-branch-name');
+  const addrs = host.querySelectorAll('.hf-branch-addr');
+  const out = [];
+  for (let i = 0; i < names.length; i++) {
+    out.push({ name: String(names[i].value || '').trim(), address: String(addrs[i]?.value || '').trim() });
+  }
+  return out;
+};
+Admin._hospitalImagePreviewHTML = function() {
+  return this._hospitalImage
+    ? `<img src="${WUtil.escape(this._hospitalImage)}" alt="医院图片预览" />`
+    : `<div class="hosp-image-empty">${ICON.building}<span>暂无图片</span></div>`;
+};
+
+Admin.openHospitalForm = function(id) {
+  const h = id ? CareStore.hospital(id) : null;
+  if (id && !h) return this.toast('医院不存在');
+  this._editingHospitalId = id || null;
+  this._hospitalImage = h ? (h.image || null) : null;
+  this._hospitalImageUploaded = h ? !!h.imageUploaded : false;
+  const branches = (h && h.branches && h.branches.length) ? h.branches : [{ name: '总院', address: '' }];
+  this.modal(`
+    <div class="modal-head-row"><h2>${h ? '编辑医院' : '新增医院'}</h2>${h ? `<span class="status-badge ${h.active === false ? 'cancelled' : 'done'}">${h.active === false ? '已停用' : '在架'}</span>` : ''}</div>
+    <p class="helper-text">带 <em>*</em> 为必填。图片会压缩后保存在本机浏览器（演示环境），请勿上传含患者信息的图片。</p>
+    <div class="form-grid-2">
+      <div class="form-grid-full"><label class="field-label" for="hf_name">医院全称 <em>*</em></label><input class="fg-input" id="hf_name" value="${WUtil.escape(h?.name || '')}" placeholder="例如：复旦大学附属中山医院" /></div>
+      <div><label class="field-label" for="hf_short">简称</label><input class="fg-input" id="hf_short" value="${WUtil.escape(h?.shortName || '')}" placeholder="例如：中山医院" /></div>
+      <div><label class="field-label" for="hf_phone">医院电话</label><input class="fg-input" id="hf_phone" value="${WUtil.escape(h?.phone || '')}" placeholder="021-0000-0000" /></div>
+      <div><label class="field-label" for="hf_level">等级</label><select class="fg-select" id="hf_level">${['三甲', '三乙', '二甲', '待完善'].map(x => `<option ${h?.level === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
+      <div><label class="field-label" for="hf_category">类别</label><select class="fg-select" id="hf_category">${['综合医院', '专科医院', '中医医院'].map(x => `<option ${h?.category === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
+      <div><label class="field-label" for="hf_city">城市</label><input class="fg-input" id="hf_city" value="${WUtil.escape(h?.city || '上海市')}" /></div>
+      <div><label class="field-label" for="hf_orders">服务单量（展示用）</label><input class="fg-input" id="hf_orders" type="number" min="0" value="${Number(h?.orders || 0)}" /></div>
+      <div class="form-grid-full"><label class="field-label" for="hf_depts">优势科室（顿号/逗号分隔）</label><input class="fg-input" id="hf_depts" value="${WUtil.escape((h?.keyDepts || []).join('、'))}" placeholder="心内科、心外科、普外科" /></div>
+      <div class="form-grid-full"><label class="field-label" for="hf_intro">医院简介</label><textarea class="fg-input" id="hf_intro" rows="3" placeholder="患者端可见，建议 100 字以内">${WUtil.escape(h?.intro || '')}</textarea></div>
+      <div class="form-grid-full"><label class="field-label" for="hf_advantage">核心优势</label><textarea class="fg-input" id="hf_advantage" rows="2" placeholder="专科实力、就诊动线等">${WUtil.escape(h?.advantage || '')}</textarea></div>
+    </div>
+    <div class="field-label">院区地址</div>
+    <div id="hf_branches" class="branch-rows">${branches.map((b, i) => this._branchRowHTML(b, i)).join('')}</div>
+    <button class="btn btn-outline btn-sm" onclick="Admin.addBranchRow()">+ 添加院区</button>
+    <div class="field-label">医院图片</div>
+    <div class="hosp-image-row">
+      <div class="hosp-image-preview" id="hf_img_preview">${this._hospitalImagePreviewHTML()}</div>
+      <div class="hosp-image-ops">
+        <input hidden type="file" id="hf_image_input" accept="image/jpeg,image/png,image/webp" onchange="Admin.uploadHospitalImage(this)" />
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('hf_image_input').click()">${this._hospitalImage ? '更换图片' : '上传图片'}</button>
+        ${this._hospitalImage ? '<button class="text-danger" onclick="Admin.clearHospitalImage()">移除图片</button>' : ''}
+        <p class="helper-text">支持 JPEG/PNG/WebP，自动压缩至约 200KB、最长边 1280px。</p>
+      </div>
+    </div>
+    <label class="consent-row" style="margin-top:12px;"><input type="checkbox" id="hf_hot" ${h?.hot ? 'checked' : ''} /> 设为首页/特色页热门推荐</label>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="Admin.closeModal()">取消</button>
+      <button class="btn" onclick="Admin.saveHospitalForm()">${h ? '保存修改' : '创建医院'}</button>
+    </div>
+  `);
+};
+
+Admin.saveHospitalForm = function() {
+  const name = WUtil.value('hf_name');
+  if (!name) { this.toast('请填写医院全称'); document.getElementById('hf_name')?.focus(); return; }
+  let branches = this.collectBranchRows().filter(b => b.name || b.address);
+  if (!branches.length) branches = [{ name: '总院', address: '' }];
+  const keyDepts = WUtil.value('hf_depts').split(/[、,，]/).map(s => s.trim()).filter(Boolean);
+  const orders = Number(WUtil.value('hf_orders'));
+  const payload = {
+    name, shortName: WUtil.value('hf_short'),
+    level: WUtil.value('hf_level') || '三甲', category: WUtil.value('hf_category') || '综合医院',
+    city: WUtil.value('hf_city') || '上海市', phone: WUtil.value('hf_phone'),
+    intro: WUtil.value('hf_intro'), advantage: WUtil.value('hf_advantage'),
+    keyDepts, specialties: keyDepts.join('、'),
+    orders: Number.isFinite(orders) && orders >= 0 ? orders : 0,
+    branches, hot: !!document.getElementById('hf_hot')?.checked,
+    image: this._hospitalImage || '', imageUploaded: !!this._hospitalImageUploaded,
+  };
+  try {
+    if (this._editingHospitalId) {
+      CareStore.updateHospital(this._editingHospitalId, payload);
+      this.toast('医院资料已更新，患者端已同步');
+    } else {
+      CareStore.addHospital(payload);
+      this.toast('医院已新增，患者端立即可见');
+    }
+    this._editingHospitalId = null; this._hospitalImage = null; this._hospitalImageUploaded = false;
+    this.closeModal();
+    this.renderContent();
+  } catch (e) {
+    this.toast(e.message);
+  }
+};
+
+Admin.uploadHospitalImage = async function(input) {
+  const file = input?.files?.[0];
+  if (!file) return;
+  try {
+    this.toast('正在压缩图片…');
+    const item = await MediaService.process(file, HOSPITAL_IMAGE_PROFILE);
+    this._hospitalImage = item.dataUrl;
+    this._hospitalImageUploaded = true;
+    const preview = document.getElementById('hf_img_preview');
+    if (preview) preview.innerHTML = this._hospitalImagePreviewHTML();
+    this.toast('图片已就绪，保存后生效');
+  } catch (e) {
+    this.toast(e.message);
+  }
+  input.value = '';
+};
+
+Admin.clearHospitalImage = function() {
+  this._hospitalImage = null;
+  this._hospitalImageUploaded = false;
+  const preview = document.getElementById('hf_img_preview');
+  if (preview) preview.innerHTML = this._hospitalImagePreviewHTML();
+};
+
+Admin.toggleHospitalActive = function(id) {
+  const h = CareStore.hospital(id);
+  if (!h) return this.toast('医院不存在');
+  const wasActive = h.active !== false;
+  const doToggle = () => {
+    try {
+      if (wasActive) { CareStore.removeHospital(id); this.toast(`${h.name} 已停用，患者端不再展示`); }
+      else { CareStore.restoreHospital(id); this.toast(`${h.name} 已恢复启用`); }
+      this.renderContent();
+    } catch (e) { this.toast(e.message); }
+  };
+  if (!wasActive) return doToggle();
+  const busy = CareStore.busyNeeds(n => n.hospital === h.name).length;
+  WUtil.confirm({
+    title: '确认停用医院',
+    desc: `停用后患者端"特色医院""医院介绍"与需求表单下拉均不再展示「${h.name}」，历史需求保留${busy ? `；当前仍有 ${busy} 条未完成需求` : ''}。`,
+    rows: [['医院', h.name], ['当前状态', '在架'], ['未完成需求', `${busy} 条`]],
+    okText: '确认停用',
+    danger: true,
+    onOk: doToggle,
+  });
+};
+
+Admin.deleteHospital = function(id) {
+  const h = CareStore.hospital(id);
+  if (!h) return this.toast('医院不存在');
+  const refs = CareStore.state.needs.filter(n => n.hospital === h.name).length
+    + CareStore.state.hospitalApplications.filter(a => a.hospital === h.name).length;
+  WUtil.confirm({
+    title: '确认彻底删除医院',
+    desc: refs
+      ? `「${h.name}」已被 ${refs} 条需求/申请引用，系统会阻止彻底删除，请改用「停用」。`
+      : `删除后不可恢复，患者端将不再展示「${h.name}」。`,
+    rows: [['医院', h.name], ['引用记录', `${refs} 条`], ['当前状态', h.active === false ? '已停用' : '在架']],
+    okText: '确认彻底删除',
+    danger: true,
+    onOk: () => {
+      try {
+        CareStore.deleteHospital(id);
+        this.toast('医院已彻底删除');
+        this.renderContent();
+      } catch (e) { this.toast(e.message); }
+    },
+  });
+};
+
+// 旧入口兼容：原 prompt 式编辑改为打开表单
+Admin.editHospitalV2 = function(id) { Admin.openHospitalForm(id); };
+
+// ---- 患者端"医院介绍"页：补全医院图片 + 电话咨询入口 ----
+Patient.renderHospitals = function(el) {
+  const screen = el || document.getElementById('screen');
+  screen.classList.remove('fade-in'); void screen.offsetWidth; screen.classList.add('fade-in');
+  const apps = CareStore.state.hospitalApplications.filter(a => a.patientName === MockData.patient.user.name);
+  const hospitals = CareStore.activeHospitals();
+  const consult = this.consultSettings();
+  screen.innerHTML = `
+    <div class="svd-header"><div class="svd-back" onclick="Patient.goBack()" aria-label="返回">${P_ICON.chevronLeft}</div><h2>医院介绍</h2></div>
+    <div class="page-head"><div>简介与图片由管理员维护，具体就诊安排以医院通知为准</div></div>
+    ${consult.phone ? `
+    <div style="margin-bottom:12px;">
+      <div class="consult-strip" onclick="location.href='tel:${WUtil.escape(consult.tel)}'">
+        <span class="cs-icon">${P_ICON.phone}</span>
+        <span class="cs-text"><strong>${WUtil.escape(consult.phone)}</strong>${consult.hours ? ` · ${WUtil.escape(consult.hours)}` : ''}</span>
+        <span class="cs-cta">电话咨询</span>
+      </div>
+    </div>` : ''}
+    <section class="card apply-hospital">
+      <div class="card-title">${P_ICON.inbox} 没有想去的医院？</div>
+      <button class="btn btn-outline" onclick="Patient.toggleHospitalApply()">${this._showApplyForm ? '收起申请' : '申请新增医院'}</button>
+    </section>
+    ${this._showApplyForm ? this._renderHospitalApplyForm() : ''}
+    ${apps.length ? `<section class="card"><div class="card-title">我的医院申请</div>${apps.map(a => `
+      <div class="application-row">
+        <div><strong>${WUtil.escape(a.hospital)}</strong><small>${WUtil.escape(a.dept)} · ${WUtil.escape(a.time)}</small>${a.rejectReason ? `<p>原因：${WUtil.escape(a.rejectReason)}</p>` : ''}</div>
+        <span class="status-badge ${a.status === '待审批' ? 'pending' : a.status === '已通过' ? 'done' : 'cancelled'}">${WUtil.escape(a.status)}</span>
+      </div>`).join('')}</section>` : ''}
+    ${hospitals.length ? hospitals.map(h => HospitalUI.renderIntroCard(h)).join('') : '<div class="empty-inline">暂无医院资料</div>'}
+  `;
+};
+
+// ======================================================================
+// B4：服务收费管理（新增服务项 / 停用恢复 / 删除守卫）
+// 覆盖层：重新赋值 Admin.renderPricing，优先级高于前面的旧实现
+// ======================================================================
+Admin.renderPricing = function(el) {
+  const items = CareStore.state.prices;
+  const changes = CareStore.state.priceChanges;
+  const activeItems = items.filter(p => p.active !== false);
+  const escortCount = activeItems.filter(p => p.group !== 'expert').length;
+  const expertCount = activeItems.filter(p => p.group === 'expert').length;
+  el.innerHTML = `
+    <div class="page-head"><h2>服务收费</h2><div>新增/维护患者端公开价格；历史需求保留提交时价格快照</div></div>
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-blue"><div class="kpi-icon">${ICON.finance}</div><div class="kpi-body"><div class="kpi-num">${activeItems.length}</div><div class="kpi-label">在售服务</div></div></div>
+      <div class="kpi-card kpi-green"><div class="kpi-icon">${ICON.clipboard}</div><div class="kpi-body"><div class="kpi-num">${escortCount} / ${expertCount}</div><div class="kpi-label">陪诊 / 专家预约</div></div></div>
+      <div class="kpi-card kpi-warn"><div class="kpi-icon">${ICON.scroll}</div><div class="kpi-body"><div class="kpi-num">${changes.length}</div><div class="kpi-label">价格变更记录</div></div></div>
+    </div>
+    <section class="db-card">
+      <div class="db-card-head">
+        <h3>${ICON.finance} <span style="margin-left:6px;">公开价格表（${items.length}）</span></h3>
+        <button class="btn btn-sm" onclick="Admin.openPriceForm()">+ 新增服务项</button>
+      </div>
+      <div class="table-card"><table class="data-table">
+        <thead><tr><th>服务</th><th>分组</th><th>说明</th><th>计价单位</th><th>公开价格</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody>
+          ${items.map(p => `
+            <tr${p.active === false ? ' style="opacity:.62"' : ''}>
+              <td><strong>${WUtil.escape(p.name)}</strong><div class="cp-sub">${WUtil.escape(p.id)}</div></td>
+              <td><span class="status-badge ${p.group === 'expert' ? 'pending' : 'accepted'}">${p.group === 'expert' ? '专家预约' : '陪诊服务'}</span></td>
+              <td><div class="cp-sub">${WUtil.escape(p.desc || '-')}</div></td>
+              <td>${WUtil.escape(p.unit)}</td>
+              <td><input class="fg-input price-input" type="number" min="1" id="price_${p.id}" value="${p.price}" /></td>
+              <td><span class="status-badge ${p.active === false ? 'cancelled' : 'done'}">${p.active === false ? '已停用' : '在售'}</span></td>
+              <td>
+                <div class="hc-actions" style="margin:0; padding:0; border:0;">
+                  <button class="btn btn-sm" onclick="Admin.savePriceV2('${p.id}')">保存价格</button>
+                  <button class="btn btn-outline btn-sm" onclick="Admin.openPriceForm('${p.id}')">编辑</button>
+                  <button class="btn btn-outline btn-sm" onclick="Admin.togglePriceActive('${p.id}')">${p.active === false ? '恢复' : '停用'}</button>
+                  <button class="btn btn-outline btn-sm danger" onclick="Admin.deletePrice('${p.id}')">删除</button>
+                </div>
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </section>
+    <section class="db-card">
+      <div class="db-card-head"><h3>最近变更</h3></div>
+      <div class="db-card-body">${changes.slice(0, 10).map(c => `
+        <div class="db-row-item"><div><strong>${WUtil.escape(c.itemName)}</strong><p class="dbr-info">¥${c.oldPrice} → ¥${c.newPrice} · ${WUtil.escape(c.time)}</p></div><span class="status-badge done">已生效</span></div>`).join('') || '<div class="empty-inline">暂无变更</div>'}</div>
+    </section>
+  `;
+};
+
+// 保存价格（二次确认：展示新旧价格对比，确认后才写入）
+Admin.savePriceV2 = function(id) {
+  const value = Number(document.getElementById('price_' + id)?.value);
+  const item = CareStore.state.prices.find(p => p.id === id);
+  if (!item || !Number.isFinite(value) || value <= 0) return this.toast('请输入大于 0 的有效价格');
+  if (item.price === value) return this.toast('价格没有变化');
+  const oldPrice = item.price;
+  WUtil.confirm({
+    title: '确认调整公开价格',
+    desc: '调整后患者端"我的需求"表单立即生效；已提交需求仍按提交时的价格快照结算。',
+    rows: [['服务项', item.name], ['当前价格', `¥${oldPrice}`], ['调整后价格', `¥${value}`]],
+    okText: '确认调价',
+    onOk: () => {
+      CareStore.updatePrice(id, value);
+      this.toast(`${item.name} 价格已更新：¥${oldPrice} → ¥${value}`);
+      this.renderPricing(document.getElementById('adminContent'));
+    },
+  });
+};
+
+Admin.openPriceForm = function(id) {
+  const p = id ? CareStore.state.prices.find(x => x.id === id) : null;
+  if (id && !p) return this.toast('服务项不存在');
+  this.modal(`
+    <div class="modal-head-row"><h2>${p ? '编辑服务项' : '新增服务项'}</h2>${p ? `<span class="status-badge ${p.active === false ? 'cancelled' : 'done'}">${p.active === false ? '已停用' : '在售'}</span>` : ''}</div>
+    <p class="helper-text">${p ? '改名会同步更新"未完成需求"的服务类型；已完成需求使用价格快照，不受影响。' : '新增后立即出现在患者端"我的需求"表单对应分组中；价格提交时生成快照，后续调价不影响历史需求。'}</p>
+    <div class="form-grid-2">
+      <div class="form-grid-full"><label class="field-label" for="pf_name">服务名称 <em>*</em></label><input class="fg-input" id="pf_name" value="${WUtil.escape(p?.name || '')}" placeholder="例如：术后陪护 / 特需专家加急" /></div>
+      <div><label class="field-label" for="pf_group">分组 <em>*</em></label><select class="fg-select" id="pf_group"><option value="escort" ${p?.group !== 'expert' ? 'selected' : ''}>陪诊服务（服务类型区）</option><option value="expert" ${p?.group === 'expert' ? 'selected' : ''}>专家预约（专家预约区）</option></select></div>
+      <div><label class="field-label" for="pf_unit">计价单位</label><input class="fg-input" id="pf_unit" value="${WUtil.escape(p?.unit || '次')}" /></div>
+      <div><label class="field-label" for="pf_price">公开价格（元） <em>*</em></label><input class="fg-input" id="pf_price" type="number" min="1" step="1" value="${p ? p.price : ''}" placeholder="例如：398" /></div>
+      <div class="form-grid-full"><label class="field-label" for="pf_desc">服务说明</label><input class="fg-input" id="pf_desc" value="${WUtil.escape(p?.desc || '')}" placeholder="例如：术后 8 小时陪护，含取药与医嘱记录" /></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="Admin.closeModal()">取消</button>
+      <button class="btn" onclick="Admin.savePriceForm('${p ? p.id : ''}')">${p ? '保存修改' : '创建服务项'}</button>
+    </div>
+  `);
+};
+
+Admin.savePriceForm = function(id) {
+  const name = WUtil.value('pf_name');
+  const price = Number(WUtil.value('pf_price'));
+  const desc = WUtil.value('pf_desc');
+  const unit = WUtil.value('pf_unit') || '次';
+  const group = WUtil.value('pf_group') || 'escort';
+  if (!name) { this.toast('请填写服务名称'); document.getElementById('pf_name')?.focus(); return; }
+  if (!Number.isFinite(price) || price <= 0) { this.toast('请填写大于 0 的价格'); document.getElementById('pf_price')?.focus(); return; }
+  if (!id) {
+    try {
+      CareStore.addPrice({ name, price, desc, unit, group });
+      this.toast('服务项已新增，患者端立即可见');
+      this.closeModal();
+      this.renderContent();
+    } catch (e) {
+      this.toast(e.message);
+    }
+    return;
+  }
+  const item = CareStore.state.prices.find(x => x.id === id);
+  if (!item) return this.toast('服务项不存在');
+  const groupLabel = g => (g === 'expert' ? '专家预约' : '陪诊服务');
+  const changes = [];
+  if (name !== item.name) changes.push(['名称', `${item.name} → ${name}`]);
+  if (price !== item.price) changes.push(['价格', `¥${item.price} → ¥${price}`]);
+  if (unit !== item.unit) changes.push(['计价单位', `${item.unit} → ${unit}`]);
+  if (group !== (item.group || 'escort')) changes.push(['分组', `${groupLabel(item.group)} → ${groupLabel(group)}`]);
+  if (desc !== (item.desc || '')) changes.push(['服务说明', '已修改']);
+  if (!changes.length) { this.toast('没有需要保存的修改'); return; }
+  const affected = name !== item.name ? CareStore.busyNeeds(n => n.serviceType === item.name).length : 0;
+  WUtil.confirm({
+    title: '确认保存服务项修改',
+    desc: affected
+      ? `改名将同步更新 ${affected} 条未完成需求的服务类型；已完成需求保持原名与原价格快照。`
+      : '修改后患者端"我的需求"表单立即生效，历史需求不受影响。',
+    rows: changes,
+    okText: '确认保存',
+    onOk: () => {
+      try {
+        const r = CareStore.updatePriceItem(id, { name, price, desc, unit, group });
+        this.toast(`服务项已更新${r.renamedNeeds ? `（同步 ${r.renamedNeeds} 条未完成需求）` : ''}`);
+        this.closeModal();
+        this.renderContent();
+      } catch (e) { this.toast(e.message); }
+    },
+  });
+};
+
+Admin.togglePriceActive = function(id) {
+  const item = CareStore.state.prices.find(p => p.id === id);
+  if (!item) return this.toast('服务项不存在');
+  const restoring = item.active === false;
+  const doToggle = () => {
+    try {
+      CareStore.setPriceActive(id, restoring);
+      this.toast(restoring ? `${item.name} 已恢复在售` : `${item.name} 已停用，患者端不再展示`);
+      this.renderContent();
+    } catch (e) { this.toast(e.message); }
+  };
+  if (restoring) return doToggle();
+  const busy = CareStore.busyNeeds(n => n.serviceType === item.name).length;
+  WUtil.confirm({
+    title: '确认停用服务项',
+    desc: `停用后患者端表单不再展示「${item.name}」，历史需求不受影响${busy ? `；当前仍有 ${busy} 条未完成需求使用该服务` : ''}。`,
+    rows: [['服务项', item.name], ['当前状态', '在售'], ['未完成需求', `${busy} 条`]],
+    okText: '确认停用',
+    danger: true,
+    onOk: doToggle,
+  });
+};
+
+Admin.deletePrice = function(id) {
+  const item = CareStore.state.prices.find(p => p.id === id);
+  if (!item) return this.toast('服务项不存在');
+  const busy = CareStore.busyNeeds(n => n.serviceType === item.name).length;
+  WUtil.confirm({
+    title: '确认删除服务项',
+    desc: busy
+      ? `「${item.name}」当前有 ${busy} 条未完成需求引用，系统会阻止删除，请改用「停用」。`
+      : `删除后患者端不再展示「${item.name}」；如为误删，可重新新增同名服务项。`,
+    rows: [['服务项', item.name], ['公开价格', `¥${item.price}/${item.unit}`], ['未完成需求', `${busy} 条`]],
+    okText: '确认删除',
+    danger: true,
+    onOk: () => {
+      try {
+        CareStore.removePrice(id);
+        this.toast('服务项已删除');
+        this.renderContent();
+      } catch (e) { this.toast(e.message); }
+    },
+  });
+};
+
+// ======================================================================
+// B5：档案管理（就诊档案 + 复查提醒 + 患者数据 CRUD）
+// 覆盖层：路由链扩展 + 新菜单页；患者数据改为读写 CareStore.state.patients
+// ======================================================================
+const _b4RenderContent = Admin.renderContent.bind(Admin);
+Admin.renderContent = function() {
+  const id = this.currentMenu;
+  if (id === 'records') {
+    document.getElementById('atCrumb').textContent = '档案管理';
+    const el = document.getElementById('adminContent');
+    el.classList.remove('fade-in'); void el.offsetWidth; el.classList.add('fade-in');
+    this.renderRecords(el);
+    return;
+  }
+  _b4RenderContent();
+};
+
+// 复查状态徽章
+Admin.recheckBadge = function(a) {
+  if (!a.needRecheck) return '<span class="status-badge cancelled">无需复查</span>';
+  if (a.recheckStatus === '已复查') return '<span class="status-badge done">已复查</span>';
+  const days = CareStore.daysUntil(a.recheckDate);
+  if (days === null) return '<span class="status-badge pending">待复查</span>';
+  if (days < 0) return `<span class="status-badge cancelled">已逾期 ${Math.abs(days)} 天</span>`;
+  const cls = days <= RECHECK_REMIND_DAYS ? 'pending' : 'accepted';
+  return `<span class="status-badge ${cls}">${days === 0 ? '今日复查' : `还有 ${days} 天`}</span>`;
+};
+
+Admin.renderRecords = function(el) {
+  const reminders = CareStore.checkRecheckReminders();
+  const archives = CareStore.activeArchives();
+  const patients = CareStore.activePatients();
+  const filter = this._recordFilter || 'all';
+  const list = archives.filter(a => {
+    if (filter === 'due') return a.needRecheck && a.recheckStatus === '待复查' && a.recheckStatus !== '已复查';
+    if (filter === 'overdue') return a.recheckStatus === '已逾期';
+    if (filter === 'rechecked') return a.recheckStatus === '已复查';
+    return true;
+  });
+  el.innerHTML = `
+    <div class="page-head"><h2>档案管理</h2><div>记录就诊情况与复查计划：管理员建档、患者可补充，复查到期自动提醒</div></div>
+
+    <section class="db-card">
+      <div class="db-card-head"><h3>${ICON.alert} <span style="margin-left:6px;">复查提醒待办（${reminders.due.length + reminders.overdue.length}）</span></h3>
+        <span class="cp-sub">到期前 ${reminders.remindDays} 天自动提醒患者</span></div>
+      <div class="db-card-body">
+        ${(reminders.overdue.length + reminders.due.length) === 0 ? '<div class="empty-inline">暂无待复查档案</div>' : `
+          <div class="reminder-list">
+            ${reminders.overdue.map(x => `<div class="reminder-item overdue"><div><strong>${WUtil.escape(x.archive.patientName)}</strong> 的复查已逾期 ${Math.abs(x.days)} 天<div class="cp-sub">${WUtil.escape(x.archive.hospital)} · 计划复查 ${WUtil.escape(x.archive.recheckDate)}</div></div><button class="btn btn-sm" onclick="Admin.openArchiveForm('${x.archive.id}')">去处理</button></div>`).join('')}
+            ${reminders.due.map(x => `<div class="reminder-item"><div><strong>${WUtil.escape(x.archive.patientName)}</strong> 需在 ${WUtil.escape(x.archive.recheckDate)} 前复查<div class="cp-sub">${WUtil.escape(x.archive.hospital)} · ${x.days === 0 ? '今天到期' : `还有 ${x.days} 天`}</div></div><button class="btn btn-sm" onclick="Admin.openArchiveForm('${x.archive.id}')">去处理</button></div>`).join('')}
+          </div>`}
+      </div>
+    </section>
+
+    <section class="db-card">
+      <div class="db-card-head"><h3>${ICON.fileText} <span style="margin-left:6px;">就诊档案（${archives.length}）</span></h3>
+        <button class="btn btn-sm" onclick="Admin.openArchiveForm(null)">+ 新建档案</button></div>
+      <div class="db-card-body">
+        <div class="filter-bar">
+          ${[['all', `全部（${archives.length}）`], ['due', '待复查'], ['overdue', '已逾期'], ['rechecked', '已复查']].map(([k, name]) => `<button class="filter-btn ${filter === k ? 'active' : ''}" onclick="Admin.setRecordFilter('${k}')">${name}</button>`).join('')}
+        </div>
+        ${list.length ? list.map(a => `
+          <article class="archive-card">
+            <div class="ac-head">
+              <div>
+                <div class="ac-name">${WUtil.escape(a.patientName)} <span class="ac-hosp">${WUtil.escape(a.hospital)}${a.dept ? ` · ${WUtil.escape(a.dept)}` : ''}</span></div>
+                <div class="cp-sub">就诊日期 ${WUtil.escape(a.visitDate || '-')} · 主诊医生 ${WUtil.escape(a.doctor || '未填写')} · 更新于 ${WUtil.escape(a.updatedAt || '-')}</div>
+              </div>
+              ${this.recheckBadge(a)}
+            </div>
+            <div class="ac-body">
+              <div class="ac-row"><span class="ac-label">就诊情况</span><span class="ac-value">${WUtil.escape(a.visitSummary || '待补充')}</span></div>
+              <div class="ac-row"><span class="ac-label">基本诊疗内容</span><span class="ac-value">${WUtil.escape(a.careContent || '待补充')}</span></div>
+              ${a.needRecheck ? `<div class="ac-row"><span class="ac-label">复查到期</span><span class="ac-value">${WUtil.escape(a.recheckDate || '-')}${a.recheckNote ? ` · ${WUtil.escape(a.recheckNote)}` : ''}</span></div>` : ''}
+              <div class="ac-src">填写来源：${Object.entries(a.fieldsSource || {}).map(([k, v]) => `${WUtil.escape(this.archiveFieldLabel(k))}←${v === 'patient' ? '患者' : '管理员'}`).join('、') || '未记录'}</div>
+            </div>
+            <div class="hc-actions">
+              <button class="btn btn-sm" onclick="Admin.openArchiveForm('${a.id}')">编辑</button>
+              ${a.needRecheck && a.recheckStatus !== '已复查' ? `<button class="btn btn-outline btn-sm" onclick="Admin.markArchiveRechecked('${a.id}')">标记已复查</button>` : ''}
+              <button class="btn btn-outline btn-sm danger" onclick="Admin.deleteArchive('${a.id}')">删除</button>
+            </div>
+          </article>`).join('') : '<div class="empty-inline">暂无档案，点击右上角新建</div>'}
+      </div>
+    </section>
+
+    <section class="db-card">
+      <div class="db-card-head"><h3>${ICON.patients} <span style="margin-left:6px;">患者数据（${patients.length}）</span></h3>
+        <button class="btn btn-sm" onclick="Admin.openPatientForm(null)">+ 新增患者</button></div>
+      <div class="db-card-body"><div class="table-card"><table class="data-table">
+        <thead><tr><th>患者</th><th>性别/年龄</th><th>电话</th><th>病史</th><th>档案数</th><th>来源</th><th>操作</th></tr></thead>
+        <tbody>${patients.map(p => `
+          <tr>
+            <td><div class="cell-patient"><div class="cp-avatar">${WUtil.escape((p.name || '?').charAt(0))}</div><div><div class="cp-name">${WUtil.escape(p.name)}</div><div class="cp-sub">${WUtil.escape(p.id)}</div></div></div></td>
+            <td>${WUtil.escape(p.gender || '-')} / ${WUtil.escape(String(p.age ?? '-'))}</td>
+            <td>${WUtil.escape(p.phone || '-')}</td>
+            <td>${WUtil.escape(String(p.history || '-').slice(0, 12))}</td>
+            <td>${CareStore.archivesFor(p.name).length}</td>
+            <td>${p.source === 'patient' ? '患者端' : '管理员'}</td>
+            <td><div class="hc-actions" style="margin:0;padding:0;border:0;">
+              <button class="btn btn-outline btn-sm" onclick="Admin.openPatientForm('${p.id}')">编辑</button>
+              <button class="btn btn-outline btn-sm danger" onclick="Admin.deletePatient('${p.id}')">删除</button>
+            </div></td>
+          </tr>`).join('')}</tbody>
+      </table></div></div>
+    </section>
+  `;
+};
+
+Admin.setRecordFilter = function(filter) {
+  this._recordFilter = filter;
+  this.renderRecords(document.getElementById('adminContent'));
+};
+
+Admin.archiveFieldLabel = function(key) {
+  return ({ hospital:'医院', dept:'科室', visitDate:'就诊日期', doctor:'主诊医生', visitSummary:'就诊情况', careContent:'诊疗内容' })[key] || key;
+};
+
+Admin.openArchiveForm = function(id) {
+  const a = id ? CareStore.archive(id) : null;
+  if (id && !a) return this.toast('档案不存在');
+  const patients = CareStore.activePatients();
+  const hospitals = CareStore.activeHospitals();
+  const dateVal = (iso) => String(iso || '').slice(0, 10);
+  this.modal(`
+    <div class="modal-head-row"><h2>${a ? '编辑就诊档案' : '新建就诊档案'}</h2>${a ? this.recheckBadge(a) : ''}</div>
+    <p class="helper-text">管理员与患者可双向填写：患者端补充的内容不会覆盖管理员已填字段，来源会分别记录。</p>
+    <div class="form-grid-2">
+      <div><label class="field-label" for="af_patient">就诊人 <em>*</em></label><input class="fg-input" id="af_patient" list="af_patient_list" value="${WUtil.escape(a?.patientName || '')}" placeholder="选择或输入姓名" />
+        <datalist id="af_patient_list">${patients.map(p => `<option value="${WUtil.escape(p.name)}"></option>`).join('')}</datalist></div>
+      <div><label class="field-label" for="af_visitDate">就诊日期</label><input class="fg-input" id="af_visitDate" type="date" value="${WUtil.escape(dateVal(a?.visitDate || CareStore.todayISO()))}" /></div>
+      <div><label class="field-label" for="af_hospital">就诊医院 <em>*</em></label><input class="fg-input" id="af_hospital" list="af_hospital_list" value="${WUtil.escape(a?.hospital || '')}" placeholder="选择或输入医院" />
+        <datalist id="af_hospital_list">${hospitals.map(h => `<option value="${WUtil.escape(h.name)}"></option>`).join('')}</datalist></div>
+      <div><label class="field-label" for="af_dept">科室</label><input class="fg-input" id="af_dept" value="${WUtil.escape(a?.dept || '')}" placeholder="例如：心内科" /></div>
+      <div class="form-grid-full"><label class="field-label" for="af_doctor">主诊医生</label><input class="fg-input" id="af_doctor" value="${WUtil.escape(a?.doctor || '')}" placeholder="例如：张明华" /></div>
+      <div class="form-grid-full"><label class="field-label" for="af_visitSummary">就诊情况</label><textarea class="fg-input" id="af_visitSummary" rows="3" placeholder="本次就诊的主要情况与结论">${WUtil.escape(a?.visitSummary || '')}</textarea></div>
+      <div class="form-grid-full"><label class="field-label" for="af_careContent">基本诊疗内容</label><textarea class="fg-input" id="af_careContent" rows="3" placeholder="检查项目、用药调整、医嘱要点等">${WUtil.escape(a?.careContent || '')}</textarea></div>
+      <div class="form-grid-full">
+        <label class="consent-row"><input type="checkbox" id="af_needRecheck" ${a?.needRecheck ? 'checked' : ''} onchange="document.getElementById('af_recheckBox').hidden=!this.checked" /> 需要复查</label>
+      </div>
+      <div class="form-grid-full" id="af_recheckBox" ${a?.needRecheck ? '' : 'hidden'}>
+        <div class="form-grid-2">
+          <div><label class="field-label" for="af_recheckDate">复查到期时间 <em>*</em></label><input class="fg-input" id="af_recheckDate" type="date" value="${WUtil.escape(dateVal(a?.recheckDate || ''))}" /></div>
+          <div><label class="field-label" for="af_recheckNote">复查提示</label><input class="fg-input" id="af_recheckNote" value="${WUtil.escape(a?.recheckNote || '')}" placeholder="例如：携带血压记录本" /></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="Admin.closeModal()">取消</button>
+      ${a ? `<button class="btn btn-outline" onclick="Admin.markArchiveRechecked('${a.id}')">标记已复查</button>` : ''}
+      <button class="btn" onclick="Admin.saveArchiveForm('${a ? a.id : ''}')">${a ? '保存修改' : '创建档案'}</button>
+    </div>
+  `);
+};
+
+Admin.saveArchiveForm = function(id) {
+  const patientName = WUtil.value('af_patient');
+  const hospital = WUtil.value('af_hospital');
+  const needRecheck = !!document.getElementById('af_needRecheck')?.checked;
+  const recheckDate = WUtil.value('af_recheckDate');
+  if (!patientName) { this.toast('请填写就诊人'); document.getElementById('af_patient')?.focus(); return; }
+  if (!hospital) { this.toast('请填写就诊医院'); document.getElementById('af_hospital')?.focus(); return; }
+  if (needRecheck && !recheckDate) { this.toast('需要复查时必须填写复查到期时间'); document.getElementById('af_recheckDate')?.focus(); return; }
+  const patient = CareStore.patientByName(patientName);
+  const payload = {
+    patientId: patient ? patient.id : '',
+    patientName, hospital,
+    dept: WUtil.value('af_dept'), doctor: WUtil.value('af_doctor'),
+    visitDate: WUtil.value('af_visitDate') || CareStore.todayISO(),
+    visitSummary: WUtil.value('af_visitSummary'), careContent: WUtil.value('af_careContent'),
+    needRecheck, recheckDate: needRecheck ? recheckDate : '',
+    recheckNote: WUtil.value('af_recheckNote'),
+  };
+  try {
+    if (id) { CareStore.updateArchive(id, payload, 'admin'); this.toast('档案已更新，患者端已同步'); }
+    else { CareStore.addArchive(payload, 'admin'); this.toast('档案已创建，患者端可见'); }
+    this.closeModal();
+    this.renderContent();
+  } catch (e) { this.toast(e.message); }
+};
+
+Admin.markArchiveRechecked = function(id) {
+  try {
+    CareStore.markArchiveRechecked(id);
+    this.toast('已标记为复查完成，患者端提醒已解除');
+    this.closeModal();
+    this.renderContent();
+  } catch (e) { this.toast(e.message); }
+};
+
+Admin.deleteArchive = function(id) {
+  const a = CareStore.archive(id);
+  if (!a) return this.toast('档案不存在');
+  WUtil.confirm({
+    title: '确认删除就诊档案',
+    desc: `删除后患者端"我的档案"不再展示该记录，复查提醒同时解除。`,
+    rows: [['就诊人', a.patientName], ['医院', a.hospital], ['就诊日期', a.visitDate || '-']],
+    okText: '确认删除',
+    danger: true,
+    onOk: () => {
+      try {
+        CareStore.removeArchive(id);
+        this.toast('档案已删除');
+        this.renderContent();
+      } catch (e) { this.toast(e.message); }
+    },
+  });
+};
+
+// ---- 患者数据 CRUD（管理员）----
+Admin.openPatientForm = function(id) {
+  const p = id ? CareStore.patient(id) : null;
+  if (id && !p) return this.toast('患者不存在');
+  this.modal(`
+    <div class="modal-head-row"><h2>${p ? '编辑患者' : '新增患者'}</h2></div>
+    <div class="form-grid-2">
+      <div><label class="field-label" for="pt_name">姓名 <em>*</em></label><input class="fg-input" id="pt_name" value="${WUtil.escape(p?.name || '')}" /></div>
+      <div><label class="field-label" for="pt_phone">联系电话</label><input class="fg-input" id="pt_phone" value="${WUtil.escape(p?.phone || '')}" /></div>
+      <div><label class="field-label" for="pt_gender">性别</label><select class="fg-select" id="pt_gender">${['男', '女'].map(g => `<option ${p?.gender === g ? 'selected' : ''}>${g}</option>`).join('')}</select></div>
+      <div><label class="field-label" for="pt_age">年龄</label><input class="fg-input" id="pt_age" type="number" min="0" max="120" value="${WUtil.escape(String(p?.age ?? ''))}" /></div>
+      <div class="form-grid-full"><label class="field-label" for="pt_history">既往病史</label><input class="fg-input" id="pt_history" value="${WUtil.escape(p?.history || '')}" /></div>
+      <div><label class="field-label" for="pt_allergy">过敏史</label><input class="fg-input" id="pt_allergy" value="${WUtil.escape(p?.allergy || '')}" /></div>
+      <div><label class="field-label" for="pt_medicine">用药情况</label><input class="fg-input" id="pt_medicine" value="${WUtil.escape(p?.medicine || '')}" /></div>
+      <div><label class="field-label" for="pt_mobility">行动能力</label><input class="fg-input" id="pt_mobility" value="${WUtil.escape(p?.mobility || '')}" /></div>
+      <div><label class="field-label" for="pt_insurance">医保</label><input class="fg-input" id="pt_insurance" value="${WUtil.escape(p?.insurance || '')}" /></div>
+      <div class="form-grid-full"><label class="field-label" for="pt_note">备注</label><input class="fg-input" id="pt_note" value="${WUtil.escape(p?.note || '')}" /></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="Admin.closeModal()">取消</button>
+      <button class="btn" onclick="Admin.savePatientForm('${p ? p.id : ''}')">${p ? '保存修改' : '创建患者'}</button>
+    </div>
+  `);
+};
+
+Admin.savePatientForm = function(id) {
+  const name = WUtil.value('pt_name');
+  if (!name) { this.toast('请填写患者姓名'); document.getElementById('pt_name')?.focus(); return; }
+  const payload = {
+    name, phone: WUtil.value('pt_phone'), gender: WUtil.value('pt_gender') || '男',
+    age: WUtil.value('pt_age'), history: WUtil.value('pt_history'), allergy: WUtil.value('pt_allergy'),
+    medicine: WUtil.value('pt_medicine'), mobility: WUtil.value('pt_mobility'),
+    insurance: WUtil.value('pt_insurance'), note: WUtil.value('pt_note'),
+  };
+  try {
+    if (id) { CareStore.updatePatient(id, payload); this.toast('患者资料已更新'); }
+    else { CareStore.addPatient(payload); this.toast('患者已新增'); }
+    this.closeModal();
+    this.renderContent();
+  } catch (e) { this.toast(e.message); }
+};
+
+Admin.deletePatient = function(id) {
+  const p = CareStore.patient(id);
+  if (!p) return this.toast('患者不存在');
+  const busy = CareStore.busyNeeds(n => n.patientName === p.name).length;
+  const archives = CareStore.archivesFor(p.name).length;
+  WUtil.confirm({
+    title: '确认删除患者',
+    desc: busy
+      ? `「${p.name}」当前有 ${busy} 条未完成需求，系统会阻止删除，请先处理需求。`
+      : `删除后患者端"就诊人"不再展示该患者${archives ? `；其 ${archives} 条就诊档案仍保留（可在档案管理中单独删除）` : ''}。`,
+    rows: [['患者', `${p.name}（${p.gender || '-'}/${p.age ?? '-'}）`], ['联系电话', p.phone || '-'], ['未完成需求', `${busy} 条`], ['就诊档案', `${archives} 条`]],
+    okText: '确认删除',
+    danger: true,
+    onOk: () => {
+      try {
+        CareStore.removePatient(id);
+        this.toast('患者已删除');
+        this.renderContent();
+      } catch (e) { this.toast(e.message); }
+    },
+  });
+};
+
+// ---- 患者端"我的"页：注入"我的档案"入口（登录后可见，与管理员同源数据）----
+const _b5RenderProfile = Patient.renderProfile.bind(Patient);
+Patient.renderProfile = function(el) {
+  _b5RenderProfile(el);
+  const anchor = `<div class="me-menu-item" onclick="Patient.navigateTo(el => Patient.renderProgress(el), '陪诊进度')">`;
+  if (!el.innerHTML.includes(anchor)) return;
+  const entry = `<div class="me-menu-item" onclick="Patient.navigateTo(el => Patient.renderMyArchives(el), '我的档案')">
+          <div class="me-menu-icon" style="background:rgba(196,146,46,0.1); color:var(--accent-amber);">${P_ICON.clipboard}</div>
+          <div class="me-menu-text">我的档案</div>
+          <div class="me-menu-arrow">${P_ICON.chevronRight}</div>
+        </div>
+        `;
+  el.innerHTML = el.innerHTML.replace(anchor, entry + anchor);
+};
+
+// ======================================================================
+// B6：陪诊师管理（完整 CRUD + 停用）与患者端"意向陪诊师"
+// 规则：患者仅登记意向（preferredEscort*），订单仍为"待处理"且不携带已分配陪诊师
+// ======================================================================
+Admin.renderEscorts = function(el) {
+  const all = CareStore.state.escorts;
+  const active = CareStore.activeEscorts();
+  const inactive = all.filter(e => e.active === false);
+  const filter = this._escortFilter || 'active';
+  const list = filter === 'inactive' ? inactive : active;
+  el.innerHTML = `
+    <div class="page-head"><h2>陪诊师管理</h2><div>在岗 ${active.length} 名${inactive.length ? ` · 已停用 ${inactive.length} 名` : ''}；停用后不再出现在派单与患者端意向列表</div></div>
+    <div class="toolbar">
+      <div class="filter-bar" style="margin:0;">
+        <button class="filter-btn ${filter === 'active' ? 'active' : ''}" onclick="Admin.setEscortFilter('active')">在岗（${active.length}）</button>
+        <button class="filter-btn ${filter === 'inactive' ? 'active' : ''}" onclick="Admin.setEscortFilter('inactive')">已停用（${inactive.length}）</button>
+      </div>
+      <button class="btn btn-sm" onclick="Admin.openEscortForm(null)">+ 新增陪诊师</button>
+    </div>
+    <div class="escort-grid">
+      ${list.length ? list.map(e => `
+        <div class="escort-card${e.active === false ? ' inactive' : ''}">
+          <div class="ec-head">
+            <div class="ec-avatar" onclick="Admin.openEscort('${e.id}')">${WUtil.escape(e.avatar || (e.name || '?').charAt(0))}</div>
+            <div class="ec-info" onclick="Admin.openEscort('${e.id}')">
+              <div class="ec-name">${WUtil.escape(e.name)} <span class="ec-sub">${WUtil.escape(e.gender || '-')}/${WUtil.escape(String(e.age ?? '-'))}</span></div>
+              <div class="ec-meta"><span class="ec-star">★</span> ${WUtil.escape(String(e.star ?? 5))} · ${Number(e.orders || 0)}单 · ${WUtil.escape(e.region || '未填写区域')}</div>
+            </div>
+            <span class="status-badge ${e.active === false ? 'cancelled' : (e.status === '空闲' ? 'accepted' : 'serving')}">${WUtil.escape(e.status || '空闲')}</span>
+          </div>
+          <div class="ec-tags">${(e.tags || []).slice(0, 4).map(t => `<span class="tag tag-gray">${WUtil.escape(t)}</span>`).join('') || '<span class="cp-sub">未填写专长</span>'}</div>
+          <div class="ec-stats">
+            <div><div class="ec-num">¥${Number(e.income || 0)}</div><div class="ec-label">本月收入</div></div>
+            <div><div class="ec-num">${Number(e.completionRate || 100)}%</div><div class="ec-label">完成率</div></div>
+            <div><div class="ec-num">${Number(e.score || 90)}</div><div class="ec-label">综合评分</div></div>
+          </div>
+          <div class="hc-actions">
+            <button class="btn btn-outline btn-sm" onclick="Admin.openEscortForm('${e.id}')">编辑</button>
+            <button class="btn btn-outline btn-sm" onclick="Admin.toggleEscortActive('${e.id}')">${e.active === false ? '恢复在岗' : '停用'}</button>
+            <button class="btn btn-outline btn-sm danger" onclick="Admin.deleteEscort('${e.id}')">删除</button>
+          </div>
+        </div>`).join('') : '<div class="empty-inline">暂无陪诊师</div>'}
+    </div>
+  `;
+};
+
+Admin.setEscortFilter = function(filter) {
+  this._escortFilter = filter;
+  this.renderEscorts(document.getElementById('adminContent'));
+};
+
+Admin.openEscortForm = function(id) {
+  const e = id ? CareStore.escort(id) : null;
+  if (id && !e) return this.toast('陪诊师不存在');
+  this.modal(`
+    <div class="modal-head-row"><h2>${e ? '编辑陪诊师' : '新增陪诊师'}</h2>${e ? `<span class="status-badge ${e.active === false ? 'cancelled' : 'done'}">${e.active === false ? '已停用' : '在岗'}</span>` : ''}</div>
+    <p class="helper-text">专长标签用于派单参考（如"心内科""轮椅协助""老人陪诊"），也是患者端意向列表的展示依据。</p>
+    <div class="form-grid-2">
+      <div><label class="field-label" for="ef_name">姓名 <em>*</em></label><input class="fg-input" id="ef_name" value="${WUtil.escape(e?.name || '')}" /></div>
+      <div><label class="field-label" for="ef_phone">联系电话</label><input class="fg-input" id="ef_phone" value="${WUtil.escape(e?.phone || '')}" placeholder="138-0000-0000" /></div>
+      <div><label class="field-label" for="ef_gender">性别</label><select class="fg-select" id="ef_gender">${['女', '男'].map(g => `<option ${e?.gender === g ? 'selected' : ''}>${g}</option>`).join('')}</select></div>
+      <div><label class="field-label" for="ef_age">年龄</label><input class="fg-input" id="ef_age" type="number" min="18" max="70" value="${WUtil.escape(String(e?.age ?? ''))}" /></div>
+      <div><label class="field-label" for="ef_region">服务区域</label><input class="fg-input" id="ef_region" value="${WUtil.escape(e?.region || '')}" placeholder="例如：东城区" /></div>
+      <div><label class="field-label" for="ef_joinDate">入职日期</label><input class="fg-input" id="ef_joinDate" type="date" value="${WUtil.escape(String(e?.joinDate || CareStore.todayISO()).slice(0, 10))}" /></div>
+      <div class="form-grid-full"><label class="field-label" for="ef_tags">专长标签（顿号/逗号分隔）</label><input class="fg-input" id="ef_tags" value="${WUtil.escape((e?.tags || []).join('、'))}" placeholder="心内科、老人陪诊、轮椅协助" /></div>
+      <div><label class="field-label" for="ef_status">当前状态</label><select class="fg-select" id="ef_status">${['空闲', '服务中', '已派单', '已停用'].map(s => `<option ${e?.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
+      <div><label class="field-label" for="ef_score">综合评分</label><input class="fg-input" id="ef_score" type="number" min="0" max="100" value="${Number(e?.score ?? 90)}" /></div>
+      <div class="form-grid-full"><label class="field-label" for="ef_note">备注</label><input class="fg-input" id="ef_note" value="${WUtil.escape(e?.note || '')}" placeholder="例如：擅长与耳背老人沟通" /></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="Admin.closeModal()">取消</button>
+      <button class="btn" onclick="Admin.saveEscortForm('${e ? e.id : ''}')">${e ? '保存修改' : '创建陪诊师'}</button>
+    </div>
+  `);
+};
+
+Admin.saveEscortForm = function(id) {
+  const name = WUtil.value('ef_name');
+  if (!name) { this.toast('请填写陪诊师姓名'); document.getElementById('ef_name')?.focus(); return; }
+  const payload = {
+    name, phone: WUtil.value('ef_phone'), gender: WUtil.value('ef_gender') || '女',
+    age: WUtil.value('ef_age'), region: WUtil.value('ef_region'),
+    joinDate: WUtil.value('ef_joinDate') || CareStore.todayISO(),
+    tags: WUtil.value('ef_tags'), status: WUtil.value('ef_status') || '空闲',
+    score: Number(WUtil.value('ef_score')) || 90, note: WUtil.value('ef_note'),
+  };
+  try {
+    if (id) { CareStore.updateEscort(id, payload); this.toast('陪诊师资料已更新'); }
+    else { CareStore.addEscort(payload); this.toast('陪诊师已新增，可参与派单'); }
+    this.closeModal();
+    this.renderContent();
+  } catch (e) { this.toast(e.message); }
+};
+
+Admin.toggleEscortActive = function(id) {
+  const e = CareStore.escort(id);
+  if (!e) return this.toast('陪诊师不存在');
+  const restoring = e.active === false;
+  const doToggle = () => {
+    try {
+      CareStore.setEscortActive(id, restoring);
+      this.toast(restoring ? `${e.name} 已恢复在岗` : `${e.name} 已停用，不再参与派单`);
+      this.renderContent();
+    } catch (err) { this.toast(err.message); }
+  };
+  if (restoring) return doToggle();
+  const busy = CareStore.busyNeeds(n => n.escortId === e.id && ['已分配', '服务中'].includes(n.status)).length;
+  WUtil.confirm({
+    title: '确认停用陪诊师',
+    desc: `停用后「${e.name}」不再出现在派单弹窗与患者端意向陪诊师列表中；历史订单记录保留${busy ? `；当前有 ${busy} 条进行中订单` : ''}。`,
+    rows: [['陪诊师', e.name], ['当前状态', e.status || '空闲'], ['进行中订单', `${busy} 条`]],
+    okText: '确认停用',
+    danger: true,
+    onOk: doToggle,
+  });
+};
+
+Admin.deleteEscort = function(id) {
+  const e = CareStore.escort(id);
+  if (!e) return this.toast('陪诊师不存在');
+  const busy = CareStore.busyNeeds(n => n.escortId === e.id && ['已分配', '服务中'].includes(n.status)).length;
+  WUtil.confirm({
+    title: '确认删除陪诊师',
+    desc: busy
+      ? `「${e.name}」当前有 ${busy} 条进行中订单，系统会阻止删除，请改用「停用」。`
+      : `删除后「${e.name}」不再参与派单，历史订单中的姓名与电话记录保留。`,
+    rows: [['陪诊师', e.name], ['联系电话', e.phone || '-'], ['进行中订单', `${busy} 条`]],
+    okText: '确认删除',
+    danger: true,
+    onOk: () => {
+      try {
+        CareStore.removeEscort(id);
+        this.toast('陪诊师已删除（历史订单记录保留）');
+        this.renderContent();
+      } catch (err) { this.toast(err.message); }
+    },
+  });
+};
+
+// 陪诊师详情（改为读取 CareStore 并带操作入口）
+Admin.openEscort = function(id) {
+  const e = CareStore.escort(id);
+  if (!e) return this.toast('陪诊师不存在');
+  const related = CareStore.state.needs.filter(n => n.escortId === e.id);
+  const serving = related.filter(n => ['已分配', '服务中'].includes(n.status));
+  this.modal(`
+    <div class="modal-head-row">
+      <h2>${WUtil.escape(e.name)} 的档案</h2>
+      <span class="status-badge ${e.active === false ? 'cancelled' : (e.status === '空闲' ? 'accepted' : 'serving')}">${e.active === false ? '已停用' : WUtil.escape(e.status || '空闲')}</span>
+    </div>
+    <div class="modal-grid-2">
+      <section class="modal-card">
+        <div class="card-title">${ICON.user} 基本信息</div>
+        <div class="pb-row"><span class="pb-label">姓名</span><span class="pb-value">${WUtil.escape(e.name)}</span></div>
+        <div class="pb-row"><span class="pb-label">性别/年龄</span><span class="pb-value">${WUtil.escape(e.gender || '-')} / ${WUtil.escape(String(e.age ?? '-'))}岁</span></div>
+        <div class="pb-row"><span class="pb-label">电话</span><span class="pb-value">${WUtil.escape(e.phone || '-')}</span></div>
+        <div class="pb-row"><span class="pb-label">入职日期</span><span class="pb-value">${WUtil.escape(e.joinDate || '-')}</span></div>
+        <div class="pb-row"><span class="pb-label">服务区域</span><span class="pb-value">${WUtil.escape(e.region || '-')}</span></div>
+      </section>
+      <section class="modal-card">
+        <div class="card-title">${ICON.activity} 业务数据</div>
+        <div class="pb-row"><span class="pb-label">总订单数</span><span class="pb-value">${Number(e.orders || 0)}</span></div>
+        <div class="pb-row"><span class="pb-label">进行中订单</span><span class="pb-value">${serving.length}</span></div>
+        <div class="pb-row"><span class="pb-label">评分</span><span class="pb-value"><span class="star">★</span> ${WUtil.escape(String(e.star ?? 5))}</span></div>
+        <div class="pb-row"><span class="pb-label">完成率</span><span class="pb-value">${Number(e.completionRate || 100)}%</span></div>
+        <div class="pb-row"><span class="pb-label">综合评分</span><span class="pb-value">${Number(e.score || 90)}</span></div>
+      </section>
+    </div>
+    <div class="modal-card">
+      <div class="card-title">${ICON.shield} 专长标签</div>
+      <div class="cell-tags">${(e.tags || []).map(t => `<span class="tag tag-gray">${WUtil.escape(t)}</span>`).join('') || '<span class="cp-sub">未填写</span>'}</div>
+      ${e.note ? `<p class="helper-text" style="margin-top:8px;">备注：${WUtil.escape(e.note)}</p>` : ''}
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="Admin.closeModal()">关闭</button>
+      <button class="btn btn-outline" onclick="Admin.openEscortForm('${e.id}')">编辑资料</button>
+      <button class="btn" onclick="Admin.toggleEscortActive('${e.id}');Admin.closeModal();">${e.active === false ? '恢复在岗' : '停用该陪诊师'}</button>
+    </div>
+  `);
+};
+
+// 派单弹窗后处理：过滤已停用陪诊师按钮 + 标注患者意向（不改写原 openNeed 逻辑）
+Admin.filterEscortButtons = function(bodyEl, need) {
+  const buttons = bodyEl && bodyEl.querySelectorAll ? bodyEl.querySelectorAll('button') : [];
+  let removed = 0, marked = 0;
+  buttons.forEach(btn => {
+    if (!btn.getAttribute) return;
+    const onclick = btn.getAttribute('onclick') || '';
+    const m = onclick.match(/assignEscortV2\('([^']+)','([^']+)'\)/);
+    if (!m) return;
+    const escort = CareStore.escort(m[2]);
+    if (!escort || escort.active === false) {
+      if (btn.remove) btn.remove();
+      removed += 1;
+      return;
+    }
+    if (need && need.preferredEscortId === escort.id) {
+      if (btn.classList && btn.classList.add) btn.classList.add('preferred-escort');
+      if (String(btn.innerHTML).indexOf('意向') === -1) btn.innerHTML = `★ 意向陪诊师：${btn.innerHTML}`;
+      marked += 1;
+    }
+  });
+  return { removed, marked };
+};
+
+const _b6OpenNeed = Admin.openNeed.bind(Admin);
+Admin.openNeed = function(id) {
+  _b6OpenNeed(id);
+  const need = CareStore.need(id);
+  const body = document.getElementById('_modalBody');
+  if (!body) return;
+  const stat = this.filterEscortButtons(body, need);
+  if (need && need.preferredEscortId && stat.marked) {
+    const e = CareStore.escort(need.preferredEscortId);
+    if (body.innerHTML && !body.innerHTML.includes('患者意向')) {
+      body.innerHTML = body.innerHTML.replace(
+        /(<div class="modal-head-row">[\s\S]*?<\/div>)/,
+        `$1<div class="preferred-banner">患者意向陪诊师：<strong>${WUtil.escape(e ? e.name : need.preferredEscortName || '')}</strong>（仅供参考，由平台最终匹配）</div>`
+      );
+    }
+  }
+};
+
+// ---- 患者端"我的需求"表单：意向陪诊师（可选，仅登记意向）----
+Patient.preferredEscortFieldHTML = function() {
+  const d = CareStore.draft();
+  const escorts = CareStore.activeEscorts();
+  const options = escorts.map(e => {
+    const tags = (e.tags || []).slice(0, 2).join('/');
+    const busy = e.status && e.status !== '空闲' ? `（${e.status}）` : '';
+    return `<option value="${WUtil.escape(e.id)}" ${d.preferredEscortId === e.id ? 'selected' : ''}>${WUtil.escape(e.name)}${tags ? ` · ${WUtil.escape(tags)}` : ''}${busy}</option>`;
+  }).join('');
+  return `
+    <label class="field-label" for="req_escort">意向陪诊师（可选）</label>
+    <select class="fg-select" id="req_escort">
+      <option value="">由平台推荐（默认）</option>
+      ${options}
+    </select>
+    <div class="helper-text">仅登记意向：平台会优先按意向安排，最终由平台按病情与医院匹配确定；需求未分配前不会展示陪诊师联系方式。</div>
+  `;
+};
+
+const _b6RenderNeed = Patient.renderNeed.bind(Patient);
+Patient.renderNeed = function(el) {
+  _b6RenderNeed(el);
+  const anchor = '<label class="field-label" for="req_note">特殊照护需求</label>';
+  if (!el.innerHTML.includes(anchor)) return;
+  el.innerHTML = el.innerHTML.replace(anchor, this.preferredEscortFieldHTML() + anchor);
+  const sel = document.getElementById('req_escort');
+  if (sel && sel.addEventListener) {
+    sel.addEventListener('change', () => {
+      const id = sel.value;
+      const e = id ? CareStore.escort(id) : null;
+      CareStore.patchDraft({ preferredEscortId: e ? e.id : null, preferredEscortName: e ? e.name : '' });
+    });
+  }
+};
